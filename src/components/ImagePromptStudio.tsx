@@ -15,6 +15,12 @@ import {
   Sliders,
   HelpCircle,
   Upload,
+  Pipette,
+  SprayCan,
+  Pill,
+  ShoppingBag,
+  Droplet,
+  Box,
 } from 'lucide-react';
 import {
   PHOTO_TYPES,
@@ -22,6 +28,8 @@ import {
   CAMERA_LENSES,
   LIGHTING_STYLES,
   PACKAGING_OPTIONS,
+  PACKAGING_PRESENTATIONS,
+  PackagingPresentationMode,
   SURFACE_OPTIONS,
   INGREDIENT_EFFECTS,
   COLOR_MOODS,
@@ -108,6 +116,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const [lensId, setLensId] = useState<string>(STUDIO_QUICK_PRESETS[0].lensId);
   const [lightingId, setLightingId] = useState<string>(STUDIO_QUICK_PRESETS[0].lightingId);
   const [packagingId, setPackagingId] = useState<string>(STUDIO_QUICK_PRESETS[0].packagingId);
+  const [packagingPresentation, setPackagingPresentation] = useState<PackagingPresentationMode>(
+    STUDIO_QUICK_PRESETS[0].packagingPresentation || 'con-contenido'
+  );
   const [surfaceId, setSurfaceId] = useState<string>(STUDIO_QUICK_PRESETS[0].surfaceId);
   const [selectedIngredientIds, setSelectedIngredientIds] = useState<string[]>(
     STUDIO_QUICK_PRESETS[0].ingredientIds
@@ -126,6 +137,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
 
   // UI State for Output, Modal & Add-Custom forms
   const [isLensModalOpen, setIsLensModalOpen] = useState<boolean>(false);
+  const [showMorePackagings, setShowMorePackagings] = useState<boolean>(false);
   const [outputLang, setOutputLang] = useState<'es' | 'en'>('es');
   const [outputTab, setOutputTab] = useState<'single' | 'session6'>('single');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -181,6 +193,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     setLensId(preset.lensId);
     setLightingId(preset.lightingId);
     setPackagingId(preset.packagingId);
+    setPackagingPresentation(preset.packagingPresentation || 'solo');
     setSurfaceId(preset.surfaceId);
     setSelectedIngredientIds(preset.ingredientIds);
     setColorMoodId(preset.colorMoodId);
@@ -282,16 +295,40 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     setTimeout(() => setCopiedKey(null), 2200);
   };
 
+  const getPackagingIcon = (id: string) => {
+    if (id.includes('spray') || id.includes('atomizador')) {
+      return <SprayCan className="w-4 h-4 text-sky-400" />;
+    }
+    if (id.includes('gotero') || id.includes('pipeta')) {
+      return <Pipette className="w-4 h-4 text-emerald-400" />;
+    }
+    if (id.includes('suplementero') || id.includes('capsula') || id.includes('pill')) {
+      return <Pill className="w-4 h-4 text-amber-400" />;
+    }
+    if (id.includes('doypack') || id.includes('pouch') || id.includes('bolsa')) {
+      return <ShoppingBag className="w-4 h-4 text-rose-400" />;
+    }
+    if (id.includes('jarabe') || id.includes('botella') || id.includes('elixir')) {
+      return <Droplet className="w-4 h-4 text-cyan-400" />;
+    }
+    return <Package className="w-4 h-4 text-amber-300" />;
+  };
+
   // Resolve active items
   const activePhotoType = allPhotoTypes.find((x) => x.id === photoTypeId) || allPhotoTypes[0];
   const activeShot = allShots.find((x) => x.id === shotId) || allShots[0];
   const activeLens = allLenses.find((x) => x.id === lensId) || allLenses[0];
   const activeLighting = allLightings.find((x) => x.id === lightingId) || allLightings[0];
   const activePackaging = allPackagings.find((x) => x.id === packagingId) || allPackagings[0];
+  const activePackagingPresentation =
+    PACKAGING_PRESENTATIONS.find((x) => x.id === packagingPresentation) || PACKAGING_PRESENTATIONS[0];
   const activeSurface = allSurfaces.find((x) => x.id === surfaceId) || allSurfaces[0];
   const activeMood = allMoods.find((x) => x.id === colorMoodId) || allMoods[0];
   const activeRatio = ASPECT_RATIOS.find((x) => x.id === aspectRatio) || ASPECT_RATIOS[0];
   const activeIngredients = allIngredients.filter((x) => selectedIngredientIds.includes(x.id));
+
+  const presentationEs = activePackagingPresentation.promptEs ? `, ${activePackagingPresentation.promptEs}` : '';
+  const presentationEn = activePackagingPresentation.promptEn ? `, ${activePackagingPresentation.promptEn}` : '';
 
   const ingredientsListEs =
     activeIngredients.length > 0
@@ -336,9 +373,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const extraEn = extraCustomNotes.trim() ? ` Additional detail: ${extraCustomNotes.trim()}.` : '';
 
   // Main Prompt
-  const mainPromptEs = `${refInstructionEs}${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}. En el centro destaca ${activePackaging.promptEs}, ${activeSurface.promptEs}. Alrededor del envase se aprecian ${ingredientsListEs}. ${getMedallionFragmentEs(medallionStyle)} Con ${activeLighting.promptEs}, ${activeMood.promptEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
+  const mainPromptEs = `${refInstructionEs}${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}. En el centro destaca ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}. Alrededor del envase se aprecian ${ingredientsListEs}. ${getMedallionFragmentEs(medallionStyle)} Con ${activeLighting.promptEs}, ${activeMood.promptEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
 
-  const mainPromptEn = `${refInstructionEn}${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}. Centered is ${activePackaging.promptEn}, ${activeSurface.promptEn}. Surrounding the container are ${ingredientsListEn}. ${getMedallionFragmentEn(medallionStyle)} Featuring ${activeLighting.promptEn}, ${activeMood.promptEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
+  const mainPromptEn = `${refInstructionEn}${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}. Centered is ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}. Surrounding the container are ${ingredientsListEn}. ${getMedallionFragmentEn(medallionStyle)} Featuring ${activeLighting.promptEn}, ${activeMood.promptEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
 
   // 6-Shot Complete Photo Session
   const session6Pack = [
@@ -347,24 +384,24 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
       badge: 'Foto 1 · Póster de Beneficios',
       title: 'Póster Comercial Simétrico con 4 Medallones 3D',
       shotLabel: 'Eye-Level 0° · 85mm Bokeh',
-      promptEs: `${refInstructionEs}Fotografía comercial publicitaria tipo póster en ${activeRatio.promptEs} de "${productName}", en plano frontal eye-level perfectamente simétrico. En el centro, ${activePackaging.promptEs}, ${activeSurface.promptEs}, rodeado de ${ingredientsListEs}. ${getMedallionFragmentEs('gold-3d')} Con ${activeLighting.promptEs} y ${activeMood.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Commercial advertising poster photography in ${activeRatio.promptEn} of "${productName}", straight-on symmetrical eye-level shot. Centered is ${activePackaging.promptEn}, ${activeSurface.promptEn}, surrounded by ${ingredientsListEn}. ${getMedallionFragmentEn('gold-3d')} With ${activeLighting.promptEn} and ${activeMood.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
+      promptEs: `${refInstructionEs}Fotografía comercial publicitaria tipo póster en ${activeRatio.promptEs} de "${productName}", en plano frontal eye-level perfectamente simétrico. En el centro, ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}, rodeado de ${ingredientsListEs}. ${getMedallionFragmentEs('gold-3d')} Con ${activeLighting.promptEs} y ${activeMood.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
+      promptEn: `${refInstructionEn}Commercial advertising poster photography in ${activeRatio.promptEn} of "${productName}", straight-on symmetrical eye-level shot. Centered is ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}, surrounded by ${ingredientsListEn}. ${getMedallionFragmentEn('gold-3d')} With ${activeLighting.promptEn} and ${activeMood.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-2-hero',
       badge: 'Foto 2 · Catálogo Limpio',
       title: 'Hero Shot Imponente (Sin Medallones)',
       shotLabel: 'Contrapicado 15° · 85mm',
-      promptEs: `${refInstructionEs}Fotografía Hero Shot comercial limpia en ${activeRatio.promptEs} de "${productName}", en plano contrapicado heroico a 15 grados que engrandece la presencia del envase. Presenta ${activePackaging.promptEs}, ${activeSurface.promptEs}, acompañado de ${ingredientsListEs}. Sin ningún texto flotante ni medallones externos. Con ${activeLighting.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Clean commercial Hero Shot photography in ${activeRatio.promptEn} of "${productName}", shot from a 15-degree low-angle heroic perspective. Featuring ${activePackaging.promptEn}, ${activeSurface.promptEn}, accompanied by ${ingredientsListEn}. Strictly no floating text or external medallions. With ${activeLighting.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
+      promptEs: `${refInstructionEs}Fotografía Hero Shot comercial limpia en ${activeRatio.promptEs} de "${productName}", en plano contrapicado heroico a 15 grados que engrandece la presencia del envase. Presenta ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}, acompañado de ${ingredientsListEs}. Sin ningún texto flotante ni medallones externos. Con ${activeLighting.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
+      promptEn: `${refInstructionEn}Clean commercial Hero Shot photography in ${activeRatio.promptEn} of "${productName}", shot from a 15-degree low-angle heroic perspective. Featuring ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}, accompanied by ${ingredientsListEn}. Strictly no floating text or external medallions. With ${activeLighting.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-3-flatlay',
       badge: 'Foto 3 · Vista Cenital 90°',
       title: 'Flat Lay de Ingredientes desde Arriba',
       shotLabel: 'Cenital Top-Down · 50mm',
-      promptEs: `${refInstructionEs}Fotografía Flat Lay cenital en ángulo perpendicular de 90 grados desde arriba en ${activeRatio.promptEs} de "${productName}": ${activePackaging.promptEs} reposando en el centro de la composición ${activeSurface.promptEs}, rodeado en círculo armónico por sus ingredientes naturales puros (${ingredientsListEs}). Iluminación suave de ventana con sombras orgánicas, ${activeMood.promptEs}, lente 50mm f/1.4 editorial, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Overhead 90-degree perpendicular top-down Flat Lay photography in ${activeRatio.promptEn} of "${productName}": ${activePackaging.promptEn} resting at the center ${activeSurface.promptEn}, artfully encircled by its raw natural ingredients (${ingredientsListEn}). Soft window daylight with organic shadows, ${activeMood.promptEn}, 50mm f/1.4 editorial lens, 8k.${extraEn}`,
+      promptEs: `${refInstructionEs}Fotografía Flat Lay cenital en ángulo perpendicular de 90 grados desde arriba en ${activeRatio.promptEs} de "${productName}": ${activePackaging.promptEs}${presentationEs} reposando en el centro de la composición ${activeSurface.promptEs}, rodeado en círculo armónico por sus ingredientes naturales puros (${ingredientsListEs}). Iluminación suave de ventana con sombras orgánicas, ${activeMood.promptEs}, lente 50mm f/1.4 editorial, 8k.${extraEs}`,
+      promptEn: `${refInstructionEn}Overhead 90-degree perpendicular top-down Flat Lay photography in ${activeRatio.promptEn} of "${productName}": ${activePackaging.promptEn}${presentationEn} resting at the center ${activeSurface.promptEn}, artfully encircled by its raw natural ingredients (${ingredientsListEn}). Soft window daylight with organic shadows, ${activeMood.promptEn}, 50mm f/1.4 editorial lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-4-macro',
@@ -379,16 +416,16 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
       badge: 'Foto 5 · Splash / Acción Rápida',
       title: 'Salpicadura o Polvo Congelado en el Aire',
       shotLabel: 'High-Speed · 90mm f/4',
-      promptEs: `${refInstructionEs}Fotografía publicitaria de alta velocidad (1/4000s freeze motion) en ${activeRatio.promptEs} de "${productName}": en el centro, ${activePackaging.promptEs} permanece firme mientras a su alrededor estalla en el aire una onda dinámica de ${ingredientsListEs} iluminada a contraluz con destellos dorados. Lente de estudio 90mm f/4, nitidez absoluta en cada partícula en suspensión, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}High-speed 1/4000s freeze-motion advertising photography in ${activeRatio.promptEn} of "${productName}": centered ${activePackaging.promptEs} stands steady while a dynamic mid-air burst of ${ingredientsListEn} erupts around it backlit with golden sparkles. 90mm f/4 studio lens, crystal-clear focus on every suspended particle, 8k.${extraEn}`,
+      promptEs: `${refInstructionEs}Fotografía publicitaria de alta velocidad (1/4000s freeze motion) en ${activeRatio.promptEs} de "${productName}": en el centro, ${activePackaging.promptEs}${presentationEs} permanece firme mientras a su alrededor estalla en el aire una onda dinámica de ${ingredientsListEs} iluminada a contraluz con destellos dorados. Lente de estudio 90mm f/4, nitidez absoluta en cada partícula en suspensión, 8k.${extraEs}`,
+      promptEn: `${refInstructionEn}High-speed 1/4000s freeze-motion advertising photography in ${activeRatio.promptEn} of "${productName}": centered ${activePackaging.promptEn}${presentationEn} stands steady while a dynamic mid-air burst of ${ingredientsListEn} erupts around it backlit with golden sparkles. 90mm f/4 studio lens, crystal-clear focus on every suspended particle, 8k.${extraEn}`,
     },
     {
       id: 'shot-6-lifestyle',
       badge: 'Foto 6 · En Uso Real',
       title: 'Escena de Bienestar Cotidiano en una Mesa',
       shotLabel: 'Picado 45° · 50mm',
-      promptEs: `${refInstructionEs}Fotografía editorial Lifestyle de bienestar en ${activeRatio.promptEs} para "${productName}", en plano diagonal de 45 grados: ${activePackaging.promptEs} ${activeSurface.promptEs} junto a ${ingredientsListEs}, mientras unas manos cuidadas preparan el producto bajo el sol matutino. Atmósfera cálida, hogareña y confiable, lente 50mm f/1.4, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Wellness editorial Lifestyle photography in ${activeRatio.promptEn} for "${productName}", 45-degree angle: ${activePackaging.promptEs} ${activeSurface.promptEs} alongside ${ingredientsListEn}, while sunlit elegant hands interact with the product. Warm, trustworthy morning atmosphere, 50mm f/1.4 lens, 8k.${extraEn}`,
+      promptEs: `${refInstructionEs}Fotografía editorial Lifestyle de bienestar en ${activeRatio.promptEs} para "${productName}", en plano diagonal de 45 grados: ${activePackaging.promptEs}${presentationEs} ${activeSurface.promptEs} junto a ${ingredientsListEs}, mientras unas manos cuidadas preparan el producto bajo el sol matutino. Atmósfera cálida, hogareña y confiable, lente 50mm f/1.4, 8k.${extraEs}`,
+      promptEn: `${refInstructionEn}Wellness editorial Lifestyle photography in ${activeRatio.promptEn} for "${productName}", 45-degree angle: ${activePackaging.promptEn}${presentationEn} ${activeSurface.promptEn} alongside ${ingredientsListEn}, while sunlit elegant hands interact with the product. Warm, trustworthy morning atmosphere, 50mm f/1.4 lens, 8k.${extraEn}`,
     },
   ];
 
@@ -508,31 +545,151 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
               </div>
 
               {/* Packaging Visual Selector */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 mb-1.5">
-                  Elige cómo es el frasco o envase:
-                </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {allPackagings.slice(0, 4).map((pkg) => {
-                    const isSelected = packagingId === pkg.id;
-                    return (
-                      <button
-                        key={pkg.id}
-                        type="button"
-                        onClick={() => setPackagingId(pkg.id)}
-                        className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-emerald-500/20 border-emerald-400 ring-1 ring-emerald-400 font-bold'
-                            : isDark
-                            ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
-                            : 'bg-stone-50 border-stone-200 text-stone-700'
-                        }`}
-                      >
-                        <div className="text-[11px] font-bold line-clamp-1">{pkg.label}</div>
-                        <div className="text-[9px] text-amber-300">{pkg.badge}</div>
-                      </button>
-                    );
-                  })}
+              <div className="space-y-3 pt-1">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                      <Package className="w-3.5 h-3.5 text-emerald-400" />
+                      1. Elige el Formato de Envase o Empaque:
+                    </label>
+                    <span className="text-[10px] text-amber-300 font-semibold">
+                      {activePackaging.label}
+                    </span>
+                  </div>
+
+                  {/* Primary 6 formats grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {allPackagings.slice(0, 6).map((pkg) => {
+                      const isSelected = packagingId === pkg.id;
+                      return (
+                        <button
+                          key={pkg.id}
+                          type="button"
+                          onClick={() => setPackagingId(pkg.id)}
+                          className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 ${
+                            isSelected
+                              ? 'bg-gradient-to-br from-emerald-500/20 to-amber-500/10 border-emerald-400 ring-2 ring-emerald-400/50 shadow-md font-bold'
+                              : isDark
+                              ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
+                              : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="p-1 rounded-md bg-white/5 border border-white/10">
+                              {getPackagingIcon(pkg.id)}
+                            </span>
+                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">
+                              {pkg.badge}
+                            </span>
+                          </div>
+                          <div>
+                            <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-white' : ''}`}>
+                              {pkg.label}
+                            </div>
+                            {pkg.shortDesc && (
+                              <div className="text-[9.5px] text-slate-400 line-clamp-1 leading-tight mt-0.5">
+                                {pkg.shortDesc}
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Extra formats dropdown / toggle */}
+                  <div className="mt-2 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => setShowMorePackagings(!showMorePackagings)}
+                      className="text-[11px] text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>{showMorePackagings ? '− Menos formatos' : '+ Ver más formatos (Tarro de miel, Pote XXL...)'}</span>
+                    </button>
+                    {!allPackagings.slice(0, 6).some((p) => p.id === packagingId) && (
+                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
+                        Seleccionado: {activePackaging.label}
+                      </span>
+                    )}
+                  </div>
+
+                  {showMorePackagings && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2 pt-2 border-t border-slate-800/60">
+                      {allPackagings.slice(6).map((pkg) => {
+                        const isSelected = packagingId === pkg.id;
+                        return (
+                          <button
+                            key={pkg.id}
+                            type="button"
+                            onClick={() => setPackagingId(pkg.id)}
+                            className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-emerald-500/20 border-emerald-400 ring-1 ring-emerald-400 font-bold'
+                                : isDark
+                                ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
+                                : 'bg-stone-50 border-stone-200 text-stone-700'
+                            }`}
+                          >
+                            <div className="text-[11px] font-bold line-clamp-1">{pkg.label}</div>
+                            <div className="text-[9px] text-amber-300">{pkg.badge}</div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Packaging Presentation Mode (Solo / Con Caja / Con Contenido) */}
+                <div
+                  className={`p-3 rounded-xl border ${
+                    isDark ? 'border-slate-800 bg-black/25' : 'border-stone-200 bg-stone-50'
+                  } space-y-2`}
+                >
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                      <Box className="w-3.5 h-3.5 text-amber-400" />
+                      2. Acompañamiento del Envase en la Foto:
+                    </label>
+                    <span className="text-[10px] text-emerald-400 font-mono font-bold">
+                      {activePackagingPresentation.label}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {PACKAGING_PRESENTATIONS.map((pres) => {
+                      const isSelected = packagingPresentation === pres.id;
+                      return (
+                        <button
+                          key={pres.id}
+                          type="button"
+                          onClick={() => setPackagingPresentation(pres.id)}
+                          className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+                            isSelected
+                              ? 'bg-amber-500/20 border-amber-400 ring-1 ring-amber-400 font-bold shadow'
+                              : isDark
+                              ? 'bg-black/40 border-slate-800 text-slate-300 hover:border-slate-700'
+                              : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span
+                              className={`text-[11px] font-bold ${
+                                isSelected ? 'text-amber-300 font-extrabold' : ''
+                              }`}
+                            >
+                              {pres.label}
+                            </span>
+                            <span className="text-[9px] px-1 py-0.5 rounded bg-white/5 text-slate-400 font-mono">
+                              {pres.badge}
+                            </span>
+                          </div>
+                          <span className="text-[9.5px] text-slate-400 leading-tight">
+                            {pres.shortDesc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
