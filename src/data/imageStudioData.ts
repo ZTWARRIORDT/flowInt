@@ -13,6 +13,8 @@ export type PackagingPresentationMode =
   | 'con-contenido'
   | 'con-cuchara'
   | 'con-gotero-activo'
+  | 'con-spray-niebla'
+  | 'con-miel-cucharon'
   | 'con-fruto-fresco';
 
 export interface PackagingPresentationOption {
@@ -22,6 +24,24 @@ export interface PackagingPresentationOption {
   shortDesc: string;
   promptEs: string;
   promptEn: string;
+}
+
+export type InfographicStyle =
+  | 'none'
+  | 'pill-badges'
+  | 'callout-pins'
+  | 'live-ingredients-labels'
+  | 'metric-cards'
+  | 'editorial-typography'
+  | 'gold-3d'
+  | 'crystal-minimal';
+
+export interface InfographicStyleOption {
+  id: InfographicStyle;
+  label: string;
+  badge: string;
+  iconType: string;
+  shortDesc: string;
 }
 
 export interface PhotoTypeOption extends StudioOptionItem {
@@ -330,6 +350,14 @@ export const PACKAGING_PRESENTATIONS: PackagingPresentationOption[] = [
     promptEn: 'presented cleanly as a standalone hero product with crisp silhouette on the surface',
   },
   {
+    id: 'con-spray-niebla',
+    label: 'Con Bruma / Niebla Atomizada',
+    badge: 'Para Sprays',
+    shortDesc: 'Fina nube de microgotas suspendidas en el aire a contraluz.',
+    promptEs: 'con una fina bruma y nube suspendida de microgotas atomizadas en el aire iluminada a contraluz saliendo de la boquilla del spray',
+    promptEn: 'with a delicate illuminated backlit fine-mist cloud of atomized micro-droplets suspended in the air diffusing from the spray nozzle',
+  },
+  {
     id: 'con-contenido',
     label: 'Con Muestra de Contenido',
     badge: 'Cápsulas / Gomitas',
@@ -354,12 +382,105 @@ export const PACKAGING_PRESENTATIONS: PackagingPresentationOption[] = [
     promptEn: 'with the glass dropper pipette resting open at an angle showing a luminous translucent droplet suspended at its tip',
   },
   {
+    id: 'con-miel-cucharon',
+    label: 'Con Cucharón Mielero / Panal',
+    badge: 'Miel / Artesanal',
+    shortDesc: 'Cucharón de madera con hilo espeso de miel dorada y panal.',
+    promptEs: 'acompañado por un cucharón mielero de madera artesanal con un hilo espeso de miel dorada goteando lentamente y un trozo de panal natural',
+    promptEn: 'accompanied by an artisanal wooden honey dipper with a slow stream of thick golden honey dripping beside a chunk of natural honeycomb',
+  },
+  {
     id: 'con-fruto-fresco',
     label: 'Con Fruto Fresco o Raíz Cortada',
     badge: 'Origen Botánico',
     shortDesc: 'Trozos de fruto fresco cortado o raíces húmedas en la base.',
     promptEs: 'acompañado en la base por rodajas frescas del ingrediente botánico puro y hojas aromáticas con gotas de rocío',
     promptEn: 'accompanied at the base by fresh slices of the raw botanical ingredient and aromatic leaves with fresh dew droplets',
+  },
+];
+
+export const getCompatiblePresentations = (packagingId: string): PackagingPresentationMode[] => {
+  const p = packagingId.toLowerCase();
+  if (p.includes('spray') || p.includes('atomizador')) {
+    return ['solo', 'con-spray-niebla', 'con-fruto-fresco'];
+  }
+  if (p.includes('gotero') || p.includes('pipeta')) {
+    return ['solo', 'con-gotero-activo', 'con-fruto-fresco'];
+  }
+  if (p.includes('miel') || p.includes('hexagonal') || p.includes('yute')) {
+    return ['solo', 'con-miel-cucharon', 'con-fruto-fresco'];
+  }
+  if (p.includes('pote') || p.includes('tarro') || p.includes('polvo') || p.includes('ancho')) {
+    return ['solo', 'con-cuchara', 'con-fruto-fresco'];
+  }
+  if (p.includes('capsula') || p.includes('suplementero') || p.includes('frasco-ambar')) {
+    return ['solo', 'con-contenido', 'con-fruto-fresco'];
+  }
+  if (p.includes('doypack') || p.includes('pouch') || p.includes('bolsa')) {
+    return ['solo', 'con-contenido', 'con-cuchara', 'con-fruto-fresco'];
+  }
+  if (p.includes('jarabe') || p.includes('botella') || p.includes('elixir')) {
+    return ['solo', 'con-fruto-fresco'];
+  }
+  return ['solo', 'con-contenido', 'con-cuchara', 'con-gotero-activo', 'con-spray-niebla', 'con-fruto-fresco'];
+};
+
+export const INFOGRAPHIC_STYLES: InfographicStyleOption[] = [
+  {
+    id: 'pill-badges',
+    label: 'Badges Pill Minimalistas (+ Beneficios)',
+    badge: 'Opción 1 · E-Commerce DTC',
+    iconType: 'pill',
+    shortDesc: 'Etiquetas flotantes con bordes redondeados y tipografía nítida (+ FLORA INTESTINAL).',
+  },
+  {
+    id: 'callout-pins',
+    label: 'Callout Pins con Líneas Guía',
+    badge: 'Opción 2 · Clínico / Seed',
+    iconType: 'pin',
+    shortDesc: 'Líneas finas de precisión conectando el envase con punteros flotantes y datos.',
+  },
+  {
+    id: 'live-ingredients-labels',
+    label: 'Ingredientes Vivos con Etiquetas Tipográficas',
+    badge: 'Opción 3 · Sensorial Botánico',
+    iconType: 'leaf',
+    shortDesc: 'Ingredientes reales frescos con pequeñas etiquetas en papel mate al lado.',
+  },
+  {
+    id: 'metric-cards',
+    label: 'Tarjetas de Métricas Clínicas (24/7, 100%)',
+    badge: 'Opción 4 · Alto Impacto Ads',
+    iconType: 'chart',
+    shortDesc: 'Tarjetas de vidrio esmerilado con números y datos duros de conversión.',
+  },
+  {
+    id: 'editorial-typography',
+    label: 'Póster Tipográfico Editorial de Revista',
+    badge: 'Opción 6 · Vogue Wellness',
+    iconType: 'type',
+    shortDesc: 'Titulares serif modernos y viñetas elegantes integradas en el aire superior.',
+  },
+  {
+    id: 'gold-3d',
+    label: 'Medallones 3D de Oro Cepillado',
+    badge: 'Clásico Simétrico',
+    iconType: 'award',
+    shortDesc: 'Monedas circulares metálicas con iconos simbólicos grabados.',
+  },
+  {
+    id: 'crystal-minimal',
+    label: 'Esferas de Cristal Translúcido',
+    badge: 'Minimalista',
+    iconType: 'sparkles',
+    shortDesc: 'Burbujas de agua y cristal con iconos 3D grabados y cáusticas de luz.',
+  },
+  {
+    id: 'none',
+    label: 'Sin Elementos Flotantes (Foto 100% Limpia)',
+    badge: 'Catálogo Puro',
+    iconType: 'shield',
+    shortDesc: 'Composición limpia sin nada flotando, foco absoluto en el producto.',
   },
 ];
 

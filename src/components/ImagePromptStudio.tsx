@@ -29,6 +29,11 @@ import {
   Search,
   ShieldCheck,
   Info,
+  Tag,
+  Pin,
+  BarChart3,
+  Type,
+  EyeOff,
 } from 'lucide-react';
 import {
   PHOTO_TYPES,
@@ -49,6 +54,9 @@ import {
   ProductQuickPreset,
   SUPPLEMENT_KNOWLEDGE_BASE,
   SupplementKnowledgeItem,
+  InfographicStyle,
+  INFOGRAPHIC_STYLES,
+  getCompatiblePresentations,
 } from '../data/imageStudioData';
 import { LensVisualModal, PACKAGINGS_EXPLANATIONS } from './LensVisualModal';
 import {
@@ -146,10 +154,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     STUDIO_QUICK_PRESETS[0].aspectRatio
   );
 
-  // Medallions, Reference & Extra Modifiers
-  const [medallionStyle, setMedallionStyle] = useState<'gold-3d' | 'crystal-minimal' | 'none'>(
-    'gold-3d'
-  );
+  // Infographics, Reference & Extra Modifiers
+  const [infographicStyle, setInfographicStyle] = useState<InfographicStyle>('pill-badges');
   // Default to true as the user requested: mostly real products will be used
   const [useReferencePhotoMode, setUseReferencePhotoMode] = useState<boolean>(true);
   const [extraCustomNotes, setExtraCustomNotes] = useState<string>('');
@@ -277,13 +283,44 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     setSelectedIngredientIds([]);
     setSelectedAccompanimentIds([]);
     setPackagingPresentation('solo');
-    setMedallionStyle('none');
+    setInfographicStyle('none');
+    setSurfaceId('estudio-arena-minimal');
     setPhotoTypeId('hero-estudio');
     setShotId('contrapicado-heroico');
-    setLightingId('hora-dorada');
+    setLightingId('softbox-cenital');
     setLensId('85mm-f18');
-    setSyncFeedback('✓ Escena limpia: sin props ni medallones');
+    setSyncFeedback('✓ Escena limpia: sin props, sin medallones y fondo de catálogo neutro');
     setTimeout(() => setSyncFeedback(null), 3000);
+  };
+
+  const handleSelectPackaging = (newPkgId: string) => {
+    setPackagingId(newPkgId);
+    const compatible = getCompatiblePresentations(newPkgId);
+    if (!compatible.includes(packagingPresentation)) {
+      setPackagingPresentation('solo');
+    }
+    // Auto-clean incompatible props if switching to a format like spray
+    if (newPkgId.includes('spray') || newPkgId.includes('atomizador')) {
+      setSelectedAccompanimentIds((prev) =>
+        prev.filter((id) => id !== 'capsulas-softgel-base' && id !== 'monticulo-polvo-msm')
+      );
+    }
+  };
+
+  const handleTogglePresentation = (presId: PackagingPresentationMode) => {
+    if (packagingPresentation === presId) {
+      setPackagingPresentation('solo'); // Deselect back to solo!
+    } else {
+      setPackagingPresentation(presId);
+    }
+  };
+
+  const handleToggleInfographicStyle = (style: InfographicStyle) => {
+    if (infographicStyle === style) {
+      setInfographicStyle('none'); // Deselect back to none!
+    } else {
+      setInfographicStyle(style);
+    }
   };
 
   const handleApplyKnowledgeItem = (item: SupplementKnowledgeItem) => {
@@ -351,7 +388,11 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     if (pt.recommendedShotId) setShotId(pt.recommendedShotId);
     if (pt.recommendedLensId) setLensId(pt.recommendedLensId);
     if (pt.recommendedLightingId) setLightingId(pt.recommendedLightingId);
-    setMedallionStyle(pt.includeMedallionsByDefault ? 'gold-3d' : 'none');
+    if (!pt.includeMedallionsByDefault) {
+      setInfographicStyle('none');
+    } else if (infographicStyle === 'none') {
+      setInfographicStyle('pill-badges');
+    }
   };
 
   const handleSelectLens = (id: string) => {
@@ -398,7 +439,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
         recommendedShotId: shotId,
         recommendedLensId: lensId,
         recommendedLightingId: lightingId,
-        includeMedallionsByDefault: medallionStyle !== 'none',
+        includeMedallionsByDefault: infographicStyle !== 'none',
         isCustom: true,
       };
       setCustomItems((prev) => ({ ...prev, photoTypes: [...prev.photoTypes, newPt] }));
@@ -526,25 +567,73 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
       ? filteredAccompaniments.map((x) => x.promptEn).join(', ')
       : '';
 
-  // Medallion fragment
-  const getMedallionFragmentEs = (style: 'gold-3d' | 'crystal-minimal' | 'none') => {
-    if (style === 'none') {
-      return 'Composición 100% limpia sin medallones externos ni textos flotantes, destacando únicamente el logo simbólico en relieve del envase.';
+  // Infographic & Claims Design Fragment
+  const getInfographicFragmentEs = (style: InfographicStyle) => {
+    const b1 = benefit1?.trim() || 'Salud y Vitalidad';
+    const b2 = benefit2?.trim() || 'Fórmula 100% Pura';
+    const b3 = benefit3?.trim() || 'Protección Diaria';
+    const b4 = benefit4?.trim() || 'Bienestar Integral';
+
+    switch (style) {
+      case 'none':
+        return 'Composición 100% limpia de catálogo comercial sin medallones, sin textos flotantes ni tarjetas externas, dejando el protagonismo visual absoluto y puro en el envase.';
+
+      case 'pill-badges':
+        return `Flotando de forma armónica y simétrica a los costados del envase hay 4 etiquetas alargadas tipo "pill badge" minimalistas con esquinas redondeadas, fondo blanco translúcido suave y texto tipográfico nítido en relieve con palabras clave legibles: 1) "+ ${b1}", 2) "+ ${b2}", 3) "+ ${b3}", 4) "+ ${b4}". Diseño moderno, limpio y de alta conversión estilo e-commerce internacional de suplementos.`;
+
+      case 'callout-pins':
+        return `Composición infográfica publicitaria clínica con finas líneas guía de precisión conectando puntos clave del envase hacia 4 punteros flotantes con tipografía nítida y moderna indicando beneficios verificados: 1) "${b1}", 2) "${b2}", 3) "${b3}", 4) "${b4}". Estilo infográfico científico de alta gama sin saturar la escena.`;
+
+      case 'live-ingredients-labels':
+        return `Alrededor del envase se presentan los ingredientes naturales frescos y vivos en alta definición con pequeñas etiquetas tipográficas nítidas en papel mate blanco flotando sutilmente al lado de cada ingrediente activo: "${b1}", "${b2}", "${b3}". Fotografía publicitaria sensorial y orgánica donde la naturaleza viva y la tipografía editorial se integran perfectamente.`;
+
+      case 'metric-cards':
+        return `Flotando armónicamente a los lados del envase hay 3 tarjetas publicitarias de vidrio esmerilado (frosted glass) con datos clínicos de alto impacto impresos con tipografía bold ultra nítida: Tarjeta 1: "24/7 EFECTIVIDAD · ${b1}", Tarjeta 2: "100% FÓRMULA PURA · ${b2}", Tarjeta 3: "DOSIS ACTIVA · ${b3}". Formato publicitario de alta respuesta y conversión directa.`;
+
+      case 'editorial-typography':
+        return `Diseño publicitario editorial estilo revista de bienestar (wellness editorial layout): en la parte superior e integrada con el aire de la escena destaca una tipografía serif moderna con titulares elegantes y viñetas minimalistas legibles: "· ${b1} · ${b2} · ${b3}". Sin elementos pesados flotando, composición limpia y sofisticada con protagonismo central en el empaque.`;
+
+      case 'crystal-minimal':
+        return `Flotando de forma armónica alrededor del envase hay 4 esferas traslúcidas de cristal y borde dorado que contienen ÚNICAMENTE iconos/logos simbólicos minimalistas en 3D representando: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, prohibido incluir letras pequeñas o textos largos que se deformen.`;
+
+      case 'gold-3d':
+      default:
+        return `Flotando simétricamente alrededor del envase hay 4 medallones circulares de oro cepillado que contienen ÚNICAMENTE iconos/logos simbólicos grabados en relieve 3D representando: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, prohibido incluir letras pequeñas o textos largos para evitar deformaciones.`;
     }
-    if (style === 'crystal-minimal') {
-      return `Flotando de forma armónica alrededor del envase hay 4 esferas traslúcidas de cristal y borde dorado que contienen ÚNICAMENTE iconos/logos simbólicos minimalistas en 3D representando: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, prohibido incluir letras pequeñas o textos largos que se deformen.`;
-    }
-    return `Flotando simétricamente alrededor del envase hay 4 medallones circulares de oro cepillado que contienen ÚNICAMENTE iconos/logos simbólicos grabados en relieve 3D representando: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, prohibido incluir letras pequeñas o textos largos para evitar deformaciones.`;
   };
 
-  const getMedallionFragmentEn = (style: 'gold-3d' | 'crystal-minimal' | 'none') => {
-    if (style === 'none') {
-      return '100% clean composition with no external medallions or floating text, showcasing only the embossed symbolic logo on the container.';
+  const getInfographicFragmentEn = (style: InfographicStyle) => {
+    const b1 = benefit1?.trim() || 'Health & Vitality';
+    const b2 = benefit2?.trim() || '100% Pure Formula';
+    const b3 = benefit3?.trim() || 'Daily Protection';
+    const b4 = benefit4?.trim() || 'Total Wellness';
+
+    switch (style) {
+      case 'none':
+        return '100% clean commercial catalog composition with no external medallions, floating text, or cards, showcasing only the pure product container and its textures.';
+
+      case 'pill-badges':
+        return `Floating harmoniously and symmetrically beside the container are 4 minimalist elongated pill-shaped badges with soft translucent white frosted backgrounds, rounded corners, and crisp embossed typography highlighting key claims: 1) "+ ${b1}", 2) "+ ${b2}", 3) "+ ${b3}", 4) "+ ${b4}". Clean modern DTC supplement aesthetic.`;
+
+      case 'callout-pins':
+        return `Clinical advertising infographic composition featuring fine precision guideline pins connecting key container details to 4 floating callout pointers with clean modern typography indicating verified benefits: 1) "${b1}", 2) "${b2}", 3) "${b3}", 4) "${b4}". High-end scientific infographic aesthetic.`;
+
+      case 'live-ingredients-labels':
+        return `Fresh live raw natural botanical ingredients are artfully presented around the container in high definition, each paired with a small minimalist white matte label featuring crisp typography: "${b1}", "${b2}", "${b3}". Sensory organic advertising photography blending nature with editorial typography.`;
+
+      case 'metric-cards':
+        return `Floating harmoniously beside the container are 3 frosted glass advertising claim cards featuring bold crisp clinical typography: Card 1: "24/7 EFFECTIVENESS · ${b1}", Card 2: "100% PURE FORMULA · ${b2}", Card 3: "CLINICAL DOSE · ${b3}". High-conversion direct response advertising format.`;
+
+      case 'editorial-typography':
+        return `Wellness editorial magazine advertising layout: integrated into the upper breathing space is sophisticated modern serif typography with elegant headline subtext and clean minimalist bullet points: "· ${b1} · ${b2} · ${b3}". Clean, sophisticated composition with central focus on the product container.`;
+
+      case 'crystal-minimal':
+        return `Floating harmoniously around the container are 4 translucent glass orbs with gold rims featuring ONLY minimalist 3D symbolic icons/logos representing: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, strictly no small letters or text that could warp.`;
+
+      case 'gold-3d':
+      default:
+        return `Floating symmetrically around the container are 4 circular brushed gold medallions featuring ONLY 3D engraved symbolic icons/logos representing: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, strictly no small letters or text so nothing warps.`;
     }
-    if (style === 'crystal-minimal') {
-      return `Floating harmoniously around the container are 4 translucent glass orbs with gold rims featuring ONLY minimalist 3D symbolic icons/logos representing: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, strictly no small letters or text that could warp.`;
-    }
-    return `Floating symmetrically around the container are 4 circular brushed gold medallions featuring ONLY 3D engraved symbolic icons/logos representing: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, strictly no small letters or text so nothing warps.`;
   };
 
   const extraEs = extraCustomNotes.trim() ? ` Detalle adicional: ${extraCustomNotes.trim()}.` : '';
@@ -630,11 +719,11 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   // Main Prompt
   const mainPromptEs = isMacroMode
     ? `${photoStyleEs} ${macroPackagingEs} ${macroMedallionsEs} Con ${activeLighting.promptEs}, ${colorDirectiveEs}, capturado con lente macro 100mm f/2.8 con nitidez microscópica en texturas y gotas. Fotografía comercial publicitaria 8k.${extraEs}`
-    : `${photoStyleEs} ${packagingDescriptionEs} Alrededor del envase se aprecian ${ingredientsListEs}. ${getMedallionFragmentEs(medallionStyle)}${headlineDirectiveEs} Con ${activeLighting.promptEs}, ${colorDirectiveEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
+    : `${photoStyleEs} ${packagingDescriptionEs} Alrededor del envase se aprecian ${ingredientsListEs}. ${getInfographicFragmentEs(infographicStyle)}${headlineDirectiveEs} Con ${activeLighting.promptEs}, ${colorDirectiveEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
 
   const mainPromptEn = isMacroMode
     ? `${photoStyleEn} ${macroPackagingEn} ${macroMedallionsEn} Featuring ${activeLighting.promptEn}, ${colorDirectiveEn}, captured with a 100mm f/2.8 macro lens with microscopic sharpness on textures and dew droplets. 8k commercial advertising photography.${extraEn}`
-    : `${photoStyleEn} ${packagingDescriptionEn} Surrounding the container are ${ingredientsListEn}. ${getMedallionFragmentEn(medallionStyle)}${headlineDirectiveEn} Featuring ${activeLighting.promptEn}, ${colorDirectiveEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
+    : `${photoStyleEn} ${packagingDescriptionEn} Surrounding the container are ${ingredientsListEn}. ${getInfographicFragmentEn(infographicStyle)}${headlineDirectiveEn} Featuring ${activeLighting.promptEn}, ${colorDirectiveEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
 
   // 6-Shot Complete Photo Session
   const bottleRefEs = useReferencePhotoMode
@@ -658,10 +747,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     {
       id: 'shot-1-poster',
       badge: 'Foto 1 · Póster de Beneficios',
-      title: 'Póster Comercial Simétrico con 4 Medallones 3D',
+      title: 'Póster Comercial con Claims / Beneficios',
       shotLabel: 'Eye-Level 0° · 85mm Bokeh',
-      promptEs: `${sessionRefPrefixEs}Fotografía comercial publicitaria tipo póster en ${activeRatio.promptEs} de "${productName}", en plano frontal eye-level perfectamente simétrico. En el centro, ${bottleRefEs}${presentationEs}${accInSessionEs}, ${activeSurface.promptEs}, rodeado de ${ingredientsListEs}. ${getMedallionFragmentEs('gold-3d')}${headlineDirectiveEs} Con ${activeLighting.promptEs} y ${colorDirectiveEs}, lente 85mm f/1.8, 8k.${extraEs}`,
-      promptEn: `${sessionRefPrefixEn}Commercial advertising poster photography in ${activeRatio.promptEn} of "${productName}", straight-on symmetrical eye-level shot. Centered is ${bottleRefEn}${presentationEn}${accInSessionEn}, ${activeSurface.promptEn}, surrounded by ${ingredientsListEn}. ${getMedallionFragmentEn('gold-3d')}${headlineDirectiveEn} With ${activeLighting.promptEn} and ${colorDirectiveEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
+      promptEs: `${sessionRefPrefixEs}Fotografía comercial publicitaria tipo póster en ${activeRatio.promptEs} de "${productName}", en plano frontal eye-level perfectamente simétrico. En el centro, ${bottleRefEs}${presentationEs}${accInSessionEs}, ${activeSurface.promptEs}, rodeado de ${ingredientsListEs}. ${getInfographicFragmentEs(infographicStyle === 'none' ? 'pill-badges' : infographicStyle)}${headlineDirectiveEs} Con ${activeLighting.promptEs} y ${colorDirectiveEs}, lente 85mm f/1.8, 8k.${extraEs}`,
+      promptEn: `${sessionRefPrefixEn}Commercial advertising poster photography in ${activeRatio.promptEn} of "${productName}", straight-on symmetrical eye-level shot. Centered is ${bottleRefEn}${presentationEn}${accInSessionEn}, ${activeSurface.promptEn}, surrounded by ${ingredientsListEn}. ${getInfographicFragmentEn(infographicStyle === 'none' ? 'pill-badges' : infographicStyle)}${headlineDirectiveEn} With ${activeLighting.promptEn} and ${colorDirectiveEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-2-hero',
@@ -885,6 +974,57 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                 </div>
               </div>
 
+              {/* 4 Benefits / Claims Fields (Universal for any product) */}
+              <div className="space-y-1.5 pt-1 border-t border-slate-800/40">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    4 Beneficios / Palabras Clave del Producto (Aparecen en las píldoras/diseño):
+                  </label>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    Textos de tu empaque
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input
+                    type="text"
+                    value={benefit1}
+                    onChange={(e) => setBenefit1(e.target.value)}
+                    placeholder="1. Beneficio / Claim principal"
+                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
+                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    value={benefit2}
+                    onChange={(e) => setBenefit2(e.target.value)}
+                    placeholder="2. Segundo beneficio / Certificación"
+                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
+                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    value={benefit3}
+                    onChange={(e) => setBenefit3(e.target.value)}
+                    placeholder="3. Ingrediente activo o dosis"
+                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
+                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                    }`}
+                  />
+                  <input
+                    type="text"
+                    value={benefit4}
+                    onChange={(e) => setBenefit4(e.target.value)}
+                    placeholder="4. Efecto o valor agregado"
+                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
+                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                    }`}
+                  />
+                </div>
+              </div>
+
               {/* Packaging Visual Selector */}
               <div className="space-y-3 pt-1">
                 <div>
@@ -915,7 +1055,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                         <div key={pkg.id} className="relative group">
                           <button
                             type="button"
-                            onClick={() => setPackagingId(pkg.id)}
+                            onClick={() => handleSelectPackaging(pkg.id)}
                             className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 h-full ${
                               isSelected
                                 ? 'bg-gradient-to-br from-emerald-500/20 to-amber-500/10 border-emerald-400 ring-2 ring-emerald-400/50 shadow-md font-bold'
@@ -949,7 +1089,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                             title={`Ver foto real de estudio de ${pkg.label}`}
                             onClick={(e) => {
                               e.stopPropagation();
-                              setPackagingId(pkg.id);
+                              handleSelectPackaging(pkg.id);
                               setModalTab('packagings');
                               setIsLensModalOpen(true);
                             }}
@@ -996,7 +1136,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                           <button
                             key={pkg.id}
                             type="button"
-                            onClick={() => setPackagingId(pkg.id)}
+                            onClick={() => handleSelectPackaging(pkg.id)}
                             className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
                               isSelected
                                 ? 'bg-emerald-500/20 border-emerald-400 ring-1 ring-emerald-400 font-bold'
@@ -1020,24 +1160,37 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                     isDark ? 'border-slate-800 bg-black/25' : 'border-stone-200 bg-stone-50'
                   } space-y-2`}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
                     <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                       <Box className="w-3.5 h-3.5 text-amber-400" />
                       2. Presentación del Envase en la Foto:
                     </label>
-                    <span className="text-[10px] text-emerald-400 font-mono font-bold">
-                      {activePackagingPresentation.label}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      {packagingPresentation !== 'solo' && (
+                        <button
+                          type="button"
+                          onClick={() => setPackagingPresentation('solo')}
+                          className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                        >
+                          Deseleccionar (Solo el Envase)
+                        </button>
+                      )}
+                      <span className="text-[10px] text-emerald-400 font-mono font-bold">
+                        {activePackagingPresentation.label}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    {PACKAGING_PRESENTATIONS.map((pres) => {
+                    {PACKAGING_PRESENTATIONS.filter((pres) =>
+                      getCompatiblePresentations(packagingId).includes(pres.id)
+                    ).map((pres) => {
                       const isSelected = packagingPresentation === pres.id;
                       return (
                         <button
                           key={pres.id}
                           type="button"
-                          onClick={() => setPackagingPresentation(pres.id)}
+                          onClick={() => handleTogglePresentation(pres.id)}
                           className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
                             isSelected
                               ? 'bg-amber-500/20 border-amber-400 ring-1 ring-amber-400 font-bold shadow'
@@ -1227,6 +1380,70 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                   );
                 })}
               </div>
+
+              {/* Infographic & Benefits Design Selector */}
+              <div className="pt-3 border-t border-slate-800/60 space-y-2.5">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                      <Tag className="w-3.5 h-3.5 text-amber-400" />
+                      Diseño de Beneficios e Infografía (Alternativas a Medallones):
+                    </label>
+                    <span className="text-[10px] text-slate-400 block">
+                      Aprovecha que Gemini escribe palabras nítidas. Elige cómo mostrar tus textos o desactívalos con 1 clic.
+                    </span>
+                  </div>
+                  {infographicStyle !== 'none' && (
+                    <button
+                      type="button"
+                      onClick={() => setInfographicStyle('none')}
+                      className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                    >
+                      Deseleccionar (Foto 100% Limpia sin Textos Flotantes)
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                  {INFOGRAPHIC_STYLES.map((styleOpt) => {
+                    const isSelected = infographicStyle === styleOpt.id;
+                    return (
+                      <button
+                        key={styleOpt.id}
+                        type="button"
+                        onClick={() => handleToggleInfographicStyle(styleOpt.id)}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 h-full ${
+                          isSelected
+                            ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/50 shadow font-bold'
+                            : isDark
+                            ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
+                            : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 truncate">
+                            {styleOpt.badge}
+                          </span>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                        </div>
+                        <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-amber-200' : ''}`}>
+                          {styleOpt.label}
+                        </div>
+                        <div className="text-[9.5px] text-slate-400 line-clamp-2 leading-tight">
+                          {styleOpt.shortDesc}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {isMacroMode && (
+                  <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-[10.5px] text-cyan-300 flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>En modo Macro (100mm), la toma es un primerísimo plano extremo del envase; los elementos flotantes se omiten automáticamente para no tapar la toma.</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* STEP 3: LENTE CON MODAL VISUAL + FORMATO */}
@@ -1341,14 +1558,25 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
 
               {/* Escenario y Entorno de Estudio */}
               <div className="space-y-2 pt-2.5 border-t border-slate-800/60">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                     Escenario y Entorno Comercial:
                   </label>
-                  <span className="text-[10px] text-amber-400 font-mono font-bold truncate max-w-[200px]">
-                    {activeSurface.label.split('(')[0].trim()}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {surfaceId !== 'estudio-arena-minimal' && (
+                      <button
+                        type="button"
+                        onClick={() => setSurfaceId('estudio-arena-minimal')}
+                        className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                      >
+                        Fondo Neutro Limpio (Sin bosque/mesa)
+                      </button>
+                    )}
+                    <span className="text-[10px] text-amber-400 font-mono font-bold truncate max-w-[200px]">
+                      {activeSurface.label.split('(')[0].trim()}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -1768,8 +1996,13 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
         initialTab={modalTab}
         selectedPackagingId={packagingId}
         onSelectPackaging={(pkgId, pres) => {
-          setPackagingId(pkgId);
-          if (pres) setPackagingPresentation(pres);
+          handleSelectPackaging(pkgId);
+          if (pres) {
+            const compatible = getCompatiblePresentations(pkgId);
+            if (compatible.includes(pres)) {
+              setPackagingPresentation(pres);
+            }
+          }
         }}
       />
 
