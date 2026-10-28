@@ -44,11 +44,10 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageSt
   };
 
   const categories = [
-    { id: 'all', label: 'Todos los Productos (5)' },
-    { id: 'suplementos', label: 'Cápsulas y Articulaciones (2)' },
-    { id: 'extractos', label: 'Goteros y Detox (1)' },
-    { id: 'cosmetica', label: 'Cosmética Natural (1)' },
-    { id: 'apicultura', label: 'Miel y Defensas (1)' },
+    { id: 'all', label: 'Todas las Fotos Reales (5)' },
+    { id: 'posters', label: 'Pósters con Medallones 3D (3)' },
+    { id: 'frascos', label: 'Frasco Ámbar en Bosque (1)' },
+    { id: 'macro', label: 'Macro Textura 100mm (1)' },
   ];
 
   const filteredProducts =
