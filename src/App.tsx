@@ -389,6 +389,63 @@ export function App() {
               </p>
             </div>
           </div>
+
+          {/*Continuity by Last Frame + Model Selection Guide (Veo 3.1 vs Flash vs Omni)*/}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4">
+            {/* Card 1: Last Frame Continuity & Agent */}
+            <div
+              className={`rounded-2xl border p-6 space-y-3 ${
+                isDark
+                  ? 'bg-gradient-to-br from-[#0E1D17] to-[#101714] border-emerald-500/40'
+                  : 'bg-emerald-50/70 border-emerald-200 shadow-md'
+              }`}
+            >
+              <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs font-extrabold uppercase tracking-wider inline-block">
+                Truco de Continuidad Perfecta (Último Fotograma + Agente)
+              </span>
+              <h3 className="text-xl font-bold font-serif">
+                Cómo Iniciar Cada Escena Desde el Último Fotograma del Video Anterior
+              </h3>
+              <ul className={`text-xs md:text-sm space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-stone-700'}`}>
+                <li>
+                  <strong>1. Opción "Extend" (Extender en Scenebuilder):</strong> Cuando generes la <strong>Escena 1</strong>, haz clic en <strong>Extend / Añadir a escena</strong> y pega el prompt Todo-en-Uno de la <strong>Escena 2</strong>. Flow toma automáticamente el <strong>último fotograma exacto</strong> del video anterior para que el frasco y los logos no cambien ni den saltos.
+                </li>
+                <li>
+                  <strong>2. Opción "Frames to Video" (Fotograma Inicial):</strong> También puedes capturar/guardar el <strong>último fotograma</strong> del clip 1 y subirlo como <em>First Frame (Fotograma inicial)</em> del clip 2.
+                </li>
+                <li>
+                  <strong>3. Función de Agente:</strong> Pídele al agente de Flow: <em>"Toma el último fotograma del clip anterior como inicio y ejecuta este prompt manteniendo el envase fijo y la misma voz"</em>.
+                </li>
+              </ul>
+            </div>
+
+            {/* Card 2: Model Comparison (Veo 3.1 vs Flash vs Omni) */}
+            <div
+              className={`rounded-2xl border p-6 space-y-3 ${
+                isDark
+                  ? 'bg-gradient-to-br from-[#1B170E] to-[#101714] border-amber-500/40'
+                  : 'bg-amber-50/70 border-amber-200 shadow-md'
+              }`}
+            >
+              <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-extrabold uppercase tracking-wider inline-block">
+                Comparativa de Modelos: ¿Cuál Elegir?
+              </span>
+              <h3 className="text-xl font-bold font-serif">
+                Veo 3.1 Quality vs. Veo 3.1 Flash (Fast) vs. Omni
+              </h3>
+              <ul className={`text-xs md:text-sm space-y-2 leading-relaxed ${isDark ? 'text-slate-200' : 'text-stone-700'}`}>
+                <li>
+                  🏆 <strong>Veo 3.1 (Quality) — EL MEJOR PARA EL VIDEO FINAL:</strong> Es el modelo superior para productos naturales porque genera <strong>audio nativo completo</strong> (voz del personaje en español + música de fondo + efectos de agua/polvo al mismo tiempo) y mantiene <strong>los logos y el vidrio nítidos sin deformar el envase</strong>.
+                </li>
+                <li>
+                  ⚡ <strong>Veo 3.1 Flash / Fast — PARA PRUEBAS RÁPIDAS:</strong> Úsalo solo para probar encuadres rápido gastando menos créditos; en el render final cámbialo siempre a <strong>Veo 3.1 Quality</strong>.
+                </li>
+                <li>
+                  🧠 <strong>Omni / Agente — PARA CONTINUIDAD Y ENCADENADO:</strong> Es el cerebro multimodal que coordina tus activos (la foto de Gemini y el <strong>último fotograma del clip anterior</strong>) y se los pasa a <strong>Veo 3.1</strong> para que las 4 escenas queden unidas sin cortes bruscos.
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
