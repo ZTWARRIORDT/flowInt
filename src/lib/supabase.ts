@@ -69,6 +69,7 @@ export async function fetchCustomItemsFromSupabase(): Promise<Partial<CustomItem
       packagings: [],
       surfaces: [],
       ingredients: [],
+      accompaniments: [],
       moods: [],
     };
 
