@@ -58,24 +58,17 @@ interface Props {
 }
 
 export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPayload }) => {
-  // Product Identity State
-  const [productName, setProductName] = useState(STUDIO_QUICK_PRESETS[0].productName);
-  const [headline, setHeadline] = useState(STUDIO_QUICK_PRESETS[0].headline);
-  const [benefits, setBenefits] = useState<string[]>([
-    STUDIO_QUICK_PRESETS[0].benefit1,
-    STUDIO_QUICK_PRESETS[0].benefit2,
-    STUDIO_QUICK_PRESETS[0].benefit3,
-    STUDIO_QUICK_PRESETS[0].benefit4,
-  ]);
+  // Product Identity State (starts empty unless user chooses a preset model below)
+  const [productName, setProductName] = useState<string>('');
+  const [headline, setHeadline] = useState<string>('');
+  const [benefits, setBenefits] = useState<string[]>(['', '', '', '']);
 
   // Photography Configuration State
   const [photoTypeId, setPhotoTypeId] = useState<string>(STUDIO_QUICK_PRESETS[0].photoTypeId);
   const [shotId, setShotId] = useState<string>(STUDIO_QUICK_PRESETS[0].shotId);
   const [lensId, setLensId] = useState<string>(STUDIO_QUICK_PRESETS[0].lensId);
-  const [packagingId, setPackagingId] = useState<string>(STUDIO_QUICK_PRESETS[0].packagingId);
-  const [packagingPresentation, setPackagingPresentation] = useState<PackagingPresentationMode>(
-    STUDIO_QUICK_PRESETS[0].packagingPresentation || 'solo'
-  );
+  const [packagingId, setPackagingId] = useState<string>('');
+  const [packagingPresentation, setPackagingPresentation] = useState<PackagingPresentationMode>('solo');
   const [environmentId, setEnvironmentId] = useState<string>(STUDIO_QUICK_PRESETS[0].environmentId || 'arena-zen');
   const [aspectRatio, setAspectRatio] = useState<string>(
     STUDIO_QUICK_PRESETS[0].aspectRatio
@@ -83,9 +76,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
   // Infographics, Reference & Extra Modifiers
   const [infographicStyle, setInfographicStyle] = useState<string>(STUDIO_QUICK_PRESETS[0].infographicStyle || 'pill-badges');
-  const [realProductColor, setRealProductColor] = useState<string>(
-    STUDIO_QUICK_PRESETS[0].realProductColor || ''
-  );
+  const [realProductColor, setRealProductColor] = useState<string>('');
   const [useReferencePhotoMode, setUseReferencePhotoMode] = useState<boolean>(true);
   const [extraCustomNotes, setExtraCustomNotes] = useState<string>('');
 
@@ -204,21 +195,30 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   }, []);
 
   const handleResetCleanScene = () => {
+    setProductName('');
+    setHeadline('');
+    setBenefits(['', '', '', '']);
+    setPackagingId('');
     setPackagingPresentation('solo');
     setInfographicStyle('none');
     setEnvironmentId('estudio-neutro');
     setPhotoTypeId('hero-estudio');
     setShotId('contrapicado-heroico');
     setLensId('85mm-f18');
-    setSyncFeedback('✓ Escena limpia: sin medallones, envase protagónico y fondo de estudio neutro');
+    setRealProductColor('');
+    setSyncFeedback('✓ Formulario limpiado: campos vacíos listos para tu producto');
     setTimeout(() => setSyncFeedback(null), 3000);
   };
 
   const handleSelectPackaging = (newPkgId: string) => {
-    setPackagingId(newPkgId);
-    const compatible = getCompatiblePresentations(newPkgId);
-    if (!compatible.includes(packagingPresentation)) {
-      setPackagingPresentation('solo');
+    if (packagingId === newPkgId) {
+      setPackagingId(''); // Deselect back to empty
+    } else {
+      setPackagingId(newPkgId);
+      const compatible = getCompatiblePresentations(newPkgId);
+      if (!compatible.includes(packagingPresentation)) {
+        setPackagingPresentation('solo');
+      }
     }
   };
 
@@ -522,7 +522,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     allPhotoTypes[0];
   const activeShot = CAMERA_SHOTS.find((x) => x.id === shotId) || CAMERA_SHOTS[0];
   const activeLens = CAMERA_LENSES.find((x) => x.id === lensId) || CAMERA_LENSES[0];
-  const activePackaging = PACKAGING_OPTIONS.find((x) => x.id === packagingId) || PACKAGING_OPTIONS[0];
+  const activePackaging = packagingId ? PACKAGING_OPTIONS.find((x) => x.id === packagingId) || null : null;
+  const displayProductName = productName.trim() || '[Nombre de tu Producto]';
   const activePackagingPresentation =
     PACKAGING_PRESENTATIONS.find((x) => x.id === packagingPresentation) || PACKAGING_PRESENTATIONS[0];
   const activeEnvironment =
@@ -689,8 +690,12 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   }
 
   // 2. Reference Photo Mode vs New Packaging
-  let packagingDescriptionEs = `En el centro destaca ${activePackaging.promptEs}${presentationEs}, ${activeEnvironment.surfaceEs}.`;
-  let packagingDescriptionEn = `Centered is ${activePackaging.promptEn}${presentationEn}, ${activeEnvironment.surfaceEn}.`;
+  let packagingDescriptionEs = activePackaging
+    ? `En el centro destaca ${activePackaging.promptEs}${presentationEs}, ${activeEnvironment.surfaceEs}.`
+    : `En el centro destaca el envase del producto natural${presentationEs}, ${activeEnvironment.surfaceEs}.`;
+  let packagingDescriptionEn = activePackaging
+    ? `Centered is ${activePackaging.promptEn}${presentationEn}, ${activeEnvironment.surfaceEn}.`
+    : `Centered is the natural product container${presentationEn}, ${activeEnvironment.surfaceEn}.`;
 
   if (useReferencePhotoMode) {
     packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase de la imagen adjunta: misma silueta geométrica, misma tapa o cierre hermético y diseño original de la etiqueta con sus logotipos reales sin rediseñar.${productColorNoticeEs} En la escena destaca este envase original${presentationEs}, ${activeEnvironment.surfaceEs}.`;
@@ -700,7 +705,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   // Macro specific descriptions
   const macroPackagingEs = useReferencePhotoMode
     ? `[FOTO DE REFERENCIA ADJUNTA]: Tomando como base visual obligatoria el producto de la imagen adjunta, la toma se concentra al 100% en el detalle microscópico de sus materiales originales, tipografías y logotipo auténtico en relieve.${productColorNoticeEs} Con fondo en suave desenfoque bokeh cremoso con sutiles matices orgánicos de ${activeEnvironment.label}, sin elementos lejanos que alejen la toma.`
-    : `La toma se concentra con nitidez microscópica en el detalle de ${activePackaging.label}, su logotipo botánico en relieve y microgotas sobre la superficie. Con fondo en suave desenfoque bokeh cremoso con sutiles matices orgánicos de ${activeEnvironment.label}, sin elementos lejanos que alejen la toma.`;
+    : `La toma se concentra con nitidez microscópica en el detalle de ${activePackaging ? activePackaging.label : 'el envase original'}, su logotipo botánico en relieve y microgotas sobre la superficie. Con fondo en suave desenfoque bokeh cremoso con sutiles matices orgánicos de ${activeEnvironment.label}, sin elementos lejanos que alejen la toma.`;
 
   const macroPackagingEn = useReferencePhotoMode
     ? `[ATTACHED REFERENCE PHOTO]: Using the attached authentic product as mandatory visual base, the framing focuses 100% on microscopic details of its authentic materials, typography, and embossed authentic logo.${productColorNoticeEn} Smooth creamy bokeh background with subtle organic tones of ${activeEnvironment.label}, strictly no distant wide elements.`
@@ -865,7 +870,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     type="text"
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
-                    className={`w-full px-3 py-1.5 rounded-lg border text-xs font-semibold ${
+                    placeholder="Nombre de tu producto (ej: Cúrcuma, Colágeno, Gotero...)"
+                    className={`w-full px-3 py-1.5 rounded-lg border text-xs font-semibold placeholder:text-slate-500 ${
                       isDark
                         ? 'bg-black/40 border-slate-700 text-white'
                         : 'bg-stone-50 border-stone-300 text-stone-900'
@@ -1057,9 +1063,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     >
                       <span>{showMorePackagings ? '− Menos formatos' : '+ Ver más formatos (Tarro de miel, Pote XXL...)'}</span>
                     </button>
-                    {!PACKAGING_OPTIONS.slice(0, 6).some((p) => p.id === packagingId) && (
-                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
-                        Seleccionado: {activePackaging.label}
+                    {packagingId && activePackaging ? (
+                      !PACKAGING_OPTIONS.slice(0, 6).some((p) => p.id === packagingId) && (
+                        <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
+                          Seleccionado: {activePackaging.label}
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-[10px] text-slate-400 italic">
+                        (Empaque sin fijar · Puedes seleccionar uno o cargar un modelo abajo)
                       </span>
                     )}
                   </div>
@@ -1485,7 +1497,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     TU PROMPT DE FOTO LISTO PARA FLOW / NANOBANANA
                   </span>
                   <h3 className={`text-base font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                    {productName}
+                    {productName.trim() || 'Tu Producto Personalizado'}
                   </h3>
                 </div>
 
@@ -1563,7 +1575,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
                   <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-200 leading-relaxed">
                     ✨ <strong>Lo que generará:</strong> Una foto de estudio con{' '}
-                    <strong className="text-white">{productName}</strong> al centro en{' '}
+                    <strong className="text-white">{displayProductName}</strong> al centro en{' '}
                     <strong className="text-white">{activeEnvironment.label}</strong>,{' '}
                     {activePhotoType.shortDesc.toLowerCase()}
                   </div>
