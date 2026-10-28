@@ -44,6 +44,82 @@ export interface InfographicStyleOption {
   shortDesc: string;
 }
 
+export interface CommercialEnvironmentOption {
+  id: string;
+  label: string;
+  badge: string;
+  shortDesc: string;
+  surfaceEs: string;
+  surfaceEn: string;
+  lightingEs: string;
+  lightingEn: string;
+  promptEs: string;
+  promptEn: string;
+}
+
+export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
+  {
+    id: 'estudio-neutro',
+    label: 'Estudio Comercial Neutro',
+    badge: 'E-Commerce Puro',
+    shortDesc: 'Fondo infinito minimalista en tono neutro suave con iluminación difusa 5500K y sombras de contacto limpias.',
+    surfaceEs: 'posado sobre una superficie mate lisa y neutra en suave tono arena/gris claro con fondo infinito de estudio comercial sin distracciones',
+    surfaceEn: 'resting on a smooth neutral matte surface in soft sand/light-grey tone against a distraction-free commercial studio infinity backdrop',
+    lightingEs: 'iluminación de estudio comercial neutra difusa de tres puntos (luz blanca 5500K de alta fidelidad) con sombras de contacto naturales y suaves',
+    lightingEn: 'neutral three-point commercial studio diffused lighting (5500K true-to-life white light) with clean natural soft contact shadows',
+    promptEs: 'posado sobre una superficie mate lisa y neutra con fondo infinito de estudio comercial limpio sin distracciones, bajo iluminación de estudio comercial difusa (luz neutra 5500K de alta fidelidad) con sombras naturales suaves',
+    promptEn: 'resting on a smooth neutral matte surface against a clean commercial studio infinity backdrop without distractions, under diffused commercial studio lighting (5500K true-to-life neutral light) with soft natural shadows',
+  },
+  {
+    id: 'naturaleza-bosque',
+    label: 'Naturaleza & Rocío Fresco',
+    badge: 'Orgánico / Botánico',
+    shortDesc: 'Superficie de madera natural húmeda con musgo suave, luz de sol matutino filtrada y bokeh orgánico.',
+    surfaceEs: 'posado sobre una mesa de madera natural rústica húmeda con sutil musgo verde vivo sobre un fondo botánico orgánico en suave desenfoque bokeh',
+    surfaceEn: 'resting on a wet rustic natural wooden tabletop with subtle live green moss against a softly blurred organic botanical bokeh background',
+    lightingEs: 'iluminación natural de sol matutino suave atravesando follaje con brillos especulares en microgotas de rocío fresco',
+    lightingEn: 'soft morning sunlight filtering through botanical canopy with gentle specular highlights on fresh dew micro-droplets',
+    promptEs: 'posado sobre madera natural húmeda con sutil musgo verde sobre un fondo botánico orgánico en suave desenfoque bokeh, bajo iluminación natural de sol matutino suave filtrado y microgotas de rocío fresco',
+    promptEn: 'resting on wet natural wood with subtle live green moss against a softly blurred botanical bokeh background, under soft filtered morning sunlight and fresh dew micro-droplets',
+  },
+  {
+    id: 'pedestal-spa',
+    label: 'Pedestal Spa & Bienestar',
+    badge: 'Vogue / Cosmética',
+    shortDesc: 'Podio arquitectónico de travertino o mármol beige con luz cálida de ventana y sombras de hojas proyectadas.',
+    surfaceEs: 'elevado sobre un bloque arquitectónico geométrico de piedra travertino porosa beige en un entorno limpio de spa contemporáneo',
+    surfaceEn: 'elevated on a geometric architectural block of porous beige travertine stone in a clean contemporary wellness spa setting',
+    lightingEs: 'iluminación arquitectónica de spa con luz cálida suave de ventana proyectando sombras orgánicas de hojas de palmera (dappled gobo shadows)',
+    lightingEn: 'architectural luxury spa lighting with soft warm window sunlight casting organic palm leaf shadows (dappled gobo leaf shadows)',
+    promptEs: 'elevado sobre un podio arquitectónico de piedra travertino beige en un entorno zen de spa contemporáneo, bajo luz cálida suave de ventana proyectando sombras sutiles de hojas botánicas',
+    promptEn: 'elevated on an architectural podium of beige travertine stone in a contemporary wellness spa setting, under soft warm window sunlight casting subtle botanical leaf shadows',
+  },
+  {
+    id: 'agua-zen',
+    label: 'Agua Zen & Pureza Cristalina',
+    badge: 'Fresco / Detox',
+    shortDesc: 'Superficie con espejo de agua cristalina pura, microondas luminosas y reflejos cáusticos celestes.',
+    surfaceEs: 'posado sobre una piedra plana de río emergiendo de un espejo de agua cristalina poco profundo con ondas circulares sutiles',
+    surfaceEn: 'resting on a flat smooth river stone emerging from a shallow pool of crystal-clear water with subtle rippling circular waves',
+    lightingEs: 'iluminación diurna cristalina de clave alta (high-key daylight) con reflejos cáusticos luminosos y transparencia acuática',
+    lightingEn: 'bright crystal-clear high-key daylight with luminous aquatic caustic refractions and pure transparency',
+    promptEs: 'posado sobre una piedra plana de río emergiendo de un espejo de agua cristalina con ondas suaves y reflejos celestes, bajo luz diurna cristalina pura de clave alta con destellos cáusticos',
+    promptEn: 'resting on a flat river stone emerging from a shallow pool of crystal-clear water with gentle ripples and pure reflections, under bright crystal daylight with caustic light refractions',
+  },
+  {
+    id: 'dark-luxury',
+    label: 'Pizarra Negra & Dark Luxury',
+    badge: 'Alto Impacto Premium',
+    shortDesc: 'Bloque de piedra pizarra negra mate con contraluz sutil, destellos especulares y contraste refinado.',
+    surfaceEs: 'posado sobre una losa pulida de piedra pizarra negra húmeda con reflejos especulares oscuros sobre fondo negro mate refinado',
+    surfaceEn: 'resting on a polished wet black slate stone slab with deep specular reflections against a sleek matte dark studio background',
+    lightingEs: 'iluminación dramática chiaroscuro de lujo con doble luz de contorno (rim light) que perfila la silueta del envase con elegancia',
+    lightingEn: 'dramatic luxury chiaroscuro lighting with dual edge rim lighting outlining the container silhouette with sleek elegance',
+    promptEs: 'posado sobre una bandeja de piedra pizarra negra húmeda con sutiles reflejos especulares sobre fondo oscuro refinado, bajo iluminación dramática chiaroscuro de lujo con luz de contorno elegante',
+    promptEn: 'resting on a wet black slate stone slab with subtle specular reflections against a sleek dark studio background, under dramatic luxury chiaroscuro lighting with elegant rim edge light',
+  },
+];
+
 export interface PhotoTypeOption extends StudioOptionItem {
   recommendedShotId: string;
   recommendedLensId: string;
@@ -64,12 +140,13 @@ export interface ProductQuickPreset {
   photoTypeId: string;
   shotId: string;
   lensId: string;
-  lightingId: string;
+  environmentId?: string;
+  lightingId?: string;
   packagingId: string;
   packagingPresentation?: PackagingPresentationMode;
-  surfaceId: string;
-  ingredientIds: string[];
-  colorMoodId: string;
+  surfaceId?: string;
+  ingredientIds?: string[];
+  colorMoodId?: string;
   aspectRatio: '1:1' | '9:16' | '4:5' | '16:9';
   voiceIndex: number;
   musicIndex: number;
