@@ -10,7 +10,10 @@ import {
   Sliders,
   RotateCcw,
   Music,
+  UserCheck,
+  ShieldCheck,
 } from 'lucide-react';
+import { VOICE_PROFILES_LIBRARY } from '../data/flowData';
 
 interface Props {
   isDark: boolean;
@@ -27,89 +30,89 @@ interface PresetTemplate {
   dosage: string;
   packaging: string;
   environment: string;
-  musicStyleEs: string;
-  musicStyleEn: string;
+  voiceIndex: number;
+  musicIndex: number;
 }
 
 const MUSIC_OPTIONS = [
   {
     label: 'Piano Botánico y Cuerdas de Bienestar (Spa)',
-    es: 'colocar música de fondo instrumental relajante de spa con piano suave, cuerdas cálidas y brisa natural sutil',
-    en: 'warm, soothing spa instrumental background music with soft piano, gentle strings, and subtle nature ambiance',
+    es: 'música de fondo instrumental relajante de spa con piano suave y cuerdas cálidas a volumen moderado bajo la voz',
+    en: 'warm, soothing spa instrumental background music with soft piano and gentle strings ducked under the voice',
   },
   {
     label: 'Cinemático Inspirador y Percusión Orgánica (Energía)',
-    es: 'colocar música de fondo cinematográfica e inspiradora con percusión orgánica suave, violonchelo cálido y efectos en cámara lenta',
-    en: 'uplifting cinematic background music with soft organic percussion, warm cello swells, and slow-motion sound effects',
+    es: 'música de fondo cinematográfica e inspiradora con percusión orgánica suave y violonchelo cálido bajo la voz',
+    en: 'uplifting cinematic background music with soft organic percussion and warm cello swells ducked under the voice',
   },
   {
     label: 'Guitarra Acústica Refrescante y Agua Cristalina (Detox)',
-    es: 'colocar música de fondo acústica fresca y alegre con guitarra luminosa, marimba suave y sonido cristalino de agua',
-    en: 'bright, refreshing acoustic guitar background music with soft marimba notes and crisp water sound effects',
+    es: 'música de fondo acústica fresca y alegre con guitarra luminosa y sonido cristalino de agua bajo la voz',
+    en: 'bright, refreshing acoustic guitar background music with crisp water sound effects ducked under the voice',
   },
   {
     label: 'Folk Acústico Cálido y Tradición Artesanal (Miel/Hogar)',
-    es: 'colocar música de fondo acústica cálida con guitarra española suave, notas de arpa ligera y ambiente matutino acogedor',
-    en: 'warm artisanal acoustic background music with gentle fingerpicked guitar, light harp notes, and cozy morning ambiance',
+    es: 'música de fondo acústica cálida con guitarra española suave y notas de arpa ligera bajo la voz',
+    en: 'warm artisanal acoustic background music with gentle fingerpicked guitar and light harp notes ducked under the voice',
   },
 ];
 
 const QUICK_PRESETS: PresetTemplate[] = [
   {
     label: 'Citrato de Magnesio',
-    productName: 'Magnesio Citrate 500mg · Natural Gold',
+    productName: 'Magnesio Citrate · Natural Gold',
     headline: 'DESCANSO PROFUNDO Y MÚSCULOS SIN CALAMBRES',
     benefit1: 'Sueño Reparador',
     benefit2: 'Alivia Calambres',
     benefit3: 'Calma el Estrés',
     benefit4: 'Energía Celular',
-    dosage: '100 Cápsulas · Uso: 2 cápsulas antes de dormir',
-    packaging: 'frasco de vidrio ámbar oscuro con tapa dorada metálica y etiqueta verde esmeralda con letras doradas',
+    dosage: 'Toma dos cápsulas antes de dormir',
+    packaging: 'frasco de vidrio ámbar oscuro con tapa dorada metálica y etiqueta verde esmeralda con logo botánico dorado limpio',
     environment: 'partículas de polvo de oro mágico y hojas de lavanda y eucalipto flotando suavemente',
-    musicStyleEs: MUSIC_OPTIONS[0].es,
-    musicStyleEn: MUSIC_OPTIONS[0].en,
+    voiceIndex: 0,
+    musicIndex: 0,
   },
   {
     label: 'Omega 3 + Vitamina E',
-    productName: 'Omega 3 Ultra Pure · 1000mg EPA/DHA',
+    productName: 'Omega 3 Ultra Pure · 1000mg',
     headline: 'CORAZÓN SANO, MEMORIA ACTIVA Y CIRCULACIÓN',
     benefit1: 'Protege el Corazón',
     benefit2: 'Memoria y Enfoque',
     benefit3: 'Baja Triglicéridos',
     benefit4: 'Visión y Articulaciones',
-    dosage: '90 Cápsulas Blandas (Softgels) · Uso: 2 al día',
-    packaging: 'frasco ámbar ancho con gotas de frescura, tapa dorada con sello de seguridad y cápsulas softgel doradas traslúcidas',
-    environment: 'ondas de luz dorada líquida y burbujas cristalinas de pureza marina en cámara lenta',
-    musicStyleEs: MUSIC_OPTIONS[1].es,
-    musicStyleEn: MUSIC_OPTIONS[1].en,
+    dosage: 'Toma dos cápsulas blandas al día',
+    packaging: 'frasco ámbar ancho con gotas de frescura, tapa dorada y logo simbólico dorado de corazón y ola marina',
+    environment: 'ondas de luz dorada líquida y burbujas cristalinas de pureza en cámara lenta',
+    voiceIndex: 1,
+    musicIndex: 1,
   },
   {
     label: 'Biotina + Colágeno Capilar',
-    productName: 'Biotina + Vitamina E · Hair & Skin Glow',
+    productName: 'Biotina + Vitamina E · Hair Glow',
     headline: 'CABELLO ABUNDANTE, PIEL FIRME Y UÑAS FUERTES',
     benefit1: 'Frena la Caída',
     benefit2: 'Brillo y Volumen',
-    benefit3: 'Uñas Indestructibles',
+    benefit3: 'Uñas Fuertes',
     benefit4: 'Piel Luminosa',
-    dosage: '60 Gomitas / Cápsulas Masticables · Uso: 2 al día',
-    packaging: 'frasco ámbar con etiqueta rosa pastel y acabados en oro brillante con gotas de rocío',
+    dosage: 'Toma dos gomitas masticables al día',
+    packaging: 'frasco ámbar con etiqueta rosa pastel y logo floral estampado en oro brillante con gotas de rocío',
     environment: 'pétalos de rosa, hojas frescas de menta y destellos bokeh dorados y rosados',
-    musicStyleEs: MUSIC_OPTIONS[0].es,
-    musicStyleEn: MUSIC_OPTIONS[0].en,
+    voiceIndex: 2,
+    musicIndex: 0,
   },
   {
     label: 'Ashwagandha + Melatonina',
-    productName: 'Ashwagandha Orgánica · Calma & Bienestar',
+    productName: 'Ashwagandha Orgánica · Calma Total',
     headline: 'ADIÓS ANSIEDAD, ESTRÉS Y CANSANCIO MENTAL',
     benefit1: 'Reduce el Cortisol',
     benefit2: 'Calma la Ansiedad',
     benefit3: 'Enfoque Mental',
     benefit4: 'Sueño Profundo',
-    dosage: '90 Cápsulas Vegetales · Uso: 2 al día',
-    packaging: 'frasco de vidrio ámbar con etiqueta crema botánica y sello dorado GMP Certified',
+    dosage: 'Toma dos cápsulas vegetales al día',
+    packaging: 'frasco de vidrio ámbar con etiqueta crema botánica y emblema dorado de raíz sagrada',
     environment: 'raíces botánicas naturales, musgo verde húmedo y rayos de sol cálidos de atardecer',
-    musicStyleEs: MUSIC_OPTIONS[3].es,
-    musicStyleEn: MUSIC_OPTIONS[3].en,
+    voiceIndex: 3,
+    musicIndex: 3,
   },
 ];
 
@@ -123,8 +126,9 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
   const [dosage, setDosage] = useState(QUICK_PRESETS[0].dosage);
   const [packaging, setPackaging] = useState(QUICK_PRESETS[0].packaging);
   const [environment, setEnvironment] = useState(QUICK_PRESETS[0].environment);
+  const [selectedVoiceIndex, setSelectedVoiceIndex] = useState<number>(0);
   const [selectedMusicIndex, setSelectedMusicIndex] = useState<number>(0);
-  const [formatRatio, setFormatRatio] = useState<'9:16 Vertical' | '1:1 Estudio' | '16:9 Horizontal'>('1:1 Estudio');
+  const [formatRatio, setFormatRatio] = useState<'1:1 Estudio' | '9:16 Vertical' | '16:9 Horizontal'>('1:1 Estudio');
   const [cameraMotion, setCameraMotion] = useState('Dolly In lento (Acercamiento cinematográfico)');
   const [outputLang, setOutputLang] = useState<'es' | 'en'>('es');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -139,6 +143,8 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
     setDosage(p.dosage);
     setPackaging(p.packaging);
     setEnvironment(p.environment);
+    setSelectedVoiceIndex(p.voiceIndex);
+    setSelectedMusicIndex(p.musicIndex);
   };
 
   const copyText = (text: string, key: string) => {
@@ -147,66 +153,66 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
     setTimeout(() => setCopiedKey(null), 2200);
   };
 
+  const currentVoice = VOICE_PROFILES_LIBRARY[selectedVoiceIndex] || VOICE_PROFILES_LIBRARY[0];
   const currentMusic = MUSIC_OPTIONS[selectedMusicIndex] || MUSIC_OPTIONS[0];
 
-  // Generated Gemini Studio Prompt
-  const generatedPosterPromptEs = `Fotografía comercial de estudio en formato ${formatRatio} de un producto natural llamado "${productName}". En el centro, un ${packaging}, con tipografía perfectamente legible y nítida. Alrededor del frasco, ${environment} con iluminación de estudio comercial cálida. Flotando simétricamente alrededor del frasco hay 4 medallones circulares de oro cepillado con iconos luminosos: 1) "${benefit1}", 2) "${benefit2}", 3) "${benefit3}", 4) "${benefit4}". Fotografía hiperrealista, lente macro 85mm f/1.8, 8k.`;
+  // Generated Gemini Studio Prompt (Clean logos/icons without small text that warps)
+  const generatedPosterPromptEs = `Fotografía comercial de estudio en formato ${formatRatio} de un producto natural llamado "${productName}". En el centro, un ${packaging}. Alrededor del frasco, ${environment} con iluminación de estudio comercial cálida. Flotando simétricamente alrededor del frasco hay 4 medallones circulares de oro cepillado únicamente con iconos/logos simbólicos grabados en 3D representando: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, sin letras pequeñas ni textos largos que se deformen. Fotografía hiperrealista, lente macro 85mm f/1.8, 8k.`;
 
-  const generatedPosterPromptEn = `Commercial studio product photography in ${formatRatio} aspect ratio for a natural wellness product named "${productName}". Centered ${packaging} with tack-sharp legible label typography. Surrounding the bottle, ${environment} with warm commercial studio rim lighting. Floating symmetrically around the bottle are 4 circular brushed gold medallions with glowing icons: 1) "${benefit1}", 2) "${benefit2}", 3) "${benefit3}", 4) "${benefit4}". Hyper-realistic commercial product photography, 85mm macro lens f/1.8, 8k.`;
+  const generatedPosterPromptEn = `Commercial studio product photography in ${formatRatio} aspect ratio for a natural wellness product named "${productName}". Centered ${packaging}. Surrounding the bottle, ${environment} with warm commercial studio rim lighting. Floating symmetrically around the bottle are 4 circular brushed gold medallions featuring ONLY clean 3D engraved symbolic icons/logos representing: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, with no small letters or text that could warp. Hyper-realistic commercial product photography, 85mm macro lens f/1.8, 8k.`;
 
-  // Generated 4 Scenes for Flow with Background Music included
+  // Generated 4 Scenes for Flow (No animated letters + Same Character Voice + Background Music)
   const generatedScenes = [
     {
       num: 1,
       time: '00:00 – 00:04s',
-      title: 'Escena 1: Gancho Visual + Música de Fondo',
-      promptEs: `El envase de "${productName}" permanece perfectamente firme y nítido en el centro. En cámara lenta (slow motion), ${environment} se mueven suavemente alrededor del frasco mientras un haz de luz dorada ilumina la etiqueta. Movimiento de cámara: ${cameraMotion}. Audio: ${currentMusic.es}.`,
-      promptEn: `The "${productName}" bottle remains perfectly still and sharp in the center. In super slow motion, ${environment} drift gently around the bottle while a warm golden light beam sweeps across the label. Camera motion: ${cameraMotion}. Audio: ${currentMusic.en}.`,
-      voiceover: `¿Buscas ${headline.toLowerCase()}? Descubre el poder natural de ${productName.split('·')[0].trim()}.`,
-      screenText: `✨ ${headline}`,
+      title: 'Escena 1: Gancho Visual (Sin Animar Letras + Misma Voz)',
+      voiceLine: `¿Buscas ${headline.toLowerCase()}? Descubre el poder natural de ${productName.split('·')[0].trim()}.`,
+      promptEs: `El envase de "${productName}" y sus logos dorados permanecen 100% firmes y estáticos en el centro. NO animar letras ni generar textos móviles en pantalla. En cámara lenta (slow motion), únicamente ${environment} se mueven suavemente alrededor del frasco mientras un haz de luz dorada ilumina el logo. Cámara: ${cameraMotion}. Audio: colocar ${currentMusic.es}. ${currentVoice.descriptionEs}, diciendo: "¿Buscas ${headline.toLowerCase()}? Descubre el poder natural de ${productName.split('·')[0].trim()}."`,
+      promptEn: `The "${productName}" bottle and its gold logos remain 100% still and static in the center. Do NOT animate letters or generate moving on-screen text. In super slow motion, only ${environment} drift gently around the bottle while a warm golden light beam sweeps across the logo emblem. Camera: ${cameraMotion}. Audio: ${currentMusic.en}. ${currentVoice.descriptionEn}, speaking in Spanish: "¿Buscas ${headline.toLowerCase()}? Descubre el poder natural de ${productName.split('·')[0].trim()}."`,
     },
     {
       num: 2,
       time: '00:04 – 00:08s',
-      title: 'Escena 2: Beneficios 1 y 2 en Acción',
-      promptEs: `Movimiento orbital suave de 15 grados alrededor del envase de "${productName}". Destellos dorados y ${environment} flotan en cámara lenta resaltando los medallones de "${benefit1}" y "${benefit2}". Audio: continúa de forma envolvente al ${currentMusic.es} con un destello sonoro cristalino.`,
-      promptEn: `Smooth 15-degree orbital camera movement around the "${productName}" bottle. Golden sparkles and ${environment} float in slow motion highlighting the "${benefit1}" and "${benefit2}" medallions. Audio: continuous ${currentMusic.en} with a soft crystal chime.`,
-      voiceover: `Su fórmula concentrada te brinda ${benefit1.toLowerCase()} y ${benefit2.toLowerCase()} desde los primeros días.`,
-      screenText: `✅ 1. ${benefit1} · ✅ 2. ${benefit2}`,
+      title: 'Escena 2: Beneficios 1 y 2 (Brillo en Logos + Misma Voz)',
+      voiceLine: `Su fórmula concentrada te brinda ${benefit1.toLowerCase()} y ${benefit2.toLowerCase()} desde los primeros días.`,
+      promptEs: `El envase permanece completamente estático sin animar ni deformar ninguna letra. Un destello cálido de luz recorre únicamente el relieve metálico de los iconos simbólicos dorados mientras ${environment} flotan en cámara lenta. Audio: continúa la ${currentMusic.es} con un destello sonoro cristalino. ${currentVoice.descriptionEs}, diciendo: "Su fórmula concentrada te brinda ${benefit1.toLowerCase()} y ${benefit2.toLowerCase()} desde los primeros días."`,
+      promptEn: `The bottle stays completely static without animating or warping any letters. A warm light flare sweeps only across the metallic relief of the gold symbolic icons while ${environment} float in slow motion. Audio: continuous ${currentMusic.en} with a soft crystal chime. ${currentVoice.descriptionEn}, speaking in Spanish: "Su fórmula concentrada te brinda ${benefit1.toLowerCase()} y ${benefit2.toLowerCase()} desde los primeros días."`,
     },
     {
       num: 3,
       time: '00:08 – 00:12s',
-      title: 'Escena 3: Beneficios 3 y 4 + Ingredientes Puros',
-      promptEs: `Plano detalle macro del envase de "${productName}" rodeado de sus ingredientes naturales puros con iluminación cálida dorada resaltando "${benefit3}" y "${benefit4}". Audio: ${currentMusic.es}.`,
-      promptEn: `Macro close-up shot of the "${productName}" bottle surrounded by its pure natural ingredients with warm golden lighting highlighting "${benefit3}" and "${benefit4}". Audio: ${currentMusic.en}.`,
-      voiceover: `Además, favorece tu ${benefit3.toLowerCase()} y te garantiza ${benefit4.toLowerCase()} de forma cien por ciento natural.`,
-      screenText: `🌿 3. ${benefit3} · 🛡️ 4. ${benefit4}`,
+      title: 'Escena 3: Beneficios 3 y 4 + Ingredientes Puros (Misma Voz)',
+      voiceLine: `Además, favorece tu ${benefit3.toLowerCase()} y te garantiza ${benefit4.toLowerCase()} de forma cien por ciento natural.`,
+      promptEs: `Plano detalle macro de los ingredientes naturales puros junto al envase estático de "${productName}" con iluminación cálida dorada y partículas brillantes ascendiendo suavemente. Prohibido animar letras. Audio: continúa la ${currentMusic.es}. ${currentVoice.descriptionEs}, diciendo: "Además, favorece tu ${benefit3.toLowerCase()} y te garantiza ${benefit4.toLowerCase()} de forma cien por ciento natural."`,
+      promptEn: `Macro close-up shot of the pure natural ingredients next to the static "${productName}" bottle with warm golden lighting and glowing particles rising gently. Do NOT animate letters. Audio: continuous ${currentMusic.en}. ${currentVoice.descriptionEn}, speaking in Spanish: "Además, favorece tu ${benefit3.toLowerCase()} y te garantiza ${benefit4.toLowerCase()} de forma cien por ciento natural."`,
     },
     {
       num: 4,
       time: '00:12 – 00:16s',
-      title: 'Escena 4: Cierre con los 4 Beneficios y Dosis',
-      promptEs: `Plano heroico final de "${productName}" con sus 4 medallones dorados ("${benefit1}", "${benefit2}", "${benefit3}", "${benefit4}") brillando en armonía bajo un barrido de luz cálida. Audio: acorde final armónico y elegante al ${currentMusic.es}.`,
-      promptEn: `Final hero shot of "${productName}" with its 4 golden medallions gleaming harmoniously with a warm light sweep. Audio: harmonious resolving final chord of ${currentMusic.en}.`,
-      voiceover: `${dosage}. ¡Escríbenos ahora y pide el tuyo hoy mismo!`,
-      screenText: `📦 ${dosage} · 💬 ¡Pídelo hoy!`,
+      title: 'Escena 4: Cierre Comercial y Dosis (Misma Voz)',
+      voiceLine: `${dosage}. ¡Escríbenos ahora y pide el tuyo hoy mismo!`,
+      promptEs: `Plano heroico final de "${productName}" y sus 4 medallones de iconos dorados brillando en armonía bajo un barrido de luz cálida. El envase y su logo permanecen 100% fijos sin animar letras. Audio: acorde final armónico de ${currentMusic.es}. ${currentVoice.descriptionEs}, diciendo: "${dosage}. ¡Escríbenos ahora y pide el tuyo hoy mismo!"`,
+      promptEn: `Final hero shot of "${productName}" and its 4 golden icon medallions gleaming harmoniously with a warm light sweep. The bottle and logo stay 100% static without animating letters. Audio: harmonious resolving final chord of ${currentMusic.en}. ${currentVoice.descriptionEn}, speaking in Spanish: "${dosage}. ¡Escríbenos ahora y pide el tuyo hoy mismo!"`,
     },
   ];
 
   const fullExportBundle =
     `=== PROYECTO PERSONALIZADO: ${productName} ===\n\n` +
-    `[PROMPT DE IMAGEN GEMINI]:\n${
+    `[PERFIL DE VOZ FIJO EN LAS 4 ESCENAS]:\n${
+      outputLang === 'es' ? currentVoice.descriptionEs : currentVoice.descriptionEn
+    }\n\n` +
+    `[MÚSICA DE FONDO]:\n${outputLang === 'es' ? currentMusic.es : currentMusic.en}\n\n` +
+    `[PROMPT DE IMAGEN GEMINI (ICONOS/LOGOS SIN LETRAS PEQUEÑAS)]:\n${
       outputLang === 'es' ? generatedPosterPromptEs : generatedPosterPromptEn
     }\n\n` +
-    `[MÚSICA DE FONDO ELEGIDA]:\n${outputLang === 'es' ? currentMusic.es : currentMusic.en}\n\n` +
-    `[GUION Y 4 ESCENAS CON MÚSICA PARA GOOGLE FLOW (16 SEGUNDOS)]:\n` +
+    `[LAS 4 ESCENAS PARA GOOGLE FLOW (SIN ANIMAR LETRAS + MISMA VOZ + MÚSICA)]:\n` +
     generatedScenes
       .map(
         (s) =>
-          `\n• ${s.title} (${s.time})\n  Prompt Escena + Música: ${
+          `\n• ${s.title} (${s.time})\n  Prompt Escena: ${
             outputLang === 'es' ? s.promptEs : s.promptEn
-          }\n  Texto en pantalla: ${s.screenText}\n  Voz en off: "${s.voiceover}"`
+          }\n  Voz del personaje: "${s.voiceLine}"`
       )
       .join('\n');
 
@@ -217,18 +223,18 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/30 mb-3">
-              <Wand2 className="w-3.5 h-3.5" /> Constructor Interactivo de Prompts, Escenas y Música
+              <Wand2 className="w-3.5 h-3.5" /> Constructor a Medida (Sin Animar Letras + Misma Voz + Música)
             </span>
             <h2
               className={`text-3xl md:text-4xl font-bold font-serif ${
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              Crea tus Prompts de Imagen y Escenas con Música de Fondo a Medida
+              Genera tus Prompts con la Misma Voz de Personaje y Logos Estáticos
             </h2>
             <p className={`mt-2 max-w-3xl text-sm md:text-base ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Personaliza tu producto natural, sus <strong>4 beneficios principales</strong> y el{' '}
-              <strong>estilo de música de fondo</strong>. Obtendrás al instante el prompt de imagen para Gemini y las 4 escenas con música integrada para Flow.
+              Elige tus 4 beneficios, selecciona el <strong>personaje de voz fijo</strong> y la{' '}
+              <strong>música de fondo</strong>. Todas las escenas bloquearán la animación de letras para evitar deformaciones.
             </p>
           </div>
 
@@ -258,7 +264,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Form Column */}
           <div
-            className={`lg:col-span-5 rounded-3xl border p-6 space-y-5 ${
+            className={`lg:col-span-5 rounded-3xl border p-6 space-y-4 ${
               isDark
                 ? 'bg-[#101714] border-emerald-900/60 shadow-xl'
                 : 'bg-white border-stone-200 shadow-lg'
@@ -266,7 +272,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
           >
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
               <h3 className={`font-bold text-base flex items-center gap-2 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                <Sliders className="w-4 h-4 text-emerald-400" /> 1. Datos de tu Producto, Beneficios y Música
+                <Sliders className="w-4 h-4 text-emerald-400" /> Configura Producto, Voz y Música
               </h3>
               <button
                 type="button"
@@ -278,7 +284,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
             </div>
 
             {/* Product Name */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="block text-xs font-bold uppercase tracking-wider text-emerald-400">
                 Nombre del Producto y Marca
               </label>
@@ -286,7 +292,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                 type="text"
                 value={productName}
                 onChange={(e) => setProductName(e.target.value)}
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                className={`w-full px-3.5 py-2 rounded-xl border text-xs font-semibold ${
                   isDark
                     ? 'bg-black/50 border-slate-700 text-white'
                     : 'bg-stone-50 border-stone-300 text-stone-900'
@@ -295,15 +301,15 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
             </div>
 
             {/* Headline */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="block text-xs font-bold uppercase tracking-wider text-amber-400">
-                Promesa Principal / Gancho del Video
+                Promesa Principal (Narrada en la Escena 1)
               </label>
               <input
                 type="text"
                 value={headline}
                 onChange={(e) => setHeadline(e.target.value)}
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+                className={`w-full px-3.5 py-2 rounded-xl border text-xs font-semibold ${
                   isDark
                     ? 'bg-black/50 border-slate-700 text-white'
                     : 'bg-stone-50 border-stone-300 text-stone-900'
@@ -312,62 +318,76 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
             </div>
 
             {/* 4 Key Benefits */}
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <label className="block text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5" /> Los 4 Beneficios Clave del Producto
+                <Award className="w-3.5 h-3.5" /> Los 4 Beneficios (Iconos Simbólicos + Locución)
               </label>
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <span className="text-[10px] text-slate-400 block mb-1">Beneficio #1</span>
-                  <input
-                    type="text"
-                    value={benefit1}
-                    onChange={(e) => setBenefit1(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
-                      isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 block mb-1">Beneficio #2</span>
-                  <input
-                    type="text"
-                    value={benefit2}
-                    onChange={(e) => setBenefit2(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
-                      isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 block mb-1">Beneficio #3</span>
-                  <input
-                    type="text"
-                    value={benefit3}
-                    onChange={(e) => setBenefit3(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
-                      isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-400 block mb-1">Beneficio #4</span>
-                  <input
-                    type="text"
-                    value={benefit4}
-                    onChange={(e) => setBenefit4(e.target.value)}
-                    className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
-                      isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
-                </div>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={benefit1}
+                  onChange={(e) => setBenefit1(e.target.value)}
+                  placeholder="Beneficio 1"
+                  className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
+                    isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                  }`}
+                />
+                <input
+                  type="text"
+                  value={benefit2}
+                  onChange={(e) => setBenefit2(e.target.value)}
+                  placeholder="Beneficio 2"
+                  className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
+                    isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                  }`}
+                />
+                <input
+                  type="text"
+                  value={benefit3}
+                  onChange={(e) => setBenefit3(e.target.value)}
+                  placeholder="Beneficio 3"
+                  className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
+                    isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                  }`}
+                />
+                <input
+                  type="text"
+                  value={benefit4}
+                  onChange={(e) => setBenefit4(e.target.value)}
+                  placeholder="Beneficio 4"
+                  className={`w-full px-3 py-2 rounded-lg border text-xs font-semibold ${
+                    isDark ? 'bg-black/50 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                  }`}
+                />
               </div>
             </div>
 
+            {/* Consistent Character Voice Selector */}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                <UserCheck className="w-3.5 h-3.5" /> Personaje de Voz Fijo (Misma Voz en las 4 Escenas)
+              </label>
+              <select
+                value={selectedVoiceIndex}
+                onChange={(e) => setSelectedVoiceIndex(Number(e.target.value))}
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs font-bold ${
+                  isDark
+                    ? 'bg-emerald-950/30 border-emerald-500/50 text-emerald-200'
+                    : 'bg-emerald-50 border-emerald-300 text-emerald-950'
+                }`}
+              >
+                {VOICE_PROFILES_LIBRARY.map((vp, idx) => (
+                  <option key={vp.id} value={idx} className="bg-slate-900 text-white">
+                    🎙️ {vp.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Background Music Selector */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="block text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-1.5">
-                <Music className="w-3.5 h-3.5" /> Música de Fondo para el Video en Flow
+                <Music className="w-3.5 h-3.5" /> Música de Fondo para el Video
               </label>
               <select
                 value={selectedMusicIndex}
@@ -386,10 +406,10 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
               </select>
             </div>
 
-            {/* Dosage & Specs */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold uppercase tracking-wider text-emerald-400">
-                Contenido y Dosis (Para el Cierre)
+            {/* Dosage */}
+            <div className="space-y-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
+                Frase de Dosis / Modo de Uso (Para el Cierre)
               </label>
               <input
                 type="text"
@@ -402,9 +422,9 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
             </div>
 
             {/* Packaging & Environment */}
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
-                Descripción del Envase
+                Envase y Logo Simbólico
               </label>
               <input
                 type="text"
@@ -416,9 +436,9 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
               />
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-1">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">
-                Elementos en Movimiento (Para Flow Slow-Motion)
+                Elementos Naturales que sí se mueven (Slow-Motion)
               </label>
               <input
                 type="text"
@@ -437,7 +457,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                 <select
                   value={formatRatio}
                   onChange={(e) =>
-                    setFormatRatio(e.target.value as '9:16 Vertical' | '1:1 Estudio' | '16:9 Horizontal')
+                    setFormatRatio(e.target.value as '1:1 Estudio' | '9:16 Vertical' | '16:9 Horizontal')
                   }
                   className={`w-full px-3 py-2 rounded-xl border text-xs font-bold ${
                     isDark ? 'bg-black/60 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
@@ -458,7 +478,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                   }`}
                 >
                   <option value="Dolly In lento (Acercamiento cinematográfico)">Dolly In lento</option>
-                  <option value="Orbit suave 15° (Giro corto 3D)">Orbit suave 15°</option>
+                  <option value="Orbit suave 10° (Sin deformar logo)">Orbit suave 10°</option>
                   <option value="Static Macro (Frasco fijo + partículas en 120fps)">Static Macro</option>
                 </select>
               </div>
@@ -477,10 +497,10 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
               <div>
                 <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400">
-                  RESULTADO GENERADO EN TIEMPO REAL
+                  PROMPTS GENERADOS CON BLOQUEO DE LETRAS Y VOZ FIJA
                 </span>
                 <h3 className={`text-xl font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                  Prompts + Escenas con Música para {productName}
+                  {productName}
                 </h3>
               </div>
 
@@ -528,7 +548,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4" /> 1. Prompt de Imagen para Gemini (Con los 4 Medallones Dorados)
+                  <Sparkles className="w-4 h-4" /> 1. Prompt de Imagen para Gemini (4 Iconos/Logos sin Letras Pequeñas)
                 </span>
                 <button
                   type="button"
@@ -556,15 +576,20 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
               </div>
             </div>
 
-            {/* 2. Google Flow 4 Scenes with Background Music & Benefit Voiceover */}
+            {/* 2. Google Flow 4 Scenes with Same Voice + Background Music */}
             <div className="space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                  <Film className="w-4 h-4" /> 2. Las 4 Escenas en Flow (Con Música de Fondo y Beneficios)
+                  <Film className="w-4 h-4" /> 2. Las 4 Escenas en Flow (Misma Voz + Sin Animar Letras)
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-semibold flex items-center gap-1">
-                  <Music className="w-3 h-3" /> Música de fondo incluida en cada escena
-                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-semibold flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" /> Letras bloqueadas
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-semibold flex items-center gap-1">
+                    <UserCheck className="w-3 h-3" /> {currentVoice.name.split('(')[0]}
+                  </span>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 gap-3">
@@ -595,7 +620,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3 h-3" /> Copiar Escena {sc.num} + Música
+                            <Copy className="w-3 h-3" /> Copiar Escena {sc.num}
                           </>
                         )}
                       </button>
@@ -603,11 +628,9 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                     <p className="text-xs font-mono text-slate-200 bg-black/70 p-2.5 rounded-lg border border-slate-800 select-all">
                       {outputLang === 'es' ? sc.promptEs : sc.promptEn}
                     </p>
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] pt-1">
-                      <span className="text-emerald-300 font-semibold">{sc.screenText}</span>
-                      <span className="text-slate-300 italic flex items-center gap-1">
-                        <Mic className="w-3 h-3 text-amber-400 shrink-0" /> "{sc.voiceover}"
-                      </span>
+                    <div className="text-[11px] text-emerald-300 italic flex items-center gap-1.5 pt-0.5">
+                      <Mic className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                      <span>"{sc.voiceLine}"</span>
                     </div>
                   </div>
                 ))}

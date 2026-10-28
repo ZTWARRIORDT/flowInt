@@ -133,7 +133,7 @@ export function App() {
             <div className="lg:col-span-7 space-y-6">
               <div className="inline-flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Laboratorio de Prompts de Imagen (Gemini) + Escenas con Música (Flow)</span>
+                <span>Prompts (Gemini) + Escenas con Misma Voz de Personaje, Música y Logos sin Animar Letras (Flow)</span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif tracking-tight leading-[1.12]">
@@ -152,7 +152,7 @@ export function App() {
                   isDark ? 'text-slate-300' : 'text-stone-600'
                 }`}
               >
-                Copia prompts profesionales de fotografía botánica para <strong>Gemini</strong> y secuencias de <strong>4 escenas cinematográficas para Google Flow</strong> que explican brevemente los <strong>beneficios de cada producto</strong> con instrucciones de <strong>música de fondo</strong> y locución incluidas.
+                Copia prompts de estudio para <strong>Gemini</strong> y secuencias de <strong>4 escenas para Google Flow</strong> que explican los <strong>beneficios de cada producto</strong> con la <strong>misma voz de personaje</strong>, <strong>música de fondo</strong> y la regla de <strong>NO animar letras</strong> (solo animar logos simbólicos e ingredientes).
               </p>
 
               {/* CTA Buttons */}
@@ -172,7 +172,7 @@ export function App() {
                       : 'bg-white border-stone-300 text-stone-800 hover:border-emerald-600'
                   }`}
                 >
-                  <Music className="w-4 h-4 text-purple-400" /> Biblioteca de Escenas + Música
+                  <Music className="w-4 h-4 text-purple-400" /> Escenas + Voz + Música
                 </a>
                 <a
                   href="#constructor-prompts"
@@ -189,16 +189,16 @@ export function App() {
               {/* Mini Key Highlights */}
               <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800/60">
                 <div>
-                  <div className="text-xl font-black text-emerald-400 font-serif">5 Productos</div>
-                  <div className="text-xs text-slate-400">Fotos de estudio IA + anatomía del prompt</div>
+                  <div className="text-xl font-black text-emerald-400 font-serif">Sin Letras Móviles</div>
+                  <div className="text-xs text-slate-400">Solo se animan logos simbólicos e ingredientes</div>
                 </div>
                 <div>
-                  <div className="text-xl font-black text-amber-400 font-serif">4 Escenas / Video</div>
-                  <div className="text-xs text-slate-400">Gancho, Beneficios 1-4 y Dosis en 16s</div>
+                  <div className="text-xl font-black text-cyan-400 font-serif">Misma Voz IA</div>
+                  <div className="text-xs text-slate-400">Descriptor idéntico de personaje en las 4 escenas</div>
                 </div>
                 <div>
-                  <div className="text-xl font-black text-purple-400 font-serif">Música + Voz</div>
-                  <div className="text-xs text-slate-400">Instrucción de música de fondo en cada escena</div>
+                  <div className="text-xl font-black text-purple-400 font-serif">Música de Fondo</div>
+                  <div className="text-xs text-slate-400">Pista instrumental continua en cada prompt</div>
                 </div>
               </div>
             </div>
@@ -217,7 +217,7 @@ export function App() {
                     <Award className="w-4 h-4" /> Galería de Estudio Botánico Generada
                   </span>
                   <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-mono text-[10px]">
-                    Prompts + Escenas + Música
+                    Logos · Misma Voz · Música
                   </span>
                 </div>
 
@@ -322,13 +322,13 @@ export function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           <div className="text-center max-w-3xl mx-auto space-y-3">
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-              <Mic className="w-3.5 h-3.5" /> Guion de 16 Segundos con Música de Fondo
+              <Mic className="w-3.5 h-3.5" /> Guion de 16s · Misma Voz de Personaje · Sin Animar Letras
             </span>
             <h2 className="text-3xl md:text-4xl font-bold font-serif">
-              Cómo Estructurar las 4 Escenas para Explicar los Beneficios
+              Cómo Estructurar las 4 Escenas (Logos, Voz Consistente y Música)
             </h2>
             <p className={`text-sm md:text-base ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Cada producto del catálogo divide su historia en <strong>4 escenas de 4 segundos</strong>, manteniendo una <strong>música de fondo coherente</strong> y explicando claramente para qué sirve:
+              Cada producto divide su historia en <strong>4 escenas de 4 segundos</strong>, bloqueando las letras del envase (<strong>solo se animan logos simbólicos e ingredientes</strong>) y repitiendo el <strong>mismo descriptor de voz de personaje</strong> junto con la <strong>música de fondo</strong>:
             </p>
           </div>
 
@@ -341,9 +341,9 @@ export function App() {
               <span className="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-black text-xs inline-block">
                 ESCENA 1 · 0 a 4s
               </span>
-              <h3 className="text-lg font-bold font-serif">1. Gancho + Inicio Musical</h3>
+              <h3 className="text-lg font-bold font-serif">1. Gancho + Voz y Música</h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-                El producto aparece firme mientras el entorno (polvo de cúrcuma, splash de agua o rayos de sol) se mueve en <em>super slow motion</em> y comienza la <strong>música de fondo instrumental</strong>.
+                El envase aparece 100% fijo (<strong>sin animar letras</strong>) mientras el entorno se mueve en <em>slow motion</em>, entra la <strong>música de fondo</strong> y se define la <strong>voz del personaje narrador</strong>.
               </p>
             </div>
 
@@ -355,9 +355,9 @@ export function App() {
               <span className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-xs inline-block">
                 ESCENA 2 · 4 a 8s
               </span>
-              <h3 className="text-lg font-bold font-serif">2. Beneficios #1 y #2</h3>
+              <h3 className="text-lg font-bold font-serif">2. Brillo en Logos #1 y #2</h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-                Movimiento orbital suave resaltando los dos primeros beneficios clave (ej. <strong>Piel y Cabello · Articulaciones</strong>) acompañados de un destello sonoro sutil sobre la música.
+                Un barrido de luz ilumina los <strong>logos simbólicos #1 y #2</strong> (sin mover letras ni generar texto). La <strong>misma voz de personaje</strong> narra los dos primeros beneficios.
               </p>
             </div>
 
@@ -369,9 +369,9 @@ export function App() {
               <span className="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-black text-xs inline-block">
                 ESCENA 3 · 8 a 12s
               </span>
-              <h3 className="text-lg font-bold font-serif">3. Beneficios #3 y #4 + Pureza</h3>
+              <h3 className="text-lg font-bold font-serif">3. Logos #3 y #4 + Pureza</h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-                Plano macro de los ingredientes naturales puros (raíces, hojas, miel o gotero) explicando los beneficios <strong>#3 y #4</strong> con música cálida inspiradora.
+                Plano de los ingredientes puros y destello sobre los <strong>logos simbólicos #3 y #4</strong> (sin animar letras). Continúa exactamente la <strong>misma voz de personaje</strong> y la música.
               </p>
             </div>
 
@@ -385,7 +385,7 @@ export function App() {
               </span>
               <h3 className="text-lg font-bold font-serif">4. Cierre + Modo de Uso</h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-                Plano heroico final con los 4 beneficios visibles, la dosis recomendada (<em>"2 cápsulas al día"</em>) y un <strong>acorde musical resolutivo</strong> que invita a pedir el producto.
+                Plano heroico final con los <strong>4 logos simbólicos</strong> reluciendo, la <strong>misma voz de personaje</strong> indicando la dosis (sin letras animadas) y acorde musical resolutivo.
               </p>
             </div>
           </div>

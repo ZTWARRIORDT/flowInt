@@ -23,6 +23,14 @@ export interface BenefitItem {
     | 'award';
 }
 
+export interface VoiceProfile {
+  id: string;
+  name: string;
+  role: string;
+  descriptionEs: string;
+  descriptionEn: string;
+}
+
 export interface FlowSceneStep {
   sceneNumber: number;
   timeRange: string;
@@ -47,6 +55,9 @@ export interface NaturalProductExample {
   image: string;
   headline: string;
   summary: string;
+  voiceProfileName: string;
+  voiceProfilePromptEs: string;
+  voiceProfilePromptEn: string;
   backgroundMusicStyle: string;
   backgroundMusicPromptEs: string;
   backgroundMusicPromptEn: string;
@@ -74,6 +85,7 @@ export interface ScenePromptTemplate {
   idealFor: string;
   cameraMovement: string;
   musicSuggestion: string;
+  voiceAnchor: string;
   duration: string;
   benefitHookExample: string;
   promptEs: string;
@@ -89,6 +101,45 @@ export interface MusicPromptPreset {
   promptEn: string;
 }
 
+export const VOICE_PROFILES_LIBRARY: VoiceProfile[] = [
+  {
+    id: 'dra-sofia',
+    name: 'Voz 1: "Dra. Sofía" (Especialista en Bienestar Natural)',
+    role: 'Femenina · 32 años · Cálida, serena y confiable',
+    descriptionEs:
+      'Voz del personaje (mantener exactamente la misma voz en todas las escenas): mujer de 32 años, acento español latinoamericano neutro, timbre cálido y sereno de especialista en salud natural, ritmo pausado, grabación limpia de estudio',
+    descriptionEn:
+      'Character voice (keep the exact same voice across all scenes): 32-year-old female voice, warm neutral Latin American Spanish accent, calm and trustworthy natural wellness specialist tone, measured pace, clean studio recording',
+  },
+  {
+    id: 'mateo-narrador',
+    name: 'Voz 2: "Mateo" (Narrador Comercial Orgánico)',
+    role: 'Masculina · 35 años · Barítono cercano, seguro e inspirador',
+    descriptionEs:
+      'Voz del personaje (mantener exactamente la misma voz en todas las escenas): hombre de 35 años, barítono suave con acento español latinoamericano neutro, tono cercano, inspirador y seguro, dicción clara de locutor comercial',
+    descriptionEn:
+      'Character voice (keep the exact same voice across all scenes): 35-year-old male voice, smooth baritone with neutral Latin American Spanish accent, warm, inspiring, and confident commercial narrator tone, clear studio diction',
+  },
+  {
+    id: 'elena-vital',
+    name: 'Voz 3: "Elena" (Guía de Vida Saludable y Detox)',
+    role: 'Femenina · 27 años · Fresca, alegre y energética',
+    descriptionEs:
+      'Voz del personaje (mantener exactamente la misma voz en todas las escenas): mujer joven de 27 años, acento español neutro brillante, tono fresco, vital y empático que transmite energía matutina y bienestar',
+    descriptionEn:
+      'Character voice (keep the exact same voice across all scenes): 27-year-old young female voice, bright neutral Spanish accent, fresh, vibrant, and empathetic tone conveying morning energy and wellness',
+  },
+  {
+    id: 'arturo-artesano',
+    name: 'Voz 4: "Don Arturo" (Maestro Botánico y Tradición)',
+    role: 'Masculina · 48 años · Profunda, pausada y tradicional',
+    descriptionEs:
+      'Voz del personaje (mantener exactamente la misma voz en todas las escenas): hombre de 48 años, voz profunda, cálida y pausada en español neutro, transmite tradición artesanal, pureza de campo y máxima confianza',
+    descriptionEn:
+      'Character voice (keep the exact same voice across all scenes): 48-year-old mature male voice, deep, warm, and unhurried neutral Spanish accent, conveying artisanal tradition, pure nature, and deep trust',
+  },
+];
+
 export const MUSIC_PROMPTS_LIBRARY: MusicPromptPreset[] = [
   {
     id: 'spa-botanico',
@@ -96,9 +147,9 @@ export const MUSIC_PROMPTS_LIBRARY: MusicPromptPreset[] = [
     mood: 'Paz, pureza orgánica, regeneración y confianza',
     bestFor: 'Colágeno, Sérums Faciales, Aceites Esenciales y Vitaminas',
     promptEs:
-      'Audio: Colocar música de fondo instrumental relajante de spa con piano suave, cuerdas cálidas y sonidos sutiles de brisa en el bosque y gotas de rocío.',
+      'Música de fondo: colocar melodía instrumental relajante de spa con piano suave, cuerdas cálidas y sonidos sutiles de brisa en el bosque y gotas de rocío (volumen suave bajo la voz).',
     promptEn:
-      'Audio: Warm, soothing spa instrumental background music with soft acoustic piano, gentle strings, and subtle forest breeze and water droplet sound effects.',
+      'Background music: warm, soothing spa instrumental with soft acoustic piano, gentle strings, and subtle forest breeze and water droplet SFX (ducked softly under the voiceover).',
   },
   {
     id: 'energia-epica',
@@ -106,9 +157,9 @@ export const MUSIC_PROMPTS_LIBRARY: MusicPromptPreset[] = [
     mood: 'Fuerza, alivio del dolor, energía y acción',
     bestFor: 'Cúrcuma + Jengibre, Magnesio, Articulaciones y Superfoods',
     promptEs:
-      'Audio: Colocar música de fondo cinematográfica e inspiradora con percusión orgánica suave, violonchelo cálido y efecto de sonido envolvente en cámara lenta.',
+      'Música de fondo: colocar música cinematográfica e inspiradora con percusión orgánica suave, violonchelo cálido y efecto de sonido envolvente en cámara lenta (volumen suave bajo la voz).',
     promptEn:
-      'Audio: Uplifting cinematic background music with soft organic percussion, warm cello swells, and deep slow-motion whoosh sound effects.',
+      'Background music: uplifting cinematic music with soft organic percussion, warm cello swells, and deep slow-motion whoosh SFX (ducked softly under the voiceover).',
   },
   {
     id: 'frescura-detox',
@@ -116,9 +167,9 @@ export const MUSIC_PROMPTS_LIBRARY: MusicPromptPreset[] = [
     mood: 'Frescura matutina, ligereza digestiva y limpieza',
     bestFor: 'Clorofila, Té Matcha, Probióticos y Goteros Líquidos',
     promptEs:
-      'Audio: Colocar música de fondo alegre y fresca con guitarra acústica luminosa, marimba suave y sonido cristalino de salpicadura de agua pura.',
+      'Música de fondo: colocar melodía alegre y fresca con guitarra acústica luminosa, marimba suave y sonido cristalino de salpicadura de agua pura (volumen suave bajo la voz).',
     promptEn:
-      'Audio: Bright, refreshing acoustic background music with light acoustic guitar, soft marimba notes, and crisp crystal water splash sound effects.',
+      'Background music: bright, refreshing acoustic guitar melody with soft marimba notes and crisp crystal water splash SFX (ducked softly under the voiceover).',
   },
   {
     id: 'artesanal-acustico',
@@ -126,9 +177,9 @@ export const MUSIC_PROMPTS_LIBRARY: MusicPromptPreset[] = [
     mood: 'Hogar, calidez familiar, cosecha pura y protección',
     bestFor: 'Miel con Propóleo, Polen, Jarabes Naturales e Infusiones',
     promptEs:
-      'Audio: Colocar música de fondo acústica cálida con guitarra española suave, notas de arpa ligera y sonido relajante de miel fluyendo en una mañana soleada.',
+      'Música de fondo: colocar música acústica cálida con guitarra española suave, notas de arpa ligera y sonido relajante de miel fluyendo en una mañana soleada (volumen suave bajo la voz).',
     promptEn:
-      'Audio: Warm artisanal acoustic background music with gentle fingerpicked guitar, light harp notes, and cozy morning nature ambiance.',
+      'Background music: warm artisanal acoustic music with gentle fingerpicked guitar, light harp notes, and cozy morning nature ambiance (ducked softly under the voiceover).',
   },
 ];
 
@@ -137,14 +188,14 @@ export const ANATOMY_COLORS: Record<
   { bg: string; border: string; text: string; dot: string; name: string }
 > = {
   producto: {
-    name: 'Envase y Etiqueta',
+    name: 'Envase y Logo Fijo (Sin Animar Letras)',
     bg: 'bg-emerald-500/15',
     border: 'border-emerald-500/40',
     text: 'text-emerald-300',
     dot: 'bg-emerald-400',
   },
   beneficios: {
-    name: 'Medallones de Beneficios y Texto',
+    name: 'Iconos / Logos Simbólicos (Sin Letras Móviles)',
     bg: 'bg-amber-500/15',
     border: 'border-amber-500/40',
     text: 'text-amber-300',
@@ -165,7 +216,7 @@ export const ANATOMY_COLORS: Record<
     dot: 'bg-purple-400',
   },
   camara: {
-    name: 'Lente, Encuadre y Calidad',
+    name: 'Lente, Voz Fija y Música',
     bg: 'bg-rose-500/15',
     border: 'border-rose-500/40',
     text: 'text-rose-300',
@@ -180,17 +231,20 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     brand: 'Botanical Wellness Lab',
     category: 'Articulaciones, Piel y Energía',
     categoryId: 'suplementos',
-    badgeText: '4 Medallones Dorados · Articulaciones y Piel',
+    badgeText: 'Logos Dorados · Sin Animar Letras · Voz Fija',
     aspectRatio: '1:1 Estudio',
     image: '/images/colageno-magnesio.jpg',
     headline: 'ARTICULACIONES FUERTES, PIEL FIRME Y ENERGÍA',
     summary:
-      'Fotografía botánica en bosque soleado con frasco ámbar cubierto de rocío, etiqueta verde bosque con relieve dorado y 4 medallones circulares dorados flotantes que resumen sus beneficios.',
+      'Fotografía botánica en bosque soleado con frasco ámbar cubierto de rocío e iconos dorados de beneficios. En Flow se anima únicamente la luz solar, el rocío y el brillo de los logos sin animar letras, manteniendo la misma voz de especialista en las 4 escenas.',
+    voiceProfileName: 'Voz 1: "Dra. Sofía" (Femenina 32 años · Especialista en Bienestar)',
+    voiceProfilePromptEs: VOICE_PROFILES_LIBRARY[0].descriptionEs,
+    voiceProfilePromptEn: VOICE_PROFILES_LIBRARY[0].descriptionEn,
     backgroundMusicStyle: 'Piano Botánico Inspirador + Sonido Suave de Bosque Matutino',
     backgroundMusicPromptEs:
-      'Música de fondo: melodía instrumental inspiradora de piano suave y cuerdas cálidas a volumen moderado, acompañada de brisa matutina en el bosque y destellos cristalinos al iluminarse cada medallón de beneficio.',
+      'Música de fondo: melodía instrumental inspiradora de piano suave y cuerdas cálidas a volumen moderado bajo la voz, acompañada de brisa matutina en el bosque.',
     backgroundMusicPromptEn:
-      'Background music: uplifting soft piano and warm strings instrumental at balanced volume, layered with gentle morning forest breeze and subtle crystal chimes as each golden benefit medallion gleams.',
+      'Background music: uplifting soft piano and warm strings instrumental ducked softly under the voice, layered with gentle morning forest breeze.',
     specs: {
       tipo: 'Cápsulas Naturales Hidrolizadas',
       contenido: '120 Cápsulas (60 Porciones)',
@@ -221,101 +275,117 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
     ],
     geminiPromptEs:
-      'Fotografía comercial de producto natural: un frasco de vidrio ámbar con gotas de agua fresca y tapa dorada metálica sobre una mesa de madera húmeda en un bosque soleado. Etiqueta verde bosque oscuro con hojas grabadas y letras en relieve dorado: "COLÁGENO + MAGNESIO - 120 Capsules". Flotando simétricamente alrededor del frasco hay 4 medallones circulares de oro brillante con iconos luminosos: 1) "PIEL Y CABELLO", 2) "ARTICULACIONES", 3) "MÚSCULOS", 4) "ENERGÍA". Rodeado de helechos verdes, hojas de monstera y eucalipto con rayos de sol matutinos y partículas de polen dorado flotando. Lente 85mm f/1.8, calidad 8k.',
+      'Fotografía comercial de producto natural: un frasco de vidrio ámbar con gotas de agua fresca y tapa dorada metálica sobre una mesa de madera húmeda en un bosque soleado. Etiqueta verde bosque oscuro con emblema botánico dorado limpio. Flotando simétricamente alrededor del frasco hay 4 medallones circulares de oro brillante únicamente con iconos/logos simbólicos grabados en 3D (1: icono de rostro y cabello radiante, 2: icono de articulación sana, 3: icono de fuerza muscular, 4: icono de rayo de energía) sin letras pequeñas que se deformen. Rodeado de helechos verdes, hojas de monstera y eucalipto con rayos de sol matutinos y partículas de polen dorado flotando. Lente 85mm f/1.8, calidad 8k.',
     geminiPromptEn:
-      'Commercial natural product photography: a dark amber glass bottle with fresh water droplets and brushed gold cap resting on a wet wooden table in a sunlit forest. Dark forest green embossed label with gold foil typography: "COLÁGENO + MAGNESIO - 120 Capsules". Floating symmetrically around the bottle are 4 circular polished gold medallions with glowing icons: "PIEL Y CABELLO", "ARTICULACIONES", "MÚSCULOS", "ENERGÍA". Surrounded by green ferns, monstera, and eucalyptus leaves with morning sunbeams and golden dust motes. 85mm lens f/1.8, 8k.',
+      'Commercial natural product photography: a dark amber glass bottle with fresh water droplets and brushed gold cap resting on a wet wooden table in a sunlit forest. Dark forest green embossed label with a clean gold botanical logo emblem. Floating symmetrically around the bottle are 4 circular polished gold medallions featuring ONLY clean 3D engraved symbolic icons/logos (1: radiant skin/hair icon, 2: healthy joint icon, 3: muscle strength icon, 4: energy bolt icon) with no small text. Surrounded by green ferns, monstera, and eucalyptus leaves with morning sunbeams and golden dust motes. 85mm lens f/1.8, 8k.',
     cleanHeroPromptEs:
-      'Fotografía de producto natural en el bosque al amanecer: frasco de vidrio ámbar con gotas de rocío y etiqueta verde oscuro con letras doradas "COLÁGENO + MAGNESIO", sobre madera rústica húmeda rodeado de helechos y hojas de eucalipto. Sin medallones ni textos flotantes externos. Rayos de sol dorados atravesando el follaje, 85mm f/1.8, 8k.',
+      'Fotografía de producto natural en el bosque al amanecer: frasco de vidrio ámbar con gotas de rocío y etiqueta verde oscuro con logo botánico dorado sobre madera rústica húmeda rodeado de helechos y hojas de eucalipto. Sin textos flotantes ni letras externas. Rayos de sol dorados atravesando el follaje, 85mm f/1.8, 8k.',
     cleanHeroPromptEn:
-      'Sunrise forest product photography: dewy amber glass bottle with dark green and gold foil label "COLÁGENO + MAGNESIO" on wet rustic wood surrounded by ferns and eucalyptus leaves. No floating badges or external text. Golden sunbeams filtering through foliage, 85mm f/1.8, 8k.',
+      'Sunrise forest product photography: dewy amber glass bottle with dark green label and gold botanical logo emblem on wet rustic wood surrounded by ferns and eucalyptus leaves. No floating text or letters. Golden sunbeams filtering through foliage, 85mm f/1.8, 8k.',
     anatomy: [
       {
         category: 'producto',
-        label: 'Envase Premium',
-        textEs: 'Frasco ámbar con gotas de condensación, tapa dorada y etiqueta verde con relieve en oro "COLÁGENO + MAGNESIO"',
-        textEn: 'Amber bottle with condensation droplets, gold cap, and embossed forest green label with gold foil',
+        label: 'Envase y Logo Estático',
+        textEs: 'Frasco ámbar con gotas de condensación y logo dorado fijo (regla en Flow: prohibido animar o deformar letras)',
+        textEn: 'Amber bottle with condensation droplets and static gold logo (Flow rule: do not animate or warp letters)',
       },
       {
         category: 'beneficios',
-        label: '4 Medallones de Beneficios',
-        textEs: '4 sellos dorados circulares flotantes: Piel y Cabello, Articulaciones, Músculos y Energía',
-        textEn: '4 floating circular gold badges: Skin & Hair, Joints, Muscles, and Energy',
+        label: '4 Medallones con Iconos/Logos (Sin Letras)',
+        textEs: '4 discos dorados con símbolos puros (Piel, Articulación, Músculo, Energía) sin letras pequeñas para evitar fallos en IA',
+        textEn: '4 gold discs with pure symbolic icons (Skin, Joint, Muscle, Energy) without small text to avoid AI letter warping',
       },
       {
         category: 'iluminacion',
         label: 'Rayos de Sol (God Rays)',
-        textEs: 'Rayos de sol cálidos desde la esquina superior izquierda atravesando el bosque con partículas doradas',
-        textEn: 'Warm morning sunbeams from top-left filtering through forest canopy with golden particles',
+        textEs: 'Rayos de sol cálidos atravesando el bosque y reflejándose sobre los logos metálicos en oro',
+        textEn: 'Warm morning sunbeams filtering through the forest and reflecting off the metallic gold logos',
       },
       {
         category: 'entorno',
-        label: 'Naturaleza Viva',
-        textEs: 'Madera rústica húmeda, hojas de helecho, eucalipto y monstera con gotas de rocío',
-        textEn: 'Wet rustic wood surface, fern fronds, eucalyptus, and monstera leaves with dew drops',
+        label: 'Naturaleza Viva en Movimiento',
+        textEs: 'Helechos, eucalipto, gotas de rocío y polen dorado (lo único que se mueve en cámara lenta)',
+        textEn: 'Ferns, eucalyptus, dew drops, and golden pollen (the only elements moving in slow motion)',
       },
       {
         category: 'camara',
-        label: 'Óptica Cinematográfica',
-        textEs: 'Lente 85mm f/1.8 con desenfoque cremoso (bokeh) en el fondo y foco quirúrgico en la etiqueta',
-        textEn: '85mm f/1.8 lens with creamy background bokeh and razor-sharp focus on the bottle label',
+        label: 'Misma Voz ("Dra. Sofía") + Música',
+        textEs: 'Anclaje de voz femenina de 32 años idéntica en las 4 escenas + música de piano botánico de fondo',
+        textEn: 'Identical 32yo female wellness specialist voice anchored across all 4 scenes + botanical piano background music',
       },
     ],
     flowScenes: [
       {
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
-        title: 'Escena 1: Amanecer Botánico (Gancho de Vitalidad)',
-        purpose: 'Transmitir pureza natural y captar la atención con los rayos de sol y música envolvente.',
-        cameraMotion: 'Dolly In lento hacia la etiqueta dorada',
-        musicAndSfx: 'Piano suave inspirador + brisa matutina del bosque',
+        title: 'Escena 1: Amanecer Botánico (Gancho sin Animar Letras)',
+        purpose: 'Captar la atención animando los rayos de sol y el polen mientras el envase y su logo están 100% fijos.',
+        cameraMotion: 'Dolly In lento hacia el centro',
+        musicAndSfx: 'Piano suave inspirador + Voz "Dra. Sofía" (Escena 1/4)',
         promptEs:
-          'Los rayos de sol matutinos se filtran suavemente entre las hojas del bosque iluminando el frasco de Colágeno + Magnesio. Las hojas de helecho se mueven sutilmente con la brisa y las partículas de polen dorado flotan en cámara lenta. El frasco y sus 4 medallones dorados permanecen nítidos. Audio: colocar música de fondo instrumental relajante de piano suave y cuerdas cálidas con sonido sutil de naturaleza matutina.',
+          'El frasco de Colágeno + Magnesio y sus logos dorados permanecen 100% estáticos y nítidos. NO animar letras ni generar textos flotantes en pantalla. Únicamente se mueven en cámara lenta los rayos de sol matutinos, las hojas de helecho con la brisa y las partículas de polen dorado. Música de fondo: piano suave inspirador y cuerdas cálidas con brisa de bosque. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía diaria?"',
         promptEn:
-          'Morning sunbeams filter gently through the forest leaves illuminating the Collagen + Magnesium bottle. Fern fronds sway subtly in the breeze and golden pollen particles float in slow motion. The bottle and its 4 gold medallions remain sharp. Audio: warm, uplifting soft piano and strings background music with gentle morning forest ambiance.',
-        onScreenText: '4 Beneficios en 1 sola fórmula natural 🌿✨',
+          'The Collagen + Magnesium bottle and its gold logos remain 100% static and sharp. Do NOT animate letters or generate moving text on screen. Only animate in slow motion the morning sunbeams, fern fronds swaying in the breeze, and golden pollen particles. Background music: uplifting soft piano and warm strings with forest breeze. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía diaria?"',
+        onScreenText: 'Solo Iconos/Logos Dorados Fijos (Sin letras animadas)',
         voiceoverEs: '¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía diaria?',
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
-        title: 'Escena 2: Piel Radiante y Articulaciones Flexibles',
-        purpose: 'Resaltar los dos medallones superiores: Piel/Cabello y Articulaciones.',
-        cameraMotion: 'Pan suave de izquierda a derecha con reflejo en letras doradas',
-        musicAndSfx: 'Continúa música de piano + destello sonoro suave (chime) en los medallones',
+        title: 'Escena 2: Beneficios 1 y 2 (Brillo en Logos de Piel y Articulaciones)',
+        purpose: 'Iluminar los iconos dorados superiores mientras la misma voz explica los primeros 2 beneficios.',
+        cameraMotion: 'Pan suave con reflejo de luz en los iconos dorados',
+        musicAndSfx: 'Piano continuo + destello cristalino + Misma Voz "Dra. Sofía" (Escena 2/4)',
         promptEs:
-          'Un destello cálido de sol recorre las letras doradas en relieve de "COLÁGENO + MAGNESIO" y hace brillar los medallones de Piel y Cabello y Articulaciones. Gotas de rocío resbalan lentamente por el vidrio ámbar. Audio: música de fondo instrumental de bienestar continua con un destello sonoro cristalino al brillar los medallones dorados.',
+          'El frasco permanece firme sin deformar ni animar ninguna letra. Un destello cálido de luz solar recorre únicamente el relieve metálico de los medallones con los iconos de piel y articulaciones mientras una gota de rocío resbala lentamente por el vidrio ámbar. Música de fondo: continúa el piano suave y cuerdas cálidas con un sutil destello cristalino. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "El Colágeno Hidrolizado nutre tu piel y cabello desde adentro mientras protege tus rodillas y articulaciones."',
         promptEn:
-          'A warm sunbeam sweeps across the gold foil lettering of "COLÁGENO + MAGNESIO" and makes the Skin & Hair and Joints medallions gleam. Dew drops slide slowly down the amber glass. Audio: continuous wellness instrumental background music with a soft crystal chime as the gold medallions shine.',
-        onScreenText: '✨ 1. Piel y Cabello Firme · 🦴 2. Articulaciones sin Dolor',
+          'The bottle stays steady without animating or warping any letters. A warm sunbeam sweeps only across the metallic relief of the gold icon medallions while a dew drop slides slowly down the amber glass. Background music: continuous soft piano and warm strings with a subtle crystal chime. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "El Colágeno Hidrolizado nutre tu piel y cabello desde adentro mientras protege tus rodillas y articulaciones."',
+        onScreenText: 'Destello sobre Icono 1 (Piel) e Icono 2 (Articulación)',
         voiceoverEs: 'El Colágeno Hidrolizado nutre tu piel y cabello desde adentro mientras protege tus rodillas y articulaciones.',
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
-        title: 'Escena 3: Músculos Recuperados y Energía Vital',
-        purpose: 'Explicar la acción del Magnesio en los músculos y el nivel de energía.',
-        cameraMotion: 'Orbit ligero con enfoque en los medallones inferiores',
-        musicAndSfx: 'Cuerdas cálidas ascendentes que transmiten vitalidad y energía',
+        title: 'Escena 3: Beneficios 3 y 4 (Logos de Músculos y Energía)',
+        purpose: 'Explicar la acción del Magnesio manteniendo el mismo timbre de voz y sin textos móviles.',
+        cameraMotion: 'Orbit ligero 10° enfocando los iconos inferiores y hojas',
+        musicAndSfx: 'Cuerdas cálidas + Misma Voz "Dra. Sofía" (Escena 3/4)',
         promptEs:
-          'Cámara en órbita lenta resaltando los medallones dorados de Músculos y Energía rodeados de hojas de eucalipto húmedas y destellos dorados que ascienden desde la madera. Audio: música de fondo inspiradora con cuerdas cálidas y percusión suave que transmite vitalidad.',
+          'Movimiento orbital muy sutil de 10 grados manteniendo el envase y su logo completamente estáticos y sin animar letras. La luz dorada ilumina los medallones con los símbolos de fuerza muscular y energía rodeados de hojas de eucalipto húmedas y destellos dorados que ascienden en cámara lenta. Música de fondo: cuerdas cálidas y piano inspirador. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "Y gracias al Magnesio puro, relajas tus músculos, evitas calambres y despiertas con máxima energía."',
         promptEn:
-          'Slow orbital camera highlighting the Muscles and Energy gold medallions surrounded by wet eucalyptus leaves and golden sparkles rising from the wood. Audio: inspiring background music with warm strings and light rhythm conveying vitality.',
-        onScreenText: '💪 3. Músculos sin Calambres · ⚡ 4. Energía Todo el Día',
+          'Subtle 10-degree orbital motion keeping the bottle and its logo completely static without animating any letters. Golden light illuminates the muscle and energy symbol medallions surrounded by wet eucalyptus leaves and rising golden sparkles in slow motion. Background music: warm strings and inspiring piano. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "Y gracias al Magnesio puro, relajas tus músculos, evitas calambres y despiertas con máxima energía."',
+        onScreenText: 'Destello sobre Icono 3 (Músculos) e Icono 4 (Energía)',
         voiceoverEs: 'Y gracias al Magnesio puro, relajas tus músculos, evitas calambres y despiertas con máxima energía.',
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
-        title: 'Escena 4: Cierre Comercial (120 Cápsulas · 60 Días)',
-        purpose: 'Presentar el rendimiento del envase y llamado a la acción con acorde final.',
-        cameraMotion: 'Plano maestro fijo con atmósfera luminosa',
-        musicAndSfx: 'Acorde final cálido y elegante de piano y arpa',
+        title: 'Escena 4: Cierre Comercial (Dosis Diaria con la Misma Voz)',
+        purpose: 'Cerrar con el plano heroico limpio mientras la misma voz indica la dosis.',
+        cameraMotion: 'Plano maestro fijo con partículas doradas suaves',
+        musicAndSfx: 'Acorde final de piano + Misma Voz "Dra. Sofía" (Escena 4/4)',
         promptEs:
-          'Plano heroico final del frasco de Colágeno + Magnesio con sus 4 sellos dorados brillando en armonía bajo la luz dorada del bosque. Audio: cierre musical armónico y elegante con piano acústico y brisa suave.',
+          'Plano heroico fijo del frasco y sus 4 medallones de iconos dorados brillando en armonía bajo la luz del bosque. Prohibido animar letras o textos. Solo las partículas de polen dorado flotan suavemente. Música de fondo: acorde final armónico y elegante de piano acústico. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "Solo toma dos cápsulas cada mañana para transformar tu bienestar. ¡Pide el tuyo hoy!"',
         promptEn:
-          'Final hero shot of the Collagen + Magnesium bottle with its 4 golden badges glowing harmoniously under the golden forest light. Audio: harmonious and elegant musical resolution with acoustic piano and gentle breeze.',
-        onScreenText: '120 Cápsulas (2 meses de tratamiento) · ¡Pide el tuyo hoy!',
-        voiceoverEs: 'Un tratamiento completo de ciento veinte cápsulas para transformar tu bienestar. ¡Pídelo hoy!',
+          'Static final hero shot of the bottle and its 4 gold icon medallions glowing harmoniously in the forest light. Do NOT animate any letters or text. Only golden pollen particles float gently. Background music: harmonious resolving acoustic piano chord. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "Solo toma dos cápsulas cada mañana para transformar tu bienestar. ¡Pide el tuyo hoy!"',
+        onScreenText: 'Plano limpio sin letras móviles (la voz da el cierre)',
+        voiceoverEs: 'Solo toma dos cápsulas cada mañana para transformar tu bienestar. ¡Pide el tuyo hoy!',
       },
     ],
   },
@@ -325,17 +395,20 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     brand: 'Natural Vitae',
     category: 'Antiinflamatorio y Articular',
     categoryId: 'suplementos',
-    badgeText: 'Explosión Dinámica · Antiinflamatorio',
+    badgeText: 'Explosión Dinámica · Sin Animar Letras · Voz Fija',
     aspectRatio: '1:1 Estudio',
     image: '/images/curcuma-ashwagandha.jpg',
     headline: 'DESINFLAMA TUS ARTICULACIONES CON PODER NATURAL',
     summary:
-      'Fotografía de impacto comercial con explosión congelada de polvo dorado de cúrcuma detrás del frasco ámbar, rodajas de jengibre fresco y raíces de cúrcuma sobre pizarra negra.',
+      'Explosión en cámara superlenta de polvo dorado de cúrcuma detrás del frasco ámbar con rodajas de jengibre fresco. El frasco y su logo quedan congelados sin animar letras, y el narrador "Mateo" mantiene la misma voz en las 4 escenas.',
+    voiceProfileName: 'Voz 2: "Mateo" (Masculina 35 años · Narrador Comercial Cálido)',
+    voiceProfilePromptEs: VOICE_PROFILES_LIBRARY[1].descriptionEs,
+    voiceProfilePromptEn: VOICE_PROFILES_LIBRARY[1].descriptionEn,
     backgroundMusicStyle: 'Cinemático Orgánico con Percusión Suave + Whoosh en Slow Motion',
     backgroundMusicPromptEs:
-      'Música de fondo: instrumental cinematográfico cálido con percusión orgánica profunda, violonchelo inspirador y efecto de sonido envolvente en cámara superlenta para la explosión de cúrcuma.',
+      'Música de fondo: instrumental cinematográfico cálido con percusión orgánica profunda y violonchelo inspirador a volumen moderado bajo la voz.',
     backgroundMusicPromptEn:
-      'Background music: warm cinematic instrumental with deep organic percussion, inspiring cello, and a rich slow-motion whoosh sound effect as the golden turmeric powder expands.',
+      'Background music: warm cinematic instrumental with deep organic percussion and inspiring cello ducked softly under the voice.',
     specs: {
       tipo: 'Cápsulas Vegetales Concentradas',
       contenido: '60 Cápsulas Vegetales',
@@ -366,25 +439,25 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
     ],
     geminiPromptEs:
-      'Fotografía publicitaria de alta velocidad de un frasco de vidrio ámbar con tapa negra "NATURAL VITAE - CÚRCUMA + JENGIBRE - Apoyo Articular y Antiinflamatorio - 60 Cápsulas Vegetales", sobre una bandeja de piedra pizarra negra húmeda. Alrededor de la base hay rodajas frescas de jengibre, raíces de cúrcuma cortadas de color naranja intenso y una cuchara de madera con polvo de cúrcuma. Detrás del frasco, una espectacular explosión en el aire de fino polvo dorado de cúrcuma iluminada a contraluz por un foco cálido ámbar sobre fondo oscuro dramático. Lente macro 90mm, ultra detallado, 8k.',
+      'Fotografía publicitaria de alta velocidad de un frasco de vidrio ámbar con tapa negra y etiqueta color mostaza con un emblema circular dorado minimalista y 3 iconos simbólicos limpios (hoja botánica, articulación, escudo protector), sobre una bandeja de piedra pizarra negra húmeda. Alrededor de la base hay rodajas frescas de jengibre, raíces de cúrcuma cortadas de color naranja intenso y una cuchara de madera con polvo de cúrcuma. Detrás del frasco, una espectacular explosión en el aire de fino polvo dorado de cúrcuma iluminada a contraluz por un foco cálido ámbar sobre fondo oscuro dramático. Lente macro 90mm, 8k.',
     geminiPromptEn:
-      'High-speed commercial product photography of an amber glass supplement bottle with black cap "NATURAL VITAE - CÚRCUMA + JENGIBRE - Apoyo Articular y Antiinflamatorio - 60 Cápsulas Vegetales" on a wet black slate stone tray. Surrounded at the base by fresh sliced ginger root, vibrant orange turmeric rhizomes, and a wooden spoon with turmeric powder. Behind the bottle, a dramatic mid-air explosion of fine golden turmeric powder backlit by warm amber studio lighting against a dark moody background. 90mm macro lens, ultra-detailed, 8k.',
+      'High-speed commercial product photography of an amber glass supplement bottle with black cap and mustard-gold label featuring a clean circular gold logo emblem and 3 symbolic icons (botanical leaf, joint icon, shield icon), on a wet black slate stone tray. Surrounded at the base by fresh sliced ginger root, vibrant orange turmeric rhizomes, and a wooden spoon with turmeric powder. Behind the bottle, a dramatic mid-air explosion of fine golden turmeric powder backlit by warm amber studio lighting against a dark moody background. 90mm macro lens, 8k.',
     cleanHeroPromptEs:
-      'Fotografía comercial en estudio oscuro del frasco ámbar "NATURAL VITAE CÚRCUMA + JENGIBRE" sobre piedra pizarra negra rodeado de raíces de cúrcuma y rodajas de jengibre fresco, con iluminación cálida lateral lista para animar la explosión de polvo en Google Flow.',
+      'Fotografía comercial en estudio oscuro del frasco ámbar con etiqueta mostaza y logo circular dorado limpio sobre piedra pizarra negra rodeado de raíces de cúrcuma y rodajas de jengibre fresco, sin textos flotantes externos, lista para animar el polvo en Google Flow.',
     cleanHeroPromptEn:
-      'Dark studio commercial photo of the amber bottle "NATURAL VITAE CÚRCUMA + JENGIBRE" on black slate surrounded by turmeric roots and fresh ginger slices, with warm side lighting ready to animate powder explosion in Google Flow.',
+      'Dark studio commercial photo of the amber bottle with mustard-gold label and clean circular gold logo on black slate surrounded by turmeric roots and fresh ginger slices, no floating text, ready to animate powder in Google Flow.',
     anatomy: [
       {
         category: 'producto',
-        label: 'Frasco y Etiqueta',
-        textEs: 'Frasco de vidrio ámbar con gotas de agua, tapa negra y etiqueta mostaza "CÚRCUMA + JENGIBRE"',
-        textEn: 'Amber glass bottle with water droplets, black cap, and mustard-gold label "CÚRCUMA + JENGIBRE"',
+        label: 'Frasco y Logo Congelados',
+        textEs: 'Frasco de vidrio ámbar con gotas de agua y logo circular fijo (sin animar letras en el video)',
+        textEn: 'Amber glass bottle with water droplets and static circular logo (no animated letters in video)',
       },
       {
         category: 'beneficios',
-        label: 'Iconos en Etiqueta',
-        textEs: 'Subtítulo "APOYO ARTICULAR Y ANTIINFLAMATORIO" con 3 sellos vectoriales (Hoja, Articulación, Corazón)',
-        textEn: 'Subtitle "APOYO ARTICULAR Y ANTIINFLAMATORIO" with 3 minimalist benefit icons on the label',
+        label: '3 Iconos Simbólicos en Etiqueta',
+        textEs: 'Símbolos vectoriales limpios (Hoja, Articulación, Escudo) que no sufren deformación al animar la luz',
+        textEn: 'Clean symbolic icons (Leaf, Joint, Shield) that never deform when lighting moves',
       },
       {
         category: 'iluminacion',
@@ -394,15 +467,15 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
       {
         category: 'entorno',
-        label: 'Ingredientes Reales + Polvo',
-        textEs: 'Piedra pizarra negra, rodajas de jengibre húmedo, cúrcuma fresca y nube de especias en suspensión',
-        textEn: 'Black slate stone, wet ginger slices, fresh turmeric root, and suspended spice cloud',
+        label: 'Explosión de Polvo + Raíces',
+        textEs: 'Solo se anima la nube de polvo de cúrcuma en 120fps mientras el frasco permanece inmóvil',
+        textEn: 'Only the turmeric powder cloud animates in 120fps while the bottle stays completely still',
       },
       {
         category: 'camara',
-        label: 'Alta Velocidad (High-Speed)',
-        textEs: 'Captura congelada a 1/4000s, lente macro 90mm f/2.8, reflejo nítido en la base',
-        textEn: 'High-speed 1/4000s freeze capture, 90mm macro lens f/2.8, crisp reflection on the dark surface',
+        label: 'Misma Voz ("Mateo") + Música',
+        textEs: 'Voz masculina barítono de 35 años idéntica en las 4 escenas + música cinematográfica con percusión suave',
+        textEn: 'Identical 35yo male baritone narrator across all 4 scenes + cinematic organic percussion music',
       },
     ],
     flowScenes: [
@@ -410,57 +483,73 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Explosión en Cámara Superlenta (Hook)',
-        purpose: 'Impactar visualmente con la nube de cúrcuma en cámara superlenta mientras el frasco está inmóvil.',
-        cameraMotion: 'Slow Push-In (Acercamiento dramático en 120fps)',
-        musicAndSfx: 'Música cinematográfica cálida + efecto de expansión en slow-motion',
+        purpose: 'Impactar con la nube de cúrcuma en 120fps manteniendo el frasco estático sin animar letras.',
+        cameraMotion: 'Slow Push-In (Acercamiento suave)',
+        musicAndSfx: 'Música cinematográfica cálida + Misma Voz "Mateo" (Escena 1/4)',
         promptEs:
-          'En cámara superlenta (super slow motion), la nube de polvo dorado de cúrcuma detrás del frasco se expande suavemente en el aire iluminada por una luz ámbar cálida. El frasco de Cúrcuma + Jengibre y las raíces en la base permanecen perfectamente enfocados y firmes. Audio: colocar música de fondo cinematográfica e inspiradora con percusión orgánica suave y efecto envolvente de polvo en cámara lenta.',
+          'El frasco y su logo permanecen 100% estáticos y enfocados en el centro. NO animar letras ni generar texto en pantalla. En cámara superlenta (120fps), únicamente la nube de polvo dorado de cúrcuma detrás del frasco se expande suavemente en el aire iluminada por luz ámbar. Música de fondo: instrumental cinematográfico con percusión orgánica suave y efecto slow-motion. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEs +
+          ', diciendo: "Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti."',
         promptEn:
-          'In super slow motion, the golden turmeric powder cloud behind the bottle expands softly in mid-air backlit by warm amber light. The Turmeric + Ginger bottle and the roots at the base remain perfectly focused and steady. Audio: warm cinematic background music with soft organic percussion and a deep slow-motion powder expansion sound effect.',
-        onScreenText: '¿Dolor articular o inflamación constante? 🔥🌿',
+          'The bottle and its logo remain 100% static and focused in the center. Do NOT animate letters or generate on-screen text. In 120fps super slow motion, only the golden turmeric powder cloud behind the bottle expands softly in mid-air lit by amber light. Background music: cinematic instrumental with soft organic percussion and slow-motion SFX. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEn +
+          ', speaking in Spanish: "Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti."',
+        onScreenText: 'Polvo dorado en 120fps (Frasco y logo fijos sin animar letras)',
         voiceoverEs: 'Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti.',
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Alivio Articular y Movilidad)',
-        purpose: 'Explicar cómo la curcumina desinflama articulaciones y devuelve la movilidad.',
-        cameraMotion: 'Orbit lateral bajo alrededor de la pizarra negra',
-        musicAndSfx: 'Melodía acústica y violonchelo cálido constante',
+        purpose: 'Explicar con la misma voz cómo desinflama articulaciones mientras brillan los ingredientes.',
+        cameraMotion: 'Paneo suave a ras de la pizarra negra',
+        musicAndSfx: 'Violonchelo cálido + Misma Voz "Mateo" (Escena 2/4)',
         promptEs:
-          'Movimiento orbital suave a ras de la piedra pizarra negra, pasando frente a las rodajas frescas de jengibre y la cuchara de madera con cúrcuma mientras finas chispas doradas flotan en el aire. Audio: música de fondo instrumental cálida con cuerdas suaves y ritmo motivador.',
+          'El envase permanece completamente inmóvil sin animar letras ni deformar la etiqueta. Un haz de luz cálida ilumina las rodajas frescas de jengibre y la cuchara de madera con cúrcuma mientras finas chispas doradas flotan en cámara lenta. Música de fondo: continúa el instrumental cálido de violonchelo y percusión suave. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEs +
+          ', diciendo: "Su alta concentración desinflama tus articulaciones de forma natural y alivia la rigidez muscular."',
         promptEn:
-          'Low-angle smooth orbital movement across the black slate stone, passing the fresh ginger slices and wooden spoon with turmeric while fine golden sparks float in the air. Audio: warm instrumental background music with gentle strings and motivating rhythm.',
-        onScreenText: '🦴 1. Desinflama Articulaciones · 🏃 2. Recupera tu Movilidad',
+          'The bottle stays completely still without animating letters or warping the label. A warm light beam illuminates the fresh ginger slices and wooden spoon with turmeric while fine golden sparks float in slow motion. Background music: continuous warm cello and soft percussion instrumental. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEn +
+          ', speaking in Spanish: "Su alta concentración desinflama tus articulaciones de forma natural y alivia la rigidez muscular."',
+        onScreenText: 'Luz sobre raíces y logo simbólico (Sin texto móvil)',
         voiceoverEs: 'Su alta concentración desinflama tus articulaciones de forma natural y alivia la rigidez muscular.',
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Antioxidante + Sinergia con Jengibre)',
-        purpose: 'Mostrar por qué la combinación de Cúrcuma + Jengibre multiplica el efecto.',
-        cameraMotion: 'Macro Zoom hacia los ingredientes puros',
-        musicAndSfx: 'Música orgánica en crescendo + brillo sutil al iluminar la etiqueta',
+        purpose: 'Resaltar los iconos simbólicos de la etiqueta con un barrido de luz sin tocar las letras.',
+        cameraMotion: 'Macro Zoom lento hacia las raíces de cúrcuma',
+        musicAndSfx: 'Música orgánica en crescendo + Misma Voz "Mateo" (Escena 3/4)',
         promptEs:
-          'Plano macro cinematográfico de las raíces de cúrcuma naranja intenso y el jengibre fresco junto al frasco Natural Vitae, con iluminación dorada recorriendo los iconos de la etiqueta. Audio: música de fondo orgánica e inspiradora con destello sonoro suave.',
+          'Plano macro de las raíces de cúrcuma naranja intenso y el jengibre fresco junto al frasco estático. Prohibido animar letras; únicamente un destello dorado recorre los iconos simbólicos y las gotas de agua en el vidrio. Música de fondo: música orgánica e inspiradora. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEs +
+          ', diciendo: "Combinado con jengibre puro, protege tus células y mejora tu digestión con máxima absorción."',
         promptEn:
-          'Cinematic macro shot of vibrant orange turmeric roots and fresh ginger next to the Natural Vitae bottle, with golden light sweeping across the label icons. Audio: inspiring organic background music with a subtle shimmer sound.',
-        onScreenText: '🛡️ 3. Poder Antioxidante · 🌱 4. Con Jengibre de Alta Absorción',
+          'Macro shot of vibrant orange turmeric roots and fresh ginger next to the static bottle. Do NOT animate letters; only a golden light flare sweeps across the symbolic icons and water droplets on the glass. Background music: inspiring organic music. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEn +
+          ', speaking in Spanish: "Combinado con jengibre puro, protege tus células y mejora tu digestión con máxima absorción."',
+        onScreenText: 'Reflejo dorado en iconos y raíces frescas',
         voiceoverEs: 'Combinado con jengibre puro, protege tus células y mejora tu digestión con máxima absorción.',
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
-        title: 'Escena 4: Cierre (60 Cápsulas Vegetales)',
-        purpose: 'Llamado a la acción claro indicando la dosis diaria.',
-        cameraMotion: 'Estático con partículas doradas flotando suavemente',
-        musicAndSfx: 'Resolución musical cálida y elegante',
+        title: 'Escena 4: Cierre (Dosis Diaria con la Misma Voz)',
+        purpose: 'Cerrar la historia con la misma voz de Mateo y las partículas posándose.',
+        cameraMotion: 'Estático con partículas doradas cayendo lentamente',
+        musicAndSfx: 'Acorde final cálido + Misma Voz "Mateo" (Escena 4/4)',
         promptEs:
-          'Plano heroico final del frasco Cúrcuma + Jengibre Natural Vitae nítido en el centro mientras las últimas partículas de polvo dorado caen lentamente sobre la pizarra negra. Audio: acorde final cálido de música instrumental de bienestar.',
+          'Plano heroico final del frasco totalmente estático y nítido en el centro mientras las últimas partículas de polvo dorado caen lentamente sobre la pizarra negra. Sin animar letras ni textos. Música de fondo: acorde final cálido y resolutivo. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEs +
+          ', diciendo: "Toma dos cápsulas vegetales al día para volver a moverte sin límites. ¡Haz tu pedido hoy!"',
         promptEn:
-          'Final hero shot of the Natural Vitae Turmeric + Ginger bottle sharp in the center as the last golden powder particles settle slowly onto the black slate. Audio: warm resolving chord of wellness instrumental background music.',
-        onScreenText: '60 Cápsulas Vegetales · 2 al día · ¡Haz tu pedido hoy!',
-        voiceoverEs: 'Sesenta cápsulas cien por ciento vegetales para volver a moverte sin límites. ¡Pide el tuyo hoy!',
+          'Final hero shot of the bottle completely static and sharp in the center as the last golden powder particles settle slowly onto the black slate. No animated letters or text. Background music: warm resolving final chord. ' +
+          VOICE_PROFILES_LIBRARY[1].descriptionEn +
+          ', speaking in Spanish: "Toma dos cápsulas vegetales al día para volver a moverte sin límites. ¡Haz tu pedido hoy!"',
+        onScreenText: 'Cierre limpio (Logo fijo + Voz indicando la dosis)',
+        voiceoverEs: 'Toma dos cápsulas vegetales al día para volver a moverte sin límites. ¡Haz tu pedido hoy!',
       },
     ],
   },
@@ -470,17 +559,20 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     brand: 'Natural Wellness Drops',
     category: 'Extractos Líquidos y Detox',
     categoryId: 'extractos',
-    badgeText: 'Splash de Agua Esmeralda · Gotero Detox',
+    badgeText: 'Splash Esmeralda · Sin Animar Letras · Voz Fija',
     aspectRatio: '1:1 Estudio',
     image: '/images/clorofila-matcha.jpg',
     headline: 'OXIGENA TU CUERPO Y PURIFICA TU DIGESTIÓN',
     summary:
-      'Gotero de vidrio verde esmeralda emergiendo de una corona de agua cristalina en movimiento con hojas frescas de menta, eucalipto y té matcha bajo rayos de sol matutinos.',
+      'Gotero verde esmeralda emergiendo de una corona de agua cristalina con hojas de menta y matcha. Solo se anima el agua y las hojas en slow-motion (sin animar letras), con la voz fresca de "Elena" idéntica en las 4 escenas.',
+    voiceProfileName: 'Voz 3: "Elena" (Femenina 27 años · Guía Fresca y Vital)',
+    voiceProfilePromptEs: VOICE_PROFILES_LIBRARY[2].descriptionEs,
+    voiceProfilePromptEn: VOICE_PROFILES_LIBRARY[2].descriptionEn,
     backgroundMusicStyle: 'Acústico Refrescante Matutino + Sonido Cristalino de Agua',
     backgroundMusicPromptEs:
-      'Música de fondo: melodía acústica fresca y luminosa con guitarra suave, notas de marimba y sonido cristalino de salpicadura de agua pura en cámara lenta.',
+      'Música de fondo: melodía acústica fresca y luminosa con guitarra suave y sonido cristalino de agua pura a volumen moderado bajo la voz.',
     backgroundMusicPromptEn:
-      'Background music: bright, refreshing morning acoustic melody with soft guitar, light marimba notes, and crisp slow-motion crystal water splash sound effects.',
+      'Background music: bright, refreshing morning acoustic melody with soft guitar and crisp crystal water splash SFX ducked under the voice.',
     specs: {
       tipo: 'Gotas Líquidas Concentradas',
       contenido: '30 ml (60 Porciones)',
@@ -511,25 +603,25 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
     ],
     geminiPromptEs:
-      'Fotografía comercial refrescante de alta velocidad: un frasco gotero de vidrio verde esmeralda con pipeta de cristal y etiqueta blanca texturizada que dice "CLOROFILA & MATCHA - LIQUID DETOX - 30ml", emergiendo del centro de una corona perfecta de agua verde cristalina (water crown splash) sobre una superficie de agua con ondas concéntricas. Hojas frescas de menta, brotes de té verde matcha y eucalipto flotan en el aire junto con microgotas de agua brillantes. Fondo de jardín botánico desenfocado con rayos de sol dorados desde arriba. Lente macro 100mm, 8k.',
+      'Fotografía comercial refrescante de alta velocidad: un frasco gotero de vidrio verde esmeralda con pipeta de cristal y etiqueta crema texturizada con un logo simbólico de hoja dorada y gota verde, emergiendo del centro de una corona perfecta de agua verde cristalina (water crown splash) sobre una superficie de agua con ondas concéntricas. Hojas frescas de menta, brotes de té verde matcha y eucalipto flotan en el aire junto con microgotas de agua brillantes. Fondo de jardín botánico desenfocado con rayos de sol dorados desde arriba. Lente macro 100mm, 8k.',
     geminiPromptEn:
-      'Refreshing high-speed commercial photography: an emerald green glass dropper bottle with glass pipette and textured cream label reading "CLOROFILA & MATCHA - LIQUID DETOX - 30ml", emerging from the center of a crystal-clear emerald water crown splash over rippling water. Fresh mint leaves, green matcha tea shoots, and eucalyptus float in mid-air alongside sparkling water droplets. Sunlit blurred botanical garden background with golden sunbeams. 100mm macro lens, 8k.',
+      'Refreshing high-speed commercial photography: an emerald green glass dropper bottle with glass pipette and textured cream label featuring a clean golden leaf and green drop logo emblem, emerging from the center of a crystal-clear emerald water crown splash over rippling water. Fresh mint leaves, green matcha tea shoots, and eucalyptus float in mid-air alongside sparkling water droplets. Sunlit blurred botanical garden background with golden sunbeams. 100mm macro lens, 8k.',
     cleanHeroPromptEs:
-      'Fotografía comercial del frasco gotero verde esmeralda "CLOROFILA & MATCHA LIQUID DETOX" sobre una superficie de agua esmeralda tranquila con ondas suaves, rodeado de hojas de menta bajo luz solar matutina, listo para animar el splash en Google Flow.',
+      'Fotografía comercial del frasco gotero verde esmeralda con logo de hoja dorada sobre una superficie de agua esmeralda tranquila con ondas suaves, rodeado de hojas de menta bajo luz solar matutina, sin letras flotantes, listo para animar el agua en Google Flow.',
     cleanHeroPromptEn:
-      'Commercial photo of the emerald green dropper bottle "CLOROFILA & MATCHA LIQUID DETOX" on calm emerald water with gentle ripples, surrounded by mint leaves in morning sunlight, ready to animate in Google Flow.',
+      'Commercial photo of the emerald green dropper bottle with golden leaf logo on calm emerald water with gentle ripples, surrounded by mint leaves in morning sunlight, no floating letters, ready to animate water in Google Flow.',
     anatomy: [
       {
         category: 'producto',
-        label: 'Gotero Esmeralda',
-        textEs: 'Frasco gotero de vidrio verde esmeralda de 30ml con pipeta transparente y etiqueta "CLOROFILA & MATCHA"',
-        textEn: '30ml emerald green glass dropper bottle with clear pipette and "CLOROFILA & MATCHA" label',
+        label: 'Gotero Esmeralda Fijo',
+        textEs: 'Frasco gotero verde esmeralda 100% estático (prohibido animar letras de la etiqueta)',
+        textEn: '100% static emerald green dropper bottle (animating label letters is forbidden)',
       },
       {
         category: 'beneficios',
-        label: 'Promesa en Etiqueta',
-        textEs: 'Sello central "LIQUID DETOX · NATURAL WELLNESS DROPS" con tipografía verde bosque y oro',
-        textEn: 'Central badge "LIQUID DETOX · NATURAL WELLNESS DROPS" in forest green and gold typography',
+        label: 'Logo Botánico Limpio',
+        textEs: 'Emblema de hoja y gota dorada que se mantiene firme mientras la voz narra los 4 beneficios',
+        textEn: 'Golden leaf and drop emblem that stays sharp while the voiceover narrates the 4 benefits',
       },
       {
         category: 'iluminacion',
@@ -539,15 +631,15 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
       {
         category: 'entorno',
-        label: 'Splash + Hojas Flotantes',
-        textEs: 'Corona simétrica de agua verde cristalina, ondas concéntricas y hojas de menta y té verde en el aire',
-        textEn: 'Symmetrical emerald water splash crown, concentric ripples, and floating mint and tea leaves',
+        label: 'Splash + Hojas en Slow Motion',
+        textEs: 'Corona de agua verde cristalina, ondas y hojas de menta flotando suavemente',
+        textEn: 'Crystal emerald water crown, ripples, and mint leaves floating gently in slow motion',
       },
       {
         category: 'camara',
-        label: 'Congelado Líquido',
-        textEs: 'Obturación rápida 1/8000s, lente macro 100mm f/2.8, reflejo especular en el agua',
-        textEn: '1/8000s high-speed liquid freeze, 100mm macro lens f/2.8, crisp water reflection',
+        label: 'Misma Voz ("Elena") + Música',
+        textEs: 'Voz femenina joven de 27 años idéntica en las 4 escenas + guitarra acústica fresca y agua',
+        textEn: 'Identical 27yo fresh female voice across all 4 scenes + bright acoustic guitar and water SFX',
       },
     ],
     flowScenes: [
@@ -555,56 +647,72 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Splash Esmeralda en Cámara Lenta (Hook)',
-        purpose: 'Transmitir frescura instantánea con el movimiento líquido y música refrescante.',
-        cameraMotion: 'Static Macro con movimiento fluido del agua en 120fps',
-        musicAndSfx: 'Música acústica refrescante + sonido cristalino de salpicadura de agua',
+        purpose: 'Animar solo la corona de agua y las hojas de menta manteniendo el gotero inmóvil.',
+        cameraMotion: 'Static Macro con agua en 120fps',
+        musicAndSfx: 'Guitarra acústica fresca + agua + Misma Voz "Elena" (Escena 1/4)',
         promptEs:
-          'En cámara superlenta, la corona de agua verde esmeralda alrededor de la base del gotero Clorofila & Matcha ondula y libera pequeñas gotas cristalinas en el aire mientras las hojas de menta flotan suavemente. El frasco y su etiqueta permanecen completamente firmes. Audio: colocar música de fondo acústica fresca y luminosa acompañada del sonido cristalino de agua pura en cámara lenta.',
+          'El frasco gotero y su logo permanecen 100% firmes y estáticos en el centro. NO animar letras ni generar textos móviles. En cámara superlenta, únicamente la corona de agua verde esmeralda ondula liberando microgotas cristalinas mientras las hojas de menta flotan suavemente. Música de fondo: guitarra acústica fresca y sonido cristalino de agua pura. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEs +
+          ', diciendo: "Transforma tus mañanas con el poder purificante de la Clorofila líquida y el Té Matcha."',
         promptEn:
-          'In super slow motion, the emerald water crown around the base of the Chlorophyll & Matcha dropper ripples and releases crystal droplets into the air while mint leaves float gently. The bottle and label remain completely steady. Audio: bright, refreshing acoustic background music with crisp slow-motion crystal water splash sound effects.',
-        onScreenText: '¿Te sientes hinchado y sin energía por las mañanas? 💧🌿',
+          'The dropper bottle and its logo remain 100% steady and static in the center. Do NOT animate letters or generate moving text. In super slow motion, only the emerald water crown ripples releasing crystal micro-droplets while mint leaves float gently. Background music: fresh acoustic guitar and crisp water splash SFX. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEn +
+          ', speaking in Spanish: "Transforma tus mañanas con el poder purificante de la Clorofila líquida y el Té Matcha."',
+        onScreenText: 'Solo se anima el agua y las hojas (Etiqueta fija)',
         voiceoverEs: 'Transforma tus mañanas con el poder purificante de la Clorofila líquida y el Té Matcha.',
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Detox Profundo + Oxigenación)',
-        purpose: 'Explicar cómo limpia el organismo y oxigena las células.',
+        purpose: 'Explicar con la misma voz de Elena cómo limpia y oxigena el cuerpo.',
         cameraMotion: 'Dolly In suave hacia el gotero iluminado por el sol',
-        musicAndSfx: 'Melodía matutina suave + ondas de agua relajantes',
+        musicAndSfx: 'Melodía acústica matutina + Misma Voz "Elena" (Escena 2/4)',
         promptEs:
-          'Acercamiento lento hacia el frasco verde esmeralda mientras rayos de sol dorados atraviesan el cristal líquido y las ondas de agua se expanden suavemente en la base. Audio: música de fondo instrumental fresca de bienestar con sonido suave de agua.',
+          'Acercamiento lento hacia el frasco verde esmeralda estático sin animar ninguna letra de la etiqueta. Los rayos de sol dorados atraviesan el cristal líquido y las ondas de agua se expanden suavemente en la base. Música de fondo: continúa la melodía acústica fresca de bienestar. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEs +
+          ', diciendo: "Limpia tu organismo de toxinas, desinflama tu digestión y oxigena tus células para una piel radiante."',
         promptEn:
-          'Slow dolly-in toward the emerald glass bottle as golden sunbeams refract through the liquid glass and water ripples expand gently at the base. Audio: fresh wellness instrumental background music with gentle water ripple sounds.',
-        onScreenText: '🌱 1. Detox Hepático y Digestivo · ✨ 2. Oxigena tu Piel',
+          'Slow dolly-in toward the static emerald glass bottle without animating any label letters. Golden sunbeams refract through the liquid glass and water ripples expand gently at the base. Background music: continuous fresh acoustic wellness melody. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEn +
+          ', speaking in Spanish: "Limpia tu organismo de toxinas, desinflama tu digestión y oxigena tus células para una piel radiante."',
+        onScreenText: 'Ondas de agua y luz solar (Sin letras animadas)',
         voiceoverEs: 'Limpia tu organismo de toxinas, desinflama tu digestión y oxigena tus células para una piel radiante.',
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Aliento Fresco + Energía Limpia)',
-        purpose: 'Destacar el toque de menta orgánica y la energía antioxidante del Matcha.',
-        cameraMotion: 'Orbit ligero rodeando las hojas de menta y té verde',
-        musicAndSfx: 'Guitarra acústica alegre + brisa fresca en hojas de menta',
+        purpose: 'Destacar las hojas de menta y té verde en cámara lenta con la misma voz.',
+        cameraMotion: 'Orbit corto 10° rodeando las hojas de menta',
+        musicAndSfx: 'Guitarra alegre + brisa + Misma Voz "Elena" (Escena 3/4)',
         promptEs:
-          'Las hojas frescas de menta y brotes de té verde giran suavemente en cámara lenta alrededor del gotero esmeralda con destellos de rocío bajo el sol matutino. Audio: música de fondo alegre y revitalizante con brisa suave.',
+          'Las hojas frescas de menta y brotes de té verde flotan suavemente en cámara lenta alrededor del gotero esmeralda fijo con destellos de rocío bajo el sol matutino. Prohibido animar letras o textos. Música de fondo: guitarra acústica alegre y brisa suave. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEs +
+          ', diciendo: "Su toque de menta orgánica refresca tu aliento desde adentro mientras el Matcha te llena de energía limpia."',
         promptEn:
-          'Fresh mint leaves and green tea shoots drift gently in slow motion around the emerald dropper with sparkling dew in the morning sun. Audio: uplifting and revitalizing background music with a soft breeze.',
-        onScreenText: '🍃 3. Frescura Interna con Menta · ⚡ 4. Energía Antioxidante',
-        voiceoverEs: 'Su toque de menta natural refresca tu aliento desde adentro mientras el Matcha te llena de energía limpia.',
+          'Fresh mint leaves and green tea shoots float gently in slow motion around the static emerald dropper with sparkling dew in the morning sun. Do NOT animate letters or text. Background music: cheerful acoustic guitar and soft breeze. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEn +
+          ', speaking in Spanish: "Su toque de menta orgánica refresca tu aliento desde adentro mientras el Matcha te llena de energía limpia."',
+        onScreenText: 'Hojas de menta y matcha flotando en 120fps',
+        voiceoverEs: 'Su toque de menta orgánica refresca tu aliento desde adentro mientras el Matcha te llena de energía limpia.',
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Modo de Uso (20 Gotas en Agua)',
-        purpose: 'Explicar lo fácil que es tomarlo cada mañana.',
-        cameraMotion: 'Plano heroico luminoso',
-        musicAndSfx: 'Cierre musical fresco y luminoso',
+        purpose: 'Cerrar con la dosis matutina narrada por la misma voz de Elena.',
+        cameraMotion: 'Plano heroico fijo luminoso',
+        musicAndSfx: 'Acorde final luminoso + Misma Voz "Elena" (Escena 4/4)',
         promptEs:
-          'El gotero Clorofila & Matcha brilla en el centro del agua esmeralda con reflejos solares cálidos y atmósfera de bienestar puro. Audio: acorde final luminoso de música acústica de bienestar.',
+          'El gotero permanece estático y nítido en el centro del agua esmeralda con reflejos solares cálidos. Sin animar letras. Música de fondo: acorde final luminoso de guitarra acústica. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEs +
+          ', diciendo: "Solo agrega veinte gotas a tu vaso de agua cada mañana. ¡Pide tu Liquid Detox hoy!"',
         promptEn:
-          'The Chlorophyll & Matcha dropper gleams at the center of the emerald water with warm solar reflections and pure wellness atmosphere. Audio: bright resolving chord of acoustic wellness background music.',
-        onScreenText: 'Solo 20 gotas en tu vaso de agua cada mañana · ¡Pídelo hoy!',
+          'The dropper stays static and sharp at the center of the emerald water with warm solar reflections. No animated letters. Background music: bright resolving acoustic guitar chord. ' +
+          VOICE_PROFILES_LIBRARY[2].descriptionEn +
+          ', speaking in Spanish: "Solo agrega veinte gotas a tu vaso de agua cada mañana. ¡Pide tu Liquid Detox hoy!"',
+        onScreenText: 'Plano heroico limpio + Voz indicando las 20 gotas',
         voiceoverEs: 'Solo agrega veinte gotas a tu vaso de agua cada mañana. ¡Pide tu Liquid Detox hoy!',
       },
     ],
@@ -615,17 +723,20 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     brand: 'Organic Rosehip Apothecary',
     category: 'Cosmética Natural y Skincare',
     categoryId: 'cosmetica',
-    badgeText: 'Lujo Botánico · Regeneración de Piel',
+    badgeText: 'Ilustración Botánica · Sin Animar Letras · Voz Fija',
     aspectRatio: '1:1 Estudio',
     image: '/images/serum-botanico.jpg',
     headline: 'REGENERA, ILUMINA Y REJUVENECE TU PIEL',
     summary:
-      'Gotero ámbar con etiqueta botánica ilustrada a mano posado sobre piedra volcánica y musgo húmedo, rodeado de pétalos de rosa silvestre y frutos de rosa mosqueta al atardecer.',
+      'Gotero ámbar con logo floral dorado sobre roca y musgo húmedo al atardecer. En Flow solo caen los pétalos y brilla el logo floral sin animar letras, manteniendo la voz serena de "Dra. Sofía" en las 4 escenas.',
+    voiceProfileName: 'Voz 1: "Dra. Sofía" (Femenina 32 años · Especialista en Skincare)',
+    voiceProfilePromptEs: VOICE_PROFILES_LIBRARY[0].descriptionEs,
+    voiceProfilePromptEn: VOICE_PROFILES_LIBRARY[0].descriptionEn,
     backgroundMusicStyle: 'Ambient Spa de Lujo con Arpa, Piano y Brisa de Jardín',
     backgroundMusicPromptEs:
-      'Música de fondo: melodía elegante de spa y alta cosmética con piano delicado, notas de arpa suave y sonido sutil de brisa al atardecer.',
+      'Música de fondo: melodía elegante de spa y alta cosmética con piano delicado y notas de arpa suave a volumen moderado bajo la voz.',
     backgroundMusicPromptEn:
-      'Background music: luxury skincare spa melody with delicate piano, soft harp notes, and gentle golden-hour garden breeze.',
+      'Background music: luxury skincare spa melody with delicate piano and soft harp notes ducked softly under the voice.',
     specs: {
       tipo: 'Aceite Regenerador Prensado en Frío',
       contenido: '30 ml / 1 fl oz',
@@ -656,25 +767,25 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
     ],
     geminiPromptEs:
-      'Fotografía editorial de cosmética natural: un frasco gotero de vidrio ámbar con bulbo negro mate y etiqueta en papel algodón con ilustración botánica dorada y floral que dice "SÉRUM ROSA MOSQUETA - Boost Radiance · Renew · Hydrate - Organic Rosehip Oil 30ml". Posado sobre una roca húmeda cubierta de musgo verde esmeralda en un jardín silvestre al atardecer (golden hour). Alrededor del frasco hay pétalos de rosa suaves, frutos rojos de rosa mosqueta y finas partículas de luz dorada flotando. Bokeh cremoso de fondo, lente 85mm f/1.4, 8k.',
+      'Fotografía editorial de cosmética natural: un frasco gotero de vidrio ámbar con bulbo negro mate y etiqueta en papel algodón con un logo ilustrado de hoja dorada y flor de rosa mosqueta sobre una roca húmeda cubierta de musgo verde esmeralda en un jardín silvestre al atardecer (golden hour). Alrededor del frasco hay pétalos de rosa suaves, frutos rojos de rosa mosqueta y finas partículas de luz dorada flotando. Bokeh cremoso de fondo, lente 85mm f/1.4, 8k.',
     geminiPromptEn:
-      'Editorial natural skincare photography: an amber glass dropper bottle with matte black bulb and cotton paper label featuring gold foil and floral botanical illustration reading "SÉRUM ROSA MOSQUETA - Boost Radiance · Renew · Hydrate - Organic Rosehip Oil 30ml". Resting on a wet moss-covered stone in a wild garden at golden hour. Surrounded by soft pink rosehip petals, red rosehip berries, and floating golden light particles. Creamy background bokeh, 85mm f/1.4 lens, 8k.',
+      'Editorial natural skincare photography: an amber glass dropper bottle with matte black bulb and cotton paper label featuring a gold foil leaf and rosehip flower logo illustration resting on a wet moss-covered stone in a wild garden at golden hour. Surrounded by soft pink rosehip petals, red rosehip berries, and floating golden light particles. Creamy background bokeh, 85mm f/1.4 lens, 8k.',
     cleanHeroPromptEs:
-      'Fotografía editorial del frasco gotero ámbar "SÉRUM ROSA MOSQUETA" sobre piedra con musgo húmedo y pétalos de rosa al atardecer, con bokeh dorado cálido de fondo, listo para animar en Google Flow.',
+      'Fotografía editorial del frasco gotero ámbar con logo floral dorado sobre piedra con musgo húmedo y pétalos de rosa al atardecer, sin letras pequeñas, con bokeh dorado cálido de fondo, listo para animar en Google Flow.',
     cleanHeroPromptEn:
-      'Editorial photo of the amber dropper bottle "SÉRUM ROSA MOSQUETA" on mossy wet stone with rose petals at golden hour and warm bokeh background, ready to animate in Google Flow.',
+      'Editorial photo of the amber dropper bottle with gold floral logo on mossy wet stone with rose petals at golden hour, no small letters, warm bokeh background, ready to animate in Google Flow.',
     anatomy: [
       {
         category: 'producto',
-        label: 'Gotero Apothecary',
-        textEs: 'Frasco gotero ámbar de 30ml con etiqueta de papel texturizado e ilustración botánica de rosa mosqueta',
-        textEn: '30ml amber dropper bottle with textured cotton paper label and botanical rosehip illustration',
+        label: 'Gotero y Logo Floral Fijos',
+        textEs: 'Frasco gotero ámbar con ilustración botánica fija (prohibido animar letras en el video)',
+        textEn: 'Amber dropper bottle with static botanical logo illustration (no animated letters in video)',
       },
       {
         category: 'beneficios',
-        label: 'Trilogía de Beneficios',
-        textEs: 'Leyenda frontal "BOOST RADIANCE · RENEW · HYDRATE" (Ilumina · Regenera · Hidrata)',
-        textEn: 'Front claim "BOOST RADIANCE · RENEW · HYDRATE" clearly printed on the botanical label',
+        label: 'Emblema Floral en Oro',
+        textEs: 'El destello de luz solo recorre el logo de la hoja dorada mientras las letras permanecen quietas',
+        textEn: 'The light flare only sweeps across the gold leaf logo while any label text stays completely still',
       },
       {
         category: 'iluminacion',
@@ -684,15 +795,15 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
       {
         category: 'entorno',
-        label: 'Jardín Silvestre y Musgo',
-        textEs: 'Roca volcánica húmeda, musgo verde vivo, pétalos rosados y frutos rojos de rosa mosqueta',
-        textEn: 'Wet volcanic rock, vibrant green moss, pink rose petals, and red rosehip fruits',
+        label: 'Pétalos Cayendo en Slow Motion',
+        textEs: 'Roca con musgo húmedo, pétalos rosados cayendo suavemente y polen dorado',
+        textEn: 'Wet mossy rock, pink petals falling gently in slow motion, and golden pollen',
       },
       {
         category: 'camara',
-        label: 'Bokeh Editorial',
-        textEs: 'Lente retrato 85mm f/1.4 con círculos de bokeh dorados y florales en el fondo',
-        textEn: '85mm f/1.4 portrait lens with golden and floral bokeh circles in the background',
+        label: 'Misma Voz ("Dra. Sofía") + Música Spa',
+        textEs: 'Voz femenina serena de 32 años idéntica en las 4 escenas + piano y arpa de spa',
+        textEn: 'Identical 32yo serene female voice across all 4 scenes + spa piano and harp music',
       },
     ],
     flowScenes: [
@@ -700,57 +811,73 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Magia Botánica al Atardecer (Hook)',
-        purpose: 'Enamorar visualmente con la estética orgánica, caída de pétalos y música de spa.',
-        cameraMotion: 'Dolly In suave con caída de pétalos en slow motion',
-        musicAndSfx: 'Piano delicado de spa + arpa suave y brisa floral',
+        purpose: 'Animar la caída lenta de pétalos y polen manteniendo el frasco estático sin animar letras.',
+        cameraMotion: 'Dolly In suave con caída de pétalos',
+        musicAndSfx: 'Piano delicado y arpa + Misma Voz "Dra. Sofía" (Escena 1/4)',
         promptEs:
-          'El frasco de Sérum Rosa Mosqueta permanece firme sobre la roca con musgo húmedo mientras suaves pétalos de rosa caen en cámara lenta alrededor y partículas de polen dorado brillan bajo el sol del atardecer. Audio: colocar música de fondo relajante y elegante de spa con piano suave y notas de arpa.',
+          'El frasco de Sérum Rosa Mosqueta y su etiqueta permanecen 100% firmes y estáticos sobre la roca con musgo. NO animar letras ni generar textos en pantalla. Únicamente caen suaves pétalos de rosa en cámara lenta alrededor del frasco y brillan partículas de polen dorado al atardecer. Música de fondo: piano delicado de spa y notas suaves de arpa. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "Descubre el poder regenerador del Sérum de Rosa Mosqueta cien por ciento orgánico."',
         promptEn:
-          'The Rosehip Serum bottle remains steady on the wet mossy stone while soft pink rose petals fall in slow motion around it and golden pollen particles shimmer in the sunset light. Audio: soothing, luxury spa background music with delicate piano and harp notes.',
-        onScreenText: 'El secreto botánico para una piel luminosa y sin manchas 🌸✨',
+          'The Rosehip Serum bottle and its label remain 100% steady and static on the mossy stone. Do NOT animate letters or generate on-screen text. Only soft pink rose petals fall in slow motion around the bottle and golden pollen particles shimmer in the sunset light. Background music: delicate spa piano and soft harp notes. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "Descubre el poder regenerador del Sérum de Rosa Mosqueta cien por ciento orgánico."',
+        onScreenText: 'Caída de pétalos en slow motion (Etiqueta fija sin animar letras)',
         voiceoverEs: 'Descubre el poder regenerador del Sérum de Rosa Mosqueta cien por ciento orgánico.',
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Atenúa Manchas + Hidratación)',
-        purpose: 'Explicar su acción reparadora sobre manchas, cicatrices y sequedad.',
-        cameraMotion: 'Orbit circular suave de 20 grados alrededor del gotero',
-        musicAndSfx: 'Melodía envolvente de cuerdas suaves y destello cálido',
+        purpose: 'Hacer brillar el logo de la hoja dorada mientras la misma voz explica los beneficios.',
+        cameraMotion: 'Orbit corto 10° con reflejo en el logo dorado',
+        musicAndSfx: 'Cuerdas suaves de spa + Misma Voz "Dra. Sofía" (Escena 2/4)',
         promptEs:
-          'La cámara orbita suavemente alrededor del frasco ámbar mientras la luz dorada del atardecer ilumina el aceite en su interior y las hojas de la ilustración dorada en la etiqueta brillan sutilmente. Audio: música de fondo instrumental de alta cosmética con cuerdas cálidas.',
+          'El frasco permanece firme sin animar ni deformar ninguna letra. La luz dorada del atardecer ilumina el aceite en el interior del vidrio ámbar y hace brillar sutilmente el logo de la hoja dorada en la etiqueta. Música de fondo: continúa el piano de spa y cuerdas cálidas. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "Rico en ácidos grasos esenciales, atenúa manchas y líneas de expresión mientras hidrata profundamente."',
         promptEn:
-          'The camera orbits gently around the amber bottle as golden sunset light illuminates the oil inside and the gold foil botanical illustration on the label gleams subtly. Audio: luxury skincare instrumental background music with warm strings.',
-        onScreenText: '✨ 1. Atenúa Manchas y Marcas · 💧 2. Hidratación Profunda',
+          'The bottle stays steady without animating or warping any letters. Golden sunset light illuminates the oil inside the amber glass and makes the gold leaf logo on the label gleam subtly. Background music: continuous spa piano and warm strings. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "Rico en ácidos grasos esenciales, atenúa manchas y líneas de expresión mientras hidrata profundamente."',
+        onScreenText: 'Brillo exclusivo sobre el logo floral dorado',
         voiceoverEs: 'Rico en ácidos grasos esenciales, atenúa manchas y líneas de expresión mientras hidrata profundamente.',
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Efecto Glow y Regeneración Nocturna)',
-        purpose: 'Mostrar la pureza de los frutos de rosa mosqueta prensados en frío.',
+        purpose: 'Mostrar los frutos de rosa mosqueta y el musgo húmedo con la misma voz.',
         cameraMotion: 'Macro Pan sobre el musgo húmedo y frutos rojos',
-        musicAndSfx: 'Piano íntimo + sonido sutil de gota de rocío',
+        musicAndSfx: 'Piano íntimo + Misma Voz "Dra. Sofía" (Escena 3/4)',
         promptEs:
-          'Plano macro de los frutos rojos de rosa mosqueta y pétalos húmedos junto al frasco con destellos cálidos en el agua sobre la roca. Audio: continúa la música de fondo relajante de piano y naturaleza.',
+          'Plano macro de los frutos rojos de rosa mosqueta y pétalos húmedos junto al frasco estático con destellos cálidos en el agua sobre la roca. Prohibido animar letras. Música de fondo: piano relajante de alta cosmética. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "Regenera tu piel cada noche y despierta con un rostro suave, firme y luminoso."',
         promptEn:
-          'Macro shot of red rosehip berries and dewy petals next to the bottle with warm light reflections on the wet stone. Audio: continuous soothing piano and nature background music.',
-        onScreenText: '🌟 3. Luminosidad Natural · 🌙 4. Regeneración Nocturna',
+          'Macro shot of red rosehip berries and dewy petals next to the static bottle with warm light reflections on the wet stone. Do NOT animate letters. Background music: soothing luxury skincare piano. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "Regenera tu piel cada noche y despierta con un rostro suave, firme y luminoso."',
+        onScreenText: 'Macro de frutos y rocío (Sin textos móviles)',
         voiceoverEs: 'Regenera tu piel cada noche y despierta con un rostro suave, firme y luminoso.',
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Ritual de Aplicación (3 Gotas cada Noche)',
-        purpose: 'Cerrar con el modo de uso y llamado a la acción.',
+        purpose: 'Cerrar con el modo de uso en la misma voz de la Dra. Sofía.',
         cameraMotion: 'Estático con bokeh dorado respirando suavemente',
-        musicAndSfx: 'Acorde final sereno de arpa y piano',
+        musicAndSfx: 'Acorde final de arpa + Misma Voz "Dra. Sofía" (Escena 4/4)',
         promptEs:
-          'Plano heroico del Sérum de Rosa Mosqueta bañado por la luz dorada del atardecer con partículas flotantes suaves. Audio: resolución musical suave y elegante de spa.',
+          'Plano heroico fijo del Sérum de Rosa Mosqueta bañado por la luz dorada del atardecer con partículas flotantes suaves. El envase y su logo permanecen 100% estáticos sin animar letras. Música de fondo: resolución suave de arpa y piano. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEs +
+          ', diciendo: "Solo aplica tres gotas cada noche para enamorarte de tu piel. ¡Pídelo hoy!"',
         promptEn:
-          'Hero shot of the Rosehip Serum bathed in golden sunset light with soft floating particles. Audio: soft, elegant spa musical resolution.',
-        onScreenText: 'Solo 3 gotas cada noche · 100% Orgánico · ¡Pídelo hoy!',
-        voiceoverEs: 'Solo tres gotas cada noche para enamorarte de tu piel. ¡Pide tu Sérum de Rosa Mosqueta hoy!',
+          'Static hero shot of the Rosehip Serum bathed in golden sunset light with soft floating particles. The bottle and its logo stay 100% static without animating letters. Background music: soft harp and piano resolution. ' +
+          VOICE_PROFILES_LIBRARY[0].descriptionEn +
+          ', speaking in Spanish: "Solo aplica tres gotas cada noche para enamorarte de tu piel. ¡Pídelo hoy!"',
+        onScreenText: 'Cierre heroico fijo + Voz indicando las 3 gotas',
+        voiceoverEs: 'Solo aplica tres gotas cada noche para enamorarte de tu piel. ¡Pídelo hoy!',
       },
     ],
   },
@@ -760,17 +887,20 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     brand: 'Colmena Real Artesanal',
     category: 'Apicultura y Defensas Naturales',
     categoryId: 'apicultura',
-    badgeText: 'Textura Líquida · Miel Cayendo en Vivo',
+    badgeText: 'Miel en Vivo · Sin Animar Letras · Voz Fija',
     aspectRatio: '1:1 Estudio',
     image: '/images/miel-propoleo.jpg',
     headline: 'PROTEGE TU GARGANTA Y SUBE TUS DEFENSAS',
     summary:
-      'Tarro de cristal con miel ámbar brillante, tapa de madera con cordel de yute, panal de cera real, trozos de propóleo puro y cuchara mielera dejando caer un hilo dorado continuo.',
+      'Tarro de cristal con miel ámbar brillante, panal fresco y cuchara mielera dejando caer un hilo dorado continuo. Solo fluye la miel en cámara lenta (el tarro y su logo de abeja quedan fijos sin animar letras), narrado con la voz tradicional de "Don Arturo".',
+    voiceProfileName: 'Voz 4: "Don Arturo" (Masculina 48 años · Maestro Artesano Cálido)',
+    voiceProfilePromptEs: VOICE_PROFILES_LIBRARY[3].descriptionEs,
+    voiceProfilePromptEn: VOICE_PROFILES_LIBRARY[3].descriptionEn,
     backgroundMusicStyle: 'Guitarra Acústica Cálida Artesanal + Fluido Suave de Miel',
     backgroundMusicPromptEs:
-      'Música de fondo: melodía acústica cálida y acogedora con guitarra punteada suave, violín ligero de campo y sonido relajante de miel espesa fluyendo.',
+      'Música de fondo: melodía acústica cálida y acogedora con guitarra punteada suave a volumen moderado bajo la voz.',
     backgroundMusicPromptEn:
-      'Background music: warm, cozy artisanal acoustic melody with gentle fingerpicked guitar, light folk strings, and soothing thick honey pour ambiance.',
+      'Background music: warm, cozy artisanal acoustic melody with gentle fingerpicked guitar ducked softly under the voice.',
     specs: {
       tipo: 'Miel Cruda de Abejas con Extracto de Propóleo',
       contenido: 'Tarro de Vidrio 350g',
@@ -801,25 +931,25 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
     ],
     geminiPromptEs:
-      'Fotografía gastronómica y de producto natural: un tarro de vidrio transparente lleno de miel dorada brillante con tapa de madera, precinto de seguridad y lazo rústico de hilo de yute con etiqueta crema y letras doradas en relieve: "MIEL & PROPÓLEO - ARTESANAL | ORGÁNICO - 350g". A la derecha, una cuchara mielera de madera de la que cae un hilo continuo y espeso de miel dorada traslúcida formando una espiral sobre la mesa de madera rústica. A la izquierda, trozos de panal de abejas fresco, hojas de eucalipto, polen granulado y fragmentos oscuros de propóleo puro. Luz matutina cálida de cocina rústica, 85mm, 8k.',
+      'Fotografía gastronómica y de producto natural: un tarro de vidrio transparente lleno de miel dorada brillante con tapa de madera, lazo rústico de hilo de yute y etiqueta crema con el logo dorado en relieve de una abeja y un panal hexagonal. A la derecha, una cuchara mielera de madera de la que cae un hilo continuo y espeso de miel dorada traslúcida formando una espiral sobre la mesa de madera rústica. A la izquierda, trozos de panal de abejas fresco, hojas de eucalipto, polen granulado y fragmentos oscuros de propóleo puro. Luz matutina cálida de cocina rústica, 85mm, 8k.',
     geminiPromptEn:
-      'Artisanal food and natural product photography: a clear glass jar filled with glowing golden honey, wooden lid, paper seal, and rustic twine bow with cream label and gold foil lettering: "MIEL & PROPÓLEO - ARTESANAL | ORGÁNICO - 350g". On the right, a wooden honey dipper dripping a thick continuous ribbon of translucent golden honey coiling onto the rustic wooden table. On the left, fresh honeycomb chunks, eucalyptus leaves, bee pollen granules, and raw dark propolis pieces. Warm morning rustic kitchen light, 85mm, 8k.',
+      'Artisanal food and natural product photography: a clear glass jar filled with glowing golden honey, wooden lid, rustic twine bow, and cream label featuring an embossed gold bee and hexagonal honeycomb logo emblem. On the right, a wooden honey dipper dripping a thick continuous ribbon of translucent golden honey coiling onto the rustic wooden table. On the left, fresh honeycomb chunks, eucalyptus leaves, bee pollen granules, and raw dark propolis pieces. Warm morning rustic kitchen light, 85mm, 8k.',
     cleanHeroPromptEs:
-      'Fotografía comercial del tarro de vidrio "MIEL & PROPÓLEO ARTESANAL ORGÁNICO" sobre mesa de madera con panal de abejas, eucalipto y cuchara mielera bajo luz cálida matutina, lista para animar la caída de la miel en Google Flow.',
+      'Fotografía comercial del tarro de vidrio con miel dorada y logo de abeja en oro sobre mesa de madera con panal de abejas, eucalipto y cuchara mielera bajo luz cálida matutina, sin textos móviles, lista para animar la caída de la miel en Google Flow.',
     cleanHeroPromptEn:
-      'Commercial photo of the glass jar "MIEL & PROPÓLEO ARTESANAL ORGÁNICO" on wooden table with honeycomb, eucalyptus, and honey dipper in warm morning light, ready to animate the honey pour in Google Flow.',
+      'Commercial photo of the glass honey jar with gold bee logo on wooden table with honeycomb, eucalyptus, and honey dipper in warm morning light, no moving text, ready to animate the honey pour in Google Flow.',
     anatomy: [
       {
         category: 'producto',
-        label: 'Tarro Artesanal',
-        textEs: 'Tarro de vidrio con miel ámbar traslúcida, tapa de madera, lazo de yute y etiqueta con estampado en oro',
-        textEn: 'Clear glass jar with translucent amber honey, wooden lid, twine bow, and gold-stamped cream label',
+        label: 'Tarro y Logo de Abeja Fijos',
+        textEs: 'Tarro de vidrio y etiqueta estáticos (en Flow solo se anima el hilo de miel, nunca las letras)',
+        textEn: 'Static glass jar and label (in Flow only the honey ribbon animates, never the letters)',
       },
       {
         category: 'beneficios',
-        label: 'Sello Orgánico',
-        textEs: 'Inscripción "MIEL & PROPÓLEO · ARTESANAL | ORGÁNICO · MIEL DE ABEJAS CON EXTRACTO NATURAL"',
-        textEn: 'Gold foil inscription "MIEL & PROPÓLEO · ARTESANAL | ORGÁNICO" with botanical bee illustrations',
+        label: 'Logo de Abeja y Panal en Oro',
+        textEs: 'Emblemas dorados de abeja y panal que reflejan la luz matutina sin deformarse',
+        textEn: 'Gold bee and honeycomb emblems reflecting morning light without warping',
       },
       {
         category: 'iluminacion',
@@ -829,15 +959,15 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
       },
       {
         category: 'entorno',
-        label: 'Colmena y Acción Líquida',
-        textEs: 'Cuchara mielera vertiendo miel en vivo, panal de cera hexagonal, propóleo en roca, polen y eucalipto',
+        label: 'Miel Cayendo en Cámara Lenta',
+        textEs: 'Cuchara mielera vertiendo miel en vivo, panal hexagonal, propóleo en roca, polen y eucalipto',
         textEn: 'Honey dipper pouring thick honey, hexagonal honeycomb, raw propolis chunks, bee pollen, and eucalyptus',
       },
       {
         category: 'camara',
-        label: 'Macro Gastronómico',
-        textEs: 'Lente 85mm f/2.0 con nitidez absoluta en la viscosidad de la miel y fondo de cocina cálido desenfocado',
-        textEn: '85mm f/2.0 lens with tack-sharp focus on the honey viscosity and warm blurred background',
+        label: 'Misma Voz ("Don Arturo") + Guitarra',
+        textEs: 'Voz masculina madura y cálida de 48 años idéntica en las 4 escenas + guitarra acústica artesanal',
+        textEn: 'Identical 48yo warm mature male voice across all 4 scenes + artisanal acoustic guitar',
       },
     ],
     flowScenes: [
@@ -845,57 +975,73 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Hilo de Miel Dorada en Vivo (Hook)',
-        purpose: 'Hipnotizar al espectador con la caída lenta y viscosa de la miel dorada y música acústica cálida.',
-        cameraMotion: 'Static Macro con fluido de miel cayendo en cámara lenta',
-        musicAndSfx: 'Guitarra acústica cálida artesanal + textura sonora suave de miel',
+        purpose: 'Animar únicamente la caída lenta de la miel manteniendo el tarro y sus letras 100% quietos.',
+        cameraMotion: 'Static Macro con fluido de miel en cámara lenta',
+        musicAndSfx: 'Guitarra acústica cálida + Misma Voz "Don Arturo" (Escena 1/4)',
         promptEs:
-          'En cámara lenta, el hilo espeso y brillante de miel dorada fluye continuamente desde la cuchara de madera formando pliegues suaves en la base. El tarro de Miel & Propóleo permanece completamente firme y nítido mientras pequeñas partículas doradas brillan en el aire. Audio: colocar música de fondo acústica cálida con guitarra suave y ambiente matutino acogedor.',
+          'El tarro de Miel & Propóleo y su etiqueta permanecen 100% firmes y estáticos. NO animar letras ni generar textos móviles. En cámara lenta, únicamente el hilo espeso y brillante de miel dorada fluye continuamente desde la cuchara de madera formando pliegues suaves en la base. Música de fondo: guitarra acústica cálida artesanal. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEs +
+          ', diciendo: "Protege tu garganta y las defensas de toda tu familia con nuestra Miel y Propóleo artesanal."',
         promptEn:
-          'In slow motion, the thick glossy ribbon of golden honey flows continuously from the wooden dipper forming soft coils at the base. The Honey & Propolis jar remains completely steady and sharp while golden particles shimmer in the air. Audio: warm, cozy fingerpicked acoustic guitar background music with gentle morning ambiance.',
-        onScreenText: '¿Garganta irritada o cambios de clima? 🍯🛡️',
+          'The Honey & Propolis jar and its label remain 100% steady and static. Do NOT animate letters or generate moving text. In slow motion, only the thick glossy ribbon of golden honey flows continuously from the wooden dipper forming soft coils at the base. Background music: warm artisanal acoustic guitar. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEn +
+          ', speaking in Spanish: "Protege tu garganta y las defensas de toda tu familia con nuestra Miel y Propóleo artesanal."',
+        onScreenText: 'Solo fluye el hilo de miel (Etiqueta y letras 100% fijas)',
         voiceoverEs: 'Protege tu garganta y las defensas de toda tu familia con nuestra Miel y Propóleo artesanal.',
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Alivio de Garganta + Escudo Antibacteriano)',
-        purpose: 'Explicar la acción calmante de la miel cruda y el poder antibacteriano del propóleo.',
-        cameraMotion: 'Dolly In suave hacia la etiqueta dorada y el panal',
-        musicAndSfx: 'Melodía acústica familiar con cuerdas suaves',
+        purpose: 'Explicar con la misma voz de Don Arturo el poder del propóleo y la miel cruda.',
+        cameraMotion: 'Dolly In lento hacia el panal y el logo de abeja',
+        musicAndSfx: 'Guitarra acústica familiar + Misma Voz "Don Arturo" (Escena 2/4)',
         promptEs:
-          'Acercamiento lento hacia el tarro de Miel & Propóleo mostrando la pureza del panal de cera fresca y los fragmentos de propóleo con luz matutina cálida reflejándose en las letras doradas. Audio: música de fondo instrumental acústica cálida y reconfortante.',
+          'Acercamiento lento hacia el tarro estático sin animar ninguna letra. La luz matutina cálida hace brillar el panal de cera fresca, los fragmentos de propóleo y el logo dorado de la abeja. Música de fondo: continúa la guitarra acústica cálida y reconfortante. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEs +
+          ', diciendo: "El propóleo puro actúa como un escudo antibacteriano natural mientras la miel cruda suaviza tu garganta al instante."',
         promptEn:
-          'Slow push-in toward the Honey & Propolis jar showcasing the fresh honeycomb and raw propolis chunks with warm morning light reflecting off the gold foil lettering. Audio: comforting warm acoustic instrumental background music.',
-        onScreenText: '🍯 1. Alivia Garganta y Tos · 🛡️ 2. Antibacteriano Natural',
+          'Slow push-in toward the static jar without animating any letters. Warm morning light makes the fresh honeycomb, raw propolis chunks, and the gold bee logo gleam. Background music: continuous comforting warm acoustic guitar. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEn +
+          ', speaking in Spanish: "El propóleo puro actúa como un escudo antibacteriano natural mientras la miel cruda suaviza tu garganta al instante."',
+        onScreenText: 'Brillo cálido en el panal y en el logo de la abeja',
         voiceoverEs: 'El propóleo puro actúa como un escudo antibacteriano natural mientras la miel cruda suaviza tu garganta al instante.',
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Defensas Altas + Energía de Colmena)',
-        purpose: 'Destacar el polen, las hojas de eucalipto y la cosecha 100% pura sin azúcar añadida.',
-        cameraMotion: 'Pan horizontal suave sobre los ingredientes de la colmena',
-        musicAndSfx: 'Guitarra y arpa ligera que transmiten pureza natural',
+        purpose: 'Recorrer los ingredientes puros de la colmena manteniendo la misma voz.',
+        cameraMotion: 'Pan horizontal suave sobre el eucalipto, polen y panal',
+        musicAndSfx: 'Guitarra y arpa ligera + Misma Voz "Don Arturo" (Escena 3/4)',
         promptEs:
-          'Paneo suave a ras de la mesa de madera recorriendo las hojas de eucalipto, los gránulos de polen dorado, el panal hexagonal y el hilo de miel brillante. Audio: música de fondo orgánica y alegre con guitarra acústica y notas suaves de arpa.',
+          'Paneo suave a ras de la mesa de madera recorriendo las hojas de eucalipto, los gránulos de polen dorado y el panal hexagonal junto al tarro estático. Prohibido animar letras. Música de fondo: guitarra acústica orgánica y notas suaves de arpa. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEs +
+          ', diciendo: "Cien por ciento pura, cruda y orgánica, llena de enzimas y antioxidantes que fortalecen tu sistema inmune."',
         promptEn:
-          'Smooth tabletop pan across the eucalyptus leaves, golden bee pollen granules, hexagonal honeycomb, and glowing honey ribbon. Audio: cheerful organic background music with acoustic guitar and light harp notes.',
-        onScreenText: '🌿 3. Sube tus Defensas · ☀️ 4. 100% Pura y Orgánica',
+          'Smooth tabletop pan across the eucalyptus leaves, golden bee pollen granules, and hexagonal honeycomb next to the static jar. Do NOT animate letters. Background music: organic acoustic guitar and light harp notes. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEn +
+          ', speaking in Spanish: "Cien por ciento pura, cruda y orgánica, llena de enzimas y antioxidantes que fortalecen tu sistema inmune."',
+        onScreenText: 'Paneo sobre polen, eucalipto y panal real',
         voiceoverEs: 'Cien por ciento pura, cruda y orgánica, llena de enzimas y antioxidantes que fortalecen tu sistema inmune.',
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Cierre (1 Cucharadita cada Mañana)',
-        purpose: 'Invitar a incorporarla en la rutina diaria y cerrar el pedido.',
+        purpose: 'Cerrar con la recomendación diaria en la misma voz tradicional.',
         cameraMotion: 'Plano heroico cálido con caída continua de miel',
-        musicAndSfx: 'Acorde final cálido de guitarra acústica',
+        musicAndSfx: 'Acorde final acústico + Misma Voz "Don Arturo" (Escena 4/4)',
         promptEs:
-          'Plano final luminoso del tarro de Miel & Propóleo Artesanal con el hilo dorado de miel brillando a contraluz. Audio: cierre musical cálido y familiar con guitarra acústica.',
+          'Plano final luminoso del tarro totalmente estático con el hilo dorado de miel brillando a contraluz. Sin animar letras ni textos. Música de fondo: acorde final cálido y familiar de guitarra acústica. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEs +
+          ', diciendo: "Toma una cucharadita cada mañana para cuidar a quienes más quieres. ¡Pide tu Miel con Propóleo hoy!"',
         promptEn:
-          'Luminous final hero shot of the Artisanal Honey & Propolis jar with the golden honey ribbon glowing in backlight. Audio: warm, family-friendly acoustic guitar musical finale.',
-        onScreenText: 'Tarro de 350g · 1 cucharadita cada mañana · ¡Pídelo hoy!',
-        voiceoverEs: 'Una cucharadita cada mañana para cuidar a quienes más quieres. ¡Pide tu Miel con Propóleo hoy!',
+          'Luminous final hero shot of the completely static jar with the golden honey ribbon glowing in backlight. No animated letters or text. Background music: warm family-friendly acoustic guitar finale. ' +
+          VOICE_PROFILES_LIBRARY[3].descriptionEn +
+          ', speaking in Spanish: "Toma una cucharadita cada mañana para cuidar a quienes más quieres. ¡Pide tu Miel con Propóleo hoy!"',
+        onScreenText: 'Cierre limpio (Tarro fijo + Voz indicando la dosis)',
+        voiceoverEs: 'Toma una cucharadita cada mañana para cuidar a quienes más quieres. ¡Pide tu Miel con Propóleo hoy!',
       },
     ],
   },
@@ -906,31 +1052,41 @@ export const SCENE_TEMPLATES_LIBRARY: ScenePromptTemplate[] = [
     id: 'gancho-explosion-polvo',
     categoryId: 'gancho',
     categoryLabel: 'Escena de Gancho (0–4s)',
-    title: 'Explosión de Polvo Botánico en 120fps',
+    title: 'Explosión de Polvo Botánico en 120fps (Sin Animar Letras)',
     idealFor: 'Cúrcuma, Jengibre, Matcha, Cacao, Maca, Superfoods en cápsulas',
     cameraMovement: 'Slow Push-In (Dolly In lento)',
     musicSuggestion: 'Cinemático con percusión orgánica + whoosh en cámara lenta',
+    voiceAnchor: 'Misma Voz Fija (Narrador "Mateo" o "Dra. Sofía")',
     duration: '4 segundos',
-    benefitHookExample: '🔥 ¿Dolor articular o inflamación? Activa tu bienestar desde el primer día.',
+    benefitHookExample: 'Locución: "¿Dolor articular o inflamación? Activa tu bienestar desde el primer día."',
     promptEs:
-      'El frasco del producto permanece perfectamente firme y nítido en el centro sobre piedra pizarra negra. En cámara superlenta (120fps super slow motion), una nube de fino polvo botánico dorado detrás del envase se expande suavemente en el aire iluminada a contraluz por un foco cálido ámbar. Audio: colocar música de fondo cinematográfica e inspiradora con percusión orgánica suave y efecto envolvente en cámara lenta.',
+      'El frasco del producto y su logo permanecen 100% firmes y estáticos en el centro sobre piedra pizarra negra. NO animar letras ni generar textos móviles. En cámara superlenta (120fps super slow motion), únicamente una nube de fino polvo botánico dorado detrás del envase se expande suavemente en el aire iluminada a contraluz. Música de fondo: instrumental cinematográfico con percusión orgánica suave. ' +
+      VOICE_PROFILES_LIBRARY[1].descriptionEs +
+      '.',
     promptEn:
-      'The product bottle remains perfectly still and sharp in the center on black slate stone. In 120fps super slow motion, a cloud of fine golden botanical powder behind the bottle expands softly in mid-air backlit by warm amber studio lighting. Audio: warm uplifting cinematic background music with soft organic percussion and slow-motion powder expansion SFX.',
+      'The product bottle and its logo remain 100% still and static in the center on black slate stone. Do NOT animate letters or generate moving text. In 120fps super slow motion, only a cloud of fine golden botanical powder behind the bottle expands softly in mid-air backlit by warm amber light. Background music: uplifting cinematic music with soft organic percussion. ' +
+      VOICE_PROFILES_LIBRARY[1].descriptionEn +
+      '.',
   },
   {
     id: 'gancho-splash-esmeralda',
     categoryId: 'gancho',
     categoryLabel: 'Escena de Gancho (0–4s)',
-    title: 'Corona de Agua Cristalina y Hojas Flotantes',
+    title: 'Corona de Agua Cristalina y Hojas (Etiqueta Congelada)',
     idealFor: 'Goteros Detox, Clorofila, Extractos Herbales, Hidratación',
-    cameraMovement: 'Static Macro (Cámara fija + agua en slow-motion)',
+    cameraMovement: 'Static Macro (Frasco fijo + agua en slow-motion)',
     musicSuggestion: 'Guitarra acústica fresca + salpicadura de agua cristalina',
+    voiceAnchor: 'Misma Voz Fija ("Elena" · Voz fresca matutina)',
     duration: '4 segundos',
-    benefitHookExample: '💧 Purifica tu digestión y oxigena tu cuerpo cada mañana.',
+    benefitHookExample: 'Locución: "Purifica tu digestión y oxigena tu cuerpo cada mañana."',
     promptEs:
-      'El frasco gotero permanece completamente inmóvil y enfocado en el centro mientras una corona simétrica de agua cristalina en su base ondula en cámara superlenta, liberando microgotas brillantes y hojas de menta fresca flotando bajo rayos de sol. Audio: colocar música de fondo acústica refrescante con sonido cristalino de salpicadura de agua pura.',
+      'El frasco gotero y su logo permanecen completamente inmóviles y estáticos en el centro. Prohibido animar o deformar letras. Únicamente la corona simétrica de agua cristalina en su base ondula en cámara superlenta liberando microgotas brillantes y hojas de menta fresca. Música de fondo: guitarra acústica refrescante con sonido cristalino de agua pura. ' +
+      VOICE_PROFILES_LIBRARY[2].descriptionEs +
+      '.',
     promptEn:
-      'The dropper bottle remains completely still and sharp in the center while a symmetrical crystal water crown at its base ripples in super slow motion, releasing sparkling micro-droplets and fresh mint leaves floating under sunbeams. Audio: refreshing acoustic background music with crisp crystal water splash sound effects.',
+      'The dropper bottle and its logo remain completely still and static in the center. Animating or warping letters is forbidden. Only the symmetrical crystal water crown at its base ripples in super slow motion releasing sparkling micro-droplets and fresh mint leaves. Background music: refreshing acoustic guitar with crisp crystal water splash SFX. ' +
+      VOICE_PROFILES_LIBRARY[2].descriptionEn +
+      '.',
   },
   {
     id: 'gancho-amanecer-bosque',
@@ -938,29 +1094,39 @@ export const SCENE_TEMPLATES_LIBRARY: ScenePromptTemplate[] = [
     categoryLabel: 'Escena de Gancho (0–4s)',
     title: 'Rayos de Sol Matutinos y Rocío Resbalando',
     idealFor: 'Colágeno, Magnesio, Multivitamínicos, Adaptógenos',
-    cameraMovement: 'Dolly In suave hacia la etiqueta',
+    cameraMovement: 'Dolly In suave hacia el logo dorado',
     musicSuggestion: 'Piano suave de bienestar + brisa matutina del bosque',
+    voiceAnchor: 'Misma Voz Fija ("Dra. Sofía" · Especialista)',
     duration: '4 segundos',
-    benefitHookExample: '🌿 4 beneficios esenciales en una sola fórmula 100% natural.',
+    benefitHookExample: 'Locución: "Cuatro beneficios esenciales en una sola fórmula cien por ciento natural."',
     promptEs:
-      'El frasco de vidrio ámbar permanece firme sobre madera húmeda en un bosque soleado. Una gota de rocío cristalina se desliza lentamente por el vidrio mientras los rayos de sol matutinos (god rays) atraviesan las hojas de helecho y el polen dorado flota en el aire. Audio: colocar música de fondo instrumental relajante de piano suave y cuerdas cálidas con brisa de bosque.',
+      'El frasco de vidrio ámbar y su etiqueta permanecen 100% firmes sobre madera húmeda en un bosque soleado. NO animar letras. Una gota de rocío cristalina se desliza lentamente por el vidrio mientras los rayos de sol matutinos atraviesan las hojas de helecho y el polen dorado flota en el aire. Música de fondo: piano suave y cuerdas cálidas con brisa de bosque. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEs +
+      '.',
     promptEn:
-      'The amber glass bottle stays steady on wet wood in a sunlit forest. A crystal dew drop slides slowly down the glass while morning sunbeams filter through fern leaves and golden pollen floats in the air. Audio: soothing soft piano and warm strings background music with gentle forest breeze.',
+      'The amber glass bottle and its label stay 100% steady on wet wood in a sunlit forest. Do NOT animate letters. A crystal dew drop slides slowly down the glass while morning sunbeams filter through fern leaves and golden pollen floats in the air. Background music: soft piano and warm strings with gentle forest breeze. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEn +
+      '.',
   },
   {
     id: 'beneficios-medallones-oro',
     categoryId: 'beneficios',
     categoryLabel: 'Escena de Beneficios (4–8s)',
-    title: 'Destello de Luz sobre los 4 Medallones Dorados',
-    idealFor: 'Explicar los 4 beneficios principales con iconos dorados',
-    cameraMovement: 'Orbit suave de 15° (Izquierda a Derecha)',
-    musicSuggestion: 'Instrumental inspirador + destello cristalino (chime) por beneficio',
+    title: 'Destello de Luz sobre Logos/Iconos Dorados (Sin Letras)',
+    idealFor: 'Iluminar los 4 iconos simbólicos de beneficios mientras habla el locutor',
+    cameraMovement: 'Orbit suave de 10° (Sin deformar el envase)',
+    musicSuggestion: 'Instrumental inspirador + destello cristalino (chime) por icono',
+    voiceAnchor: 'Misma Voz Fija que en la Escena 1',
     duration: '4 segundos',
-    benefitHookExample: '✨ 1. Piel Firme · 🦴 2. Articulaciones Sanas · 💪 3. Músculos · ⚡ 4. Energía',
+    benefitHookExample: 'Locución: "Nutre tu piel y cabello mientras proteges tus articulaciones y músculos."',
     promptEs:
-      'Movimiento orbital suave de 15 grados alrededor del frasco y sus 4 medallones circulares dorados flotantes. Un barrido de luz cálida recorre el relieve metálico de los medallones haciéndolos brillar con elegancia mientras partículas doradas ascienden en el fondo. Audio: colocar música de fondo inspiradora de bienestar con un sutil destello sonoro cristalino al brillar cada medallón.',
+      'El envase permanece firme y estático. NO animar letras; únicamente un barrido de luz cálida recorre el relieve metálico de los 4 medallones circulares con iconos/logos simbólicos dorados haciéndolos brillar con elegancia mientras partículas doradas ascienden en el fondo. Música de fondo: instrumental inspirador de bienestar con destello cristalino suave. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEs +
+      '.',
     promptEn:
-      'Gentle 15-degree orbital camera movement around the bottle and its 4 floating circular gold medallions. A warm light sweep travels across the metallic relief of the medallions making them gleam elegantly while golden particles rise in the background. Audio: inspiring wellness background music with a subtle crystal chime as each medallion shines.',
+      'The bottle remains steady and static. Do NOT animate letters; only a warm light sweep travels across the metallic relief of the 4 circular gold symbolic icon/logo medallions making them gleam elegantly while golden particles rise in the background. Background music: inspiring wellness instrumental with a subtle crystal chime. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEn +
+      '.',
   },
   {
     id: 'beneficios-gota-pipeta',
@@ -970,12 +1136,17 @@ export const SCENE_TEMPLATES_LIBRARY: ScenePromptTemplate[] = [
     idealFor: 'Sérums Faciales, Aceites Esenciales, Extractos Sublinguales',
     cameraMovement: 'Macro Close-Up (Enfoque selectivo f/1.4)',
     musicSuggestion: 'Ambient Spa con piano delicado y notas de arpa',
+    voiceAnchor: 'Misma Voz Fija ("Dra. Sofía")',
     duration: '4 segundos',
-    benefitHookExample: '🌸 Regenera, atenúa manchas e hidrata profundamente mientras duermes.',
+    benefitHookExample: 'Locución: "Regenera, atenúa manchas e hidrata profundamente mientras duermes."',
     promptEs:
-      'Plano macro extremo junto al frasco abierto: de la punta de la pipeta de cristal se desprende en cámara superlenta una gota dorada traslúcida y brillante, iluminada por el sol del atardecer con un fondo bokeh cremoso de flores y musgo. Audio: colocar música de fondo elegante de spa con piano delicado y notas de arpa suave.',
+      'Plano macro extremo junto al frasco estático (sin animar letras): de la punta de la pipeta de cristal se desprende en cámara superlenta una gota dorada traslúcida y brillante, iluminada por el sol del atardecer con un fondo bokeh cremoso de flores y musgo. Música de fondo: spa elegante con piano delicado y arpa suave. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEs +
+      '.',
     promptEn:
-      'Extreme macro close-up next to the bottle: from the tip of the glass pipette a translucent glowing golden drop detaches in super slow motion, backlit by golden hour sunlight with a creamy floral and moss bokeh background. Audio: luxury spa background music with delicate piano and soft harp notes.',
+      'Extreme macro close-up next to the static bottle (do not animate letters): from the tip of the glass pipette a translucent glowing golden drop detaches in super slow motion, backlit by golden hour sunlight with a creamy floral and moss bokeh background. Background music: luxury spa piano and soft harp. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEn +
+      '.',
   },
   {
     id: 'beneficios-absorcion-celular',
@@ -983,14 +1154,19 @@ export const SCENE_TEMPLATES_LIBRARY: ScenePromptTemplate[] = [
     categoryLabel: 'Escena de Beneficios (8–12s)',
     title: 'Burbujas de Luz Dorada (Rápida Absorción y Pureza)',
     idealFor: 'Probióticos, Omega 3, Vitaminas, Citrato de Magnesio',
-    cameraMovement: 'Pan vertical ascendente lento',
-    musicSuggestion: 'Melodía electrónica orgánica suave (Ambient Wellness)',
+    cameraMovement: 'Plano fijo con microburbujas ascendentes',
+    musicSuggestion: 'Melodía orgánica suave (Ambient Wellness)',
+    voiceAnchor: 'Misma Voz Fija en todas las escenas',
     duration: '4 segundos',
-    benefitHookExample: '🛡️ Absorción 3x más rápida para subir tus defensas y proteger tus células.',
+    benefitHookExample: 'Locución: "Con absorción tres veces más rápida para subir tus defensas y energía."',
     promptEs:
-      'El envase permanece nítido en el centro mientras cientos de microburbujas de luz dorada y esmeralda ascienden suavemente a su alrededor en cámara lenta, transmitiendo biodisponibilidad, pureza celular y alivio inmediato. Audio: colocar música de fondo ambiental moderna y cálida con armónicos suaves.',
+      'El envase y su logo permanecen 100% estáticos y nítidos en el centro sin animar ninguna letra. Alrededor del frasco, cientos de microburbujas de luz dorada y esmeralda ascienden suavemente en cámara lenta transmitiendo biodisponibilidad y pureza celular. Música de fondo: ambiental moderna y cálida con armónicos suaves. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEs +
+      '.',
     promptEn:
-      'The bottle remains sharp in the center while hundreds of golden and emerald light micro-bubbles ascend gently around it in slow motion, conveying bioavailability, cellular purity, and rapid relief. Audio: warm modern ambient wellness background music with soft harmonics.',
+      'The bottle and its logo remain 100% static and sharp in the center without animating any letters. Around the bottle, hundreds of golden and emerald light micro-bubbles ascend gently in slow motion conveying bioavailability and cellular purity. Background music: warm modern ambient wellness music. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEn +
+      '.',
   },
   {
     id: 'ingredientes-miel-cayendo',
@@ -1000,12 +1176,17 @@ export const SCENE_TEMPLATES_LIBRARY: ScenePromptTemplate[] = [
     idealFor: 'Mieles, Jarabes Naturales, Propóleo, Polen, Jalea Real',
     cameraMovement: 'Static Macro con fluido viscoso en vivo',
     musicSuggestion: 'Guitarra acústica cálida artesanal + ambiente matutino',
+    voiceAnchor: 'Misma Voz Fija ("Don Arturo" · Voz artesanal)',
     duration: '4 segundos',
-    benefitHookExample: '🍯 Escudo antibacteriano natural que suaviza tu garganta al instante.',
+    benefitHookExample: 'Locución: "Un escudo antibacteriano natural que suaviza tu garganta al instante."',
     promptEs:
-      'Al lado del tarro artesanal firme, una cuchara mielera de madera deja caer un hilo espeso y continuo de miel dorada traslúcida en cámara lenta, formando pliegues brillantes a contraluz junto a trozos de panal fresco y hojas de eucalipto. Audio: colocar música de fondo acústica cálida con guitarra suave y ambiente de mañana soleada.',
+      'Al lado del tarro artesanal 100% firme (sin animar letras de la etiqueta), una cuchara mielera de madera deja caer un hilo espeso y continuo de miel dorada traslúcida en cámara lenta formando pliegues brillantes a contraluz junto a trozos de panal fresco. Música de fondo: guitarra acústica cálida artesanal. ' +
+      VOICE_PROFILES_LIBRARY[3].descriptionEs +
+      '.',
     promptEn:
-      'Beside the steady artisanal jar, a wooden honey dipper pours a thick continuous ribbon of translucent golden honey in slow motion, forming glowing coils in backlight next to fresh honeycomb chunks and eucalyptus leaves. Audio: warm fingerpicked acoustic guitar background music with sunny morning ambiance.',
+      'Beside the 100% steady artisanal jar (do not animate label letters), a wooden honey dipper pours a thick continuous ribbon of translucent golden honey in slow motion forming glowing coils in backlight next to fresh honeycomb chunks. Background music: warm fingerpicked acoustic guitar. ' +
+      VOICE_PROFILES_LIBRARY[3].descriptionEn +
+      '.',
   },
   {
     id: 'ingredientes-mesa-botanica',
@@ -1015,26 +1196,36 @@ export const SCENE_TEMPLATES_LIBRARY: ScenePromptTemplate[] = [
     idealFor: 'Demostrar que el suplemento está hecho con ingredientes 100% reales',
     cameraMovement: 'Tabletop Pan (Paneo rasante horizontal)',
     musicSuggestion: 'Cuerdas acústicas cálidas + percusión orgánica sutil',
+    voiceAnchor: 'Misma Voz Fija ("Mateo" · Narrador Comercial)',
     duration: '4 segundos',
-    benefitHookExample: '🌱 Ingredientes 100% puros, orgánicos y sin químicos añadidos.',
+    benefitHookExample: 'Locución: "Ingredientes cien por ciento puros, orgánicos y de máxima absorción."',
     promptEs:
-      'Paneo rasante cinematográfico sobre una mesa de madera oscura y piedra húmeda que recorre los ingredientes naturales frescos cubiertos de gotas de rocío hasta detenerse en el frasco principal iluminado con luz cálida. Audio: colocar música de fondo instrumental orgánica con guitarra y violonchelo suave.',
+      'Paneo rasante cinematográfico sobre una mesa de madera oscura y piedra húmeda que recorre los ingredientes naturales frescos cubiertos de gotas de rocío junto al frasco estático. Prohibido animar letras. Música de fondo: instrumental orgánico con guitarra y violonchelo suave. ' +
+      VOICE_PROFILES_LIBRARY[1].descriptionEs +
+      '.',
     promptEn:
-      'Cinematic low-angle tabletop pan across dark wood and wet stone, gliding past fresh natural ingredients covered in dew drops before settling on the hero bottle lit by warm studio light. Audio: organic instrumental background music with gentle guitar and cello.',
+      'Cinematic low-angle tabletop pan across dark wood and wet stone gliding past fresh natural ingredients covered in dew drops next to the static bottle. Do NOT animate letters. Background music: organic instrumental with gentle guitar and cello. ' +
+      VOICE_PROFILES_LIBRARY[1].descriptionEn +
+      '.',
   },
   {
     id: 'cierre-ficha-dosis',
     categoryId: 'cierre',
     categoryLabel: 'Escena de Cierre y Dosis (12–16s)',
-    title: 'Plano Heroico Final con Destello en Etiqueta y Dosis',
-    idealFor: 'Cerrar el video comercial invitando a comprar por WhatsApp o Web',
-    cameraMovement: 'Hero Lock (Plano fijo con barrido de luz en letras doradas)',
+    title: 'Plano Heroico Final con Destello en el Logo (Sin Animar Letras)',
+    idealFor: 'Cerrar el video comercial con la dosis diaria dicha por el mismo locutor',
+    cameraMovement: 'Hero Lock (Plano fijo con barrido de luz en el logo dorado)',
     musicSuggestion: 'Acorde final resolutivo de piano y cuerdas + chime dorado',
+    voiceAnchor: 'Misma Voz Fija cerrando el llamado a la acción',
     duration: '4 segundos',
-    benefitHookExample: '📦 Solo 2 cápsulas al día · Tratamiento completo · ¡Pídelo hoy!',
+    benefitHookExample: 'Locución: "Solo toma dos cápsulas al día. ¡Escríbenos y pide el tuyo hoy!"',
     promptEs:
-      'Plano maestro final perfectamente centrado del producto natural y sus medallones de beneficios. Un elegante destello de luz recorre las letras doradas de la etiqueta mientras las partículas del fondo se detienen suavemente. Audio: colocar cierre musical armónico e inspirador con piano acústico y cuerdas cálidas.',
+      'Plano maestro final perfectamente centrado del producto natural y sus medallones de iconos dorados. NO animar letras; únicamente un elegante destello de luz recorre el logo dorado mientras las partículas del fondo se posan suavemente. Música de fondo: acorde final armónico de piano y cuerdas cálidas. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEs +
+      '.',
     promptEn:
-      'Perfectly centered final master hero shot of the natural product and its benefit medallions. An elegant light flare sweeps across the gold foil label lettering while background particles gently settle. Audio: harmonious, inspiring musical resolution with acoustic piano and warm strings.',
+      'Perfectly centered final master hero shot of the natural product and its gold icon medallions. Do NOT animate letters; only an elegant light flare sweeps across the gold logo emblem while background particles gently settle. Background music: harmonious resolving chord of piano and warm strings. ' +
+      VOICE_PROFILES_LIBRARY[0].descriptionEn +
+      '.',
   },
 ];

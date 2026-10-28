@@ -16,13 +16,13 @@ import {
   Activity,
   Award,
   Mic,
-  Type,
   Camera,
-  Layers,
   X,
   ChevronRight,
   BookOpen,
   Music,
+  ShieldCheck,
+  UserCheck,
 } from 'lucide-react';
 import {
   PRODUCTS_DATA,
@@ -99,21 +99,22 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
         (s) =>
           `--- ${s.title} (${s.timeRange}) ---\n` +
           `Cámara: ${s.cameraMotion}\n` +
-          `Música de Fondo y SFX: ${s.musicAndSfx}\n` +
-          `Prompt Escena + Audio (ES): ${s.promptEs}\n` +
-          `Prompt Escena + Audio (EN): ${s.promptEn}\n` +
-          `Texto en pantalla: ${s.onScreenText}\n` +
-          `Locución de Beneficios: "${s.voiceoverEs}"`
+          `Audio y Voz Fija: ${s.musicAndSfx}\n` +
+          `Prompt Escena (ES): ${s.promptEs}\n` +
+          `Prompt Escena (EN): ${s.promptEn}\n` +
+          `Acción Visual: ${s.onScreenText}\n` +
+          `Frase exacta del personaje: "${s.voiceoverEs}"`
       )
       .join('\n\n');
 
     return (
-      `=== GUÍA DE PROMPTS, ESCENAS Y MÚSICA: ${prod.name} ===\n` +
+      `=== GUÍA DE PROMPTS, ESCENAS, VOZ FIJA Y MÚSICA: ${prod.name} ===\n` +
       `Titular: ${prod.headline}\n` +
+      `Perfil de Voz Fijo (Misma voz en las 4 escenas): ${prod.voiceProfilePromptEs}\n` +
       `Música de Fondo General: ${prod.backgroundMusicPromptEs}\n\n` +
-      `[1] PROMPT DE IMAGEN GEMINI (ESTUDIO CON ELEMENTOS Y BENEFICIOS - ES):\n${prod.geminiPromptEs}\n\n` +
-      `[2] PROMPT DE IMAGEN GEMINI (FOTO LIMPIA PARA ANIMAR - ES):\n${prod.cleanHeroPromptEs}\n\n` +
-      `[3] SECUENCIA DE 4 ESCENAS DE VIDEO CON MÚSICA DE FONDO Y BENEFICIOS (16s):\n\n${scenesText}`
+      `[1] PROMPT DE IMAGEN GEMINI (ICONOS/LOGOS SIN LETRAS PEQUEÑAS - ES):\n${prod.geminiPromptEs}\n\n` +
+      `[2] PROMPT DE IMAGEN GEMINI (FOTO LIMPIA DE ESTUDIO - ES):\n${prod.cleanHeroPromptEs}\n\n` +
+      `[3] SECUENCIA DE 4 ESCENAS (SIN ANIMAR LETRAS + MISMA VOZ + MÚSICA):\n\n${scenesText}`
     );
   };
 
@@ -129,6 +130,9 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
 
     const activeMusicPrompt =
       promptLang === 'es' ? product.backgroundMusicPromptEs : product.backgroundMusicPromptEn;
+
+    const activeVoicePrompt =
+      promptLang === 'es' ? product.voiceProfilePromptEs : product.voiceProfilePromptEn;
 
     return (
       <div
@@ -183,11 +187,11 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
             >
               {copiedId === `full-${product.id}` ? (
                 <>
-                  <Check className="w-4 h-4" /> ¡Prompts + Escenas + Música Copiados!
+                  <Check className="w-4 h-4" /> ¡Todo Copiado!
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4" /> Copiar Todo (Imagen + Escenas + Música)
+                  <Copy className="w-4 h-4" /> Copiar Todo (Imagen + Escenas + Voz + Música)
                 </>
               )}
             </button>
@@ -207,18 +211,18 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
 
         {/* Main Content Grid */}
         <div className="p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Column: Image + Background Music Card + 4 Benefits + Specs */}
-          <div className="lg:col-span-5 space-y-6">
+          {/* Left Column: Image + Voice Profile Card + Background Music Card + 4 Benefits */}
+          <div className="lg:col-span-5 space-y-5">
             {/* Image Showcase */}
             <div className="relative rounded-2xl overflow-hidden border-2 border-amber-500/40 bg-black shadow-xl flex items-center justify-center">
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full max-h-[440px] object-cover"
+                className="w-full max-h-[420px] object-cover"
               />
               <div className="absolute bottom-3 left-3 right-3 bg-black/80 backdrop-blur-md p-3 rounded-xl border border-amber-500/30">
                 <div className="text-[10px] font-mono uppercase tracking-wider text-amber-400">
-                  Promesa Principal del Video
+                  Promesa Principal (Dicha por la Voz del Personaje)
                 </div>
                 <div className="text-sm font-black text-white tracking-wide font-serif">
                   "{product.headline}"
@@ -226,9 +230,43 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               </div>
             </div>
 
+            {/* Consistent Character Voice Profile Box */}
+            <div
+              className={`rounded-2xl border p-4 space-y-2 ${
+                isDark
+                  ? 'bg-emerald-950/30 border-emerald-500/40'
+                  : 'bg-emerald-50 border-emerald-200'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                  <UserCheck className="w-4 h-4 text-emerald-400" /> Misma Voz de Personaje (Anclada en las 4 Escenas)
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleCopy(activeVoicePrompt, `voice-${product.id}`)}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold flex items-center gap-1 cursor-pointer transition-all"
+                >
+                  {copiedId === `voice-${product.id}` ? (
+                    <>
+                      <Check className="w-3 h-3" /> Copiado
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3 h-3" /> Copiar Voz
+                    </>
+                  )}
+                </button>
+              </div>
+              <div className="text-xs font-bold text-amber-300">{product.voiceProfileName}</div>
+              <p className="text-xs font-mono text-slate-200 bg-black/60 p-2.5 rounded-lg border border-emerald-500/30 select-all">
+                {activeVoicePrompt}
+              </p>
+            </div>
+
             {/* Background Music Prompt Box */}
             <div
-              className={`rounded-2xl border p-4 space-y-2.5 ${
+              className={`rounded-2xl border p-4 space-y-2 ${
                 isDark
                   ? 'bg-purple-950/25 border-purple-500/40'
                   : 'bg-purple-50 border-purple-200'
@@ -236,7 +274,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
-                  <Music className="w-4 h-4 text-purple-400" /> Música de Fondo Recomendada
+                  <Music className="w-4 h-4 text-purple-400" /> Música de Fondo Continua
                 </span>
                 <button
                   type="button"
@@ -249,7 +287,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3 h-3" /> Copiar Prompt Música
+                      <Copy className="w-3 h-3" /> Copiar Música
                     </>
                   )}
                 </button>
@@ -272,7 +310,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     isDark ? 'text-amber-300' : 'text-amber-900'
                   }`}
                 >
-                  <Award className="w-4 h-4 text-amber-400" /> Los 4 Beneficios para Explicar en las Escenas
+                  <Award className="w-4 h-4 text-amber-400" /> 4 Beneficios (Iconos Simbólicos + Locución)
                 </h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -302,38 +340,9 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                 ))}
               </div>
             </div>
-
-            {/* Specs Ficha Técnica */}
-            <div
-              className={`rounded-2xl border p-4 text-xs space-y-2 ${
-                isDark ? 'bg-black/40 border-slate-800' : 'bg-stone-50 border-stone-200'
-              }`}
-            >
-              <div className="font-bold text-emerald-400 uppercase tracking-wider text-[11px] mb-2">
-                Datos del Producto (Para la Escena 4 de Cierre):
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <span className="text-slate-400 block text-[10px]">TIPO:</span>
-                  <span className="font-semibold">{product.specs.tipo}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[10px]">CONTENIDO:</span>
-                  <span className="font-semibold">{product.specs.contenido}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[10px]">INGREDIENTES:</span>
-                  <span className="font-semibold">{product.specs.ingredientes}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block text-[10px]">MODO DE USO:</span>
-                  <span className="font-semibold text-amber-400">{product.specs.uso}</span>
-                </div>
-              </div>
-            </div>
           </div>
 
-          {/* Right Column: Phase 1 (Gemini Image Prompt + Anatomy) & Phase 2 (4 Flow Video Scenes + Background Music + Voiceover) */}
+          {/* Right Column: Phase 1 (Gemini Image Prompt + Anatomy) & Phase 2 (4 Flow Video Scenes) */}
           <div className="lg:col-span-7 space-y-7">
             {/* PHASE 1: GEMINI IMAGE PROMPT */}
             <div
@@ -344,7 +353,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" /> 1. Prompt de Imagen (Para Gemini)
+                    <Sparkles className="w-3.5 h-3.5" /> 1. Prompt de Imagen (Con Logos e Iconos sin Letras Pequeñas)
                   </span>
                   <h4 className={`text-lg font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
                     Fotografía Profesional de {product.name}
@@ -362,7 +371,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                         : 'text-slate-300 hover:text-white'
                     }`}
                   >
-                    Prompt Completo de Estudio
+                    Con Medallones de Iconos
                   </button>
                   <button
                     type="button"
@@ -373,7 +382,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                         : 'text-slate-300 hover:text-white'
                     }`}
                   >
-                    Versión Minimalista
+                    Solo Envase y Botánica
                   </button>
                 </div>
               </div>
@@ -383,7 +392,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-mono text-emerald-300">
                     {imagePromptType === 'poster'
-                      ? 'PROMPT DE IMAGEN COMPLETO'
+                      ? 'PROMPT DE IMAGEN CON ICONOS/LOGOS SIMBÓLICOS'
                       : 'PROMPT DE IMAGEN BASE LIMPIA'}{' '}
                     ({promptLang.toUpperCase()})
                   </span>
@@ -413,7 +422,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               {/* Prompt Anatomy Color Breakdown */}
               <div className="space-y-2">
                 <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Anatomía Desglosada del Prompt de Imagen:
+                  Anatomía del Prompt (Optimizada para no deformar letras):
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   {product.anatomy.map((seg) => {
@@ -443,13 +452,15 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                 isDark ? 'bg-[#131C18] border-amber-500/40' : 'bg-amber-50/40 border-amber-200'
               }`}
             >
-              <div>
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                  <Film className="w-3.5 h-3.5" /> 2. Prompts de Escenas + Música de Fondo para Flow (16s)
-                </span>
-                <h4 className={`text-lg font-bold font-serif mt-0.5 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                  Las 4 Escenas de Video (Cada Prompt ya incluye la instrucción de Música de Fondo)
-                </h4>
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                    <Film className="w-3.5 h-3.5" /> 2. Las 4 Escenas para Flow (Sin Animar Letras + Misma Voz + Música)
+                  </span>
+                  <h4 className={`text-lg font-bold font-serif mt-0.5 ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                    Cada Escena Bloquea las Letras y Mantiene el Mismo Personaje Vocal
+                  </h4>
+                </div>
               </div>
 
               <div className="space-y-4">
@@ -486,7 +497,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                             </>
                           ) : (
                             <>
-                              <Copy className="w-3.5 h-3.5" /> Copiar Prompt Escena + Música ({promptLang.toUpperCase()})
+                              <Copy className="w-3.5 h-3.5" /> Copiar Escena Completa ({promptLang.toUpperCase()})
                             </>
                           )}
                         </button>
@@ -494,6 +505,9 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
 
                       {/* Flow Settings Badges */}
                       <div className="flex flex-wrap gap-2 text-[11px]">
+                        <span className="px-2.5 py-1 rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-semibold flex items-center gap-1">
+                          <ShieldCheck className="w-3 h-3" /> {scene.onScreenText}
+                        </span>
                         <span className="px-2.5 py-1 rounded-md bg-sky-500/15 text-sky-300 border border-sky-500/30 font-semibold flex items-center gap-1">
                           <Camera className="w-3 h-3" /> {scene.cameraMotion}
                         </span>
@@ -507,19 +521,14 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                         {scenePrompt}
                       </div>
 
-                      {/* Benefit On-screen Text & Voiceover */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 pt-1">
-                        <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs">
-                          <div className="text-[10px] font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1 mb-0.5">
-                            <Type className="w-3 h-3" /> Texto de Beneficio en Pantalla:
-                          </div>
-                          <div className="font-bold text-white">{scene.onScreenText}</div>
-                        </div>
-                        <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-xs">
-                          <div className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1 mb-0.5">
-                            <Mic className="w-3 h-3" /> Locución / Voz de Beneficios:
-                          </div>
-                          <div className="italic text-slate-200">"{scene.voiceoverEs}"</div>
+                      {/* Voiceover Line */}
+                      <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-xs flex items-start gap-2">
+                        <Mic className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 block">
+                            Diálogo de {product.voiceProfileName}:
+                          </span>
+                          <span className="italic text-slate-100 font-medium">"{scene.voiceoverEs}"</span>
                         </div>
                       </div>
                     </div>
@@ -540,17 +549,17 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mb-3">
-              <BookOpen className="w-3.5 h-3.5" /> Catálogo de Prompts, Escenas y Música de Fondo
+              <BookOpen className="w-3.5 h-3.5" /> Catálogo de Prompts, Escenas, Voz Fija y Música
             </span>
             <h2
               className={`text-3xl md:text-4xl font-bold font-serif ${
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              5 Productos Naturales: Prompts de Imagen + Escenas con Música y Beneficios
+              5 Productos Naturales: Animación de Logos/Entorno (Sin Animar Letras) + Misma Voz
             </h2>
             <p className={`mt-2 max-w-3xl text-sm md:text-base ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Selecciona cualquier producto para copiar su <strong>prompt de fotografía en Gemini</strong> y las <strong>4 escenas cinematográficas para Google Flow</strong> (con instrucciones de <strong>música de fondo</strong>, efectos de sonido y guion de beneficios incluidos).
+              Todos los prompts están ajustados para <strong>no animar ni deformar letras</strong> (solo se animan los logos simbólicos, la luz y los elementos naturales) y mantienen exactamente <strong>el mismo perfil de voz de personaje</strong> y <strong>música de fondo</strong> en las 4 escenas.
             </p>
           </div>
         </div>
@@ -607,7 +616,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                         {prod.category}
                       </span>
                       <span className="px-2 py-0.5 rounded bg-black/75 text-amber-300 text-[10px] font-mono border border-amber-400/30">
-                        4 Escenas + Música
+                        Sin Animar Letras
                       </span>
                     </div>
 
@@ -622,15 +631,13 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     </div>
                   </div>
 
-                  {/* Card Body: 4 Benefits + Music Summary */}
-                  <div className="p-4 space-y-3">
-                    <p
-                      className={`text-xs line-clamp-2 leading-relaxed ${
-                        isDark ? 'text-slate-300' : 'text-stone-600'
-                      }`}
-                    >
-                      {prod.summary}
-                    </p>
+                  {/* Card Body: Voice + Music + 4 Benefits Summary */}
+                  <div className="p-4 space-y-2.5">
+                    {/* Voice Tag */}
+                    <div className="px-2.5 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-[11px] text-emerald-300 font-semibold flex items-center gap-1.5">
+                      <UserCheck className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span className="truncate">{prod.voiceProfileName}</span>
+                    </div>
 
                     {/* Music Tag */}
                     <div className="px-2.5 py-1.5 rounded-lg bg-purple-500/15 border border-purple-500/30 text-[11px] text-purple-300 font-semibold flex items-center gap-1.5">
@@ -638,9 +645,9 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                       <span className="truncate">{prod.backgroundMusicStyle}</span>
                     </div>
 
-                    <div className="space-y-1.5">
+                    <div className="space-y-1.5 pt-1">
                       <div className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
-                        4 Beneficios en el Guion de Escenas:
+                        4 Beneficios (Iconos Simbólicos + Voz):
                       </div>
                       <div className="grid grid-cols-2 gap-1.5">
                         {prod.benefits.map((b) => (
@@ -713,11 +720,10 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               }`}
             >
               <Sparkles className="w-5 h-5 text-amber-400" />
-              Prompts, Escenas y Música Activos:{' '}
-              <span className="text-emerald-400">{selectedProduct.name}</span>
+              Estudio Activo: <span className="text-emerald-400">{selectedProduct.name}</span>
             </h3>
             <span className="text-xs text-slate-400">
-              Selecciona cualquier producto arriba para ver sus escenas
+              Selecciona cualquier producto arriba para inspeccionar sus 4 escenas
             </span>
           </div>
           {renderDetailedProductInspector(selectedProduct, false)}

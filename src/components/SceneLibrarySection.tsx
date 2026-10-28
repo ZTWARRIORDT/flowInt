@@ -8,10 +8,13 @@ import {
   Layers,
   Music,
   Volume2,
+  UserCheck,
+  ShieldCheck,
 } from 'lucide-react';
 import {
   SCENE_TEMPLATES_LIBRARY,
   MUSIC_PROMPTS_LIBRARY,
+  VOICE_PROFILES_LIBRARY,
   ScenePromptTemplate,
 } from '../data/flowData';
 
@@ -64,18 +67,17 @@ export const SceneLibrarySection: React.FC<Props> = ({ isDark }) => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/30 mb-3">
-              <Film className="w-3.5 h-3.5" /> Biblioteca de Prompts de Escenas + Música de Fondo
+              <Film className="w-3.5 h-3.5" /> Biblioteca de Escenas + Misma Voz + Música de Fondo
             </span>
             <h2
               className={`text-3xl md:text-4xl font-bold font-serif ${
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              Prompts de Escenas Cinematográficas y Música para Flow
+              Prompts de Escenas (Sin Animar Letras, Solo Logos y Entorno)
             </h2>
             <p className={`mt-2 max-w-3xl text-sm md:text-base ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Cada escena incluye el movimiento de cámara, la acción natural en cámara lenta y la{' '}
-              <strong>instrucción de música de fondo y efectos sonoros</strong> para que tus videos de beneficios tengan atmósfera comercial completa.
+              Cada escena incluye la restricción explícita de <strong>no animar ni deformar letras</strong>, animando únicamente los logos/iconos, la luz y la naturaleza, además de mantener <strong>la misma voz del personaje</strong> y la <strong>música de fondo</strong>.
             </p>
           </div>
 
@@ -164,10 +166,16 @@ export const SceneLibrarySection: React.FC<Props> = ({ isDark }) => {
                     </p>
                   </div>
 
-                  {/* Camera + Music Tags */}
+                  {/* Camera + Voice + Music Tags */}
                   <div className="flex flex-wrap gap-1.5">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-semibold">
+                      <ShieldCheck className="w-3 h-3" /> Sin Animar Letras
+                    </span>
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-500/15 border border-sky-500/30 text-sky-300 text-[11px] font-semibold">
                       <Camera className="w-3 h-3" /> {scene.cameraMovement}
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[11px] font-semibold">
+                      <UserCheck className="w-3 h-3" /> {scene.voiceAnchor}
                     </span>
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-300 text-[11px] font-semibold">
                       <Music className="w-3 h-3" /> {scene.musicSuggestion}
@@ -182,7 +190,7 @@ export const SceneLibrarySection: React.FC<Props> = ({ isDark }) => {
                   {/* Benefit Hook Overlay Example */}
                   <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs">
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-400 block mb-0.5">
-                      Texto / Beneficio sugerido en esta escena:
+                      Ejemplo de beneficio narrado por el personaje:
                     </span>
                     <span className="font-semibold text-white">{scene.benefitHookExample}</span>
                   </div>
@@ -196,17 +204,77 @@ export const SceneLibrarySection: React.FC<Props> = ({ isDark }) => {
                 >
                   {copiedId === scene.id ? (
                     <>
-                      <Check className="w-4 h-4" /> ¡Escena + Música Copiada!
+                      <Check className="w-4 h-4" /> ¡Escena Copiada!
                     </>
                   ) : (
                     <>
-                      <Copy className="w-4 h-4" /> Copiar Escena con Música ({lang.toUpperCase()})
+                      <Copy className="w-4 h-4" /> Copiar Escena + Voz + Música ({lang.toUpperCase()})
                     </>
                   )}
                 </button>
               </div>
             );
           })}
+        </div>
+
+        {/* Dedicated Consistent Character Voice Profiles Sub-Section */}
+        <div
+          className={`rounded-3xl border p-6 md:p-8 space-y-6 ${
+            isDark
+              ? 'bg-gradient-to-br from-[#0E1D17] via-[#101714] to-[#14221A] border-emerald-500/40'
+              : 'bg-emerald-50/60 border-emerald-200'
+          }`}
+        >
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-2">
+              <UserCheck className="w-3.5 h-3.5" /> Anclaje de Misma Voz de Personaje
+            </span>
+            <h3 className={`text-2xl font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
+              4 Perfiles de Voz para Mantener al Mismo Locutor en Todas las Escenas
+            </h3>
+            <p className={`text-xs md:text-sm mt-1 ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
+              Para que Google Flow no cambie la voz entre la Escena 1 y la Escena 4, pega siempre <strong>exactamente el mismo bloque de descripción vocal</strong> en cada escena junto con la frase entre comillas.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {VOICE_PROFILES_LIBRARY.map((vp) => {
+              const voiceText = lang === 'es' ? vp.descriptionEs : vp.descriptionEn;
+              return (
+                <div
+                  key={vp.id}
+                  className={`p-4 rounded-2xl border space-y-2.5 ${
+                    isDark ? 'bg-black/50 border-emerald-500/30' : 'bg-white border-emerald-200'
+                  }`}
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="font-bold text-sm text-emerald-300 flex items-center gap-2">
+                      <UserCheck className="w-4 h-4 text-emerald-400" /> {vp.name}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleCopy(voiceText, `vp-${vp.id}`)}
+                      className="px-3 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs flex items-center gap-1 cursor-pointer transition-all"
+                    >
+                      {copiedId === `vp-${vp.id}` ? (
+                        <>
+                          <Check className="w-3.5 h-3.5" /> Copiado
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" /> Copiar Voz Fija
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <div className="text-[11px] text-amber-300 font-medium">{vp.role}</div>
+                  <p className="text-xs font-mono text-slate-100 bg-black/75 p-3 rounded-xl border border-slate-800 select-all">
+                    {voiceText}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Dedicated Background Music Prompts Sub-Section */}
@@ -223,10 +291,10 @@ export const SceneLibrarySection: React.FC<Props> = ({ isDark }) => {
                 <Volume2 className="w-3.5 h-3.5" /> Prompts de Música de Fondo y Atmósfera Sonora
               </span>
               <h3 className={`text-2xl font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                4 Estilos de Música de Fondo para Agregar a tus Videos en Flow
+                4 Estilos de Música de Fondo para Agregar a tus Escenas
               </h3>
               <p className={`text-xs md:text-sm mt-1 ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-                Pega cualquiera de estas líneas al final de tu prompt de escena en Flow para indicarle qué estilo de música instrumental y sonidos de naturaleza colocar de fondo.
+                Úsalos junto con el perfil de voz fijo para que la música instrumental acompañe suavemente la explicación de los beneficios.
               </p>
             </div>
           </div>
