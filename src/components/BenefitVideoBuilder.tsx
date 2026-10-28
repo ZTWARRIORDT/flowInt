@@ -600,26 +600,41 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark, syncedProduct }) 
                 <span className="text-xs font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
                   <Film className="w-4 h-4" /> 1. Prompt Maestro de Video Todo-en-Uno para Flow (1 Solo Bloque)
                 </span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    copyText(
-                      outputLang === 'es' ? generatedMasterFlowEs : generatedMasterFlowEn,
-                      'gen-master-flow'
-                    )
-                  }
-                  className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer transition-all shadow"
-                >
-                  {copiedKey === 'gen-master-flow' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" /> ¡Prompt Maestro Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" /> Copiar Prompt Maestro Todo-en-Uno
-                    </>
-                  )}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      copyText(
+                        outputLang === 'es' ? generatedMasterFlowEs : generatedMasterFlowEn,
+                        'gen-master-flow'
+                      )
+                    }
+                    className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer transition-all shadow"
+                  >
+                    {copiedKey === 'gen-master-flow' ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" /> ¡Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3.5 h-3.5" /> Copiar Prompt Maestro
+                      </>
+                    )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      copyText(
+                        outputLang === 'es' ? generatedMasterFlowEs : generatedMasterFlowEn,
+                        'gen-master-flow'
+                      );
+                      window.open('https://flow.google', '_blank');
+                    }}
+                    className="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 border border-emerald-500/40 text-xs font-bold flex items-center gap-1 cursor-pointer transition-all"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> Abrir Flow ↗
+                  </button>
+                </div>
               </div>
               <div className="p-3.5 rounded-xl bg-black/85 border border-amber-500/40 font-mono text-xs text-slate-100 leading-relaxed select-all">
                 {outputLang === 'es' ? generatedMasterFlowEs : generatedMasterFlowEn}

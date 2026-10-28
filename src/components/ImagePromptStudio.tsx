@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
+  ExternalLink,
   Camera,
   Sparkles,
   Copy,
@@ -607,7 +608,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                       <span>Modo Frasco Real Activo · Herencia Cromática Automática</span>
                     </p>
                     <p className="text-[11px] text-slate-300 leading-relaxed">
-                      El prompt ordena a Gemini <strong>extraer y clonar directamente los colores, tonalidades, logotipos y materiales del objeto de la foto adjunta</strong> (📎), prohibiendo de forma estricta cualquier recoloreo o tinte verde/dorado ajeno.
+                      El prompt ordena a Flow / Gemini <strong>extraer y clonar directamente los colores, tonalidades, logotipos y materiales del objeto de la foto adjunta</strong> (📎), prohibiendo de forma estricta cualquier recoloreo o tinte verde/dorado ajeno.
                     </p>
                   </div>
                 </div>
@@ -1007,7 +1008,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                       3. Diseño de Beneficios e Infografía:
                     </label>
                     <span className="text-[10px] text-slate-400 block">
-                      Aprovecha que Gemini escribe palabras nítidas. Elige cómo mostrar tus textos o desactívalos con 1 clic.
+                      Aprovecha que Flow genera tipografía y palabras nítidas. Elige cómo mostrar tus textos o desactívalos con 1 clic.
                     </span>
                   </div>
                   {infographicStyle !== 'none' && (
@@ -1085,7 +1086,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 max-h-[500px] overflow-y-auto pr-1">
                   {COMMERCIAL_ENVIRONMENTS.map((env) => {
                     const isSelected = environmentId === env.id;
                     return (
@@ -1251,25 +1252,40 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')
-                    }
-                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all"
-                  >
-                    {copiedKey === 'main-copy' ? (
-                      <>
-                        <Check className="w-4 h-4 stroke-[3]" />
-                        <span>¡Prompt Copiado! Pégalo en Flow / Gemini</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        <span>Copiar Prompt para Gemini</span>
-                      </>
-                    )}
-                  </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')
+                      }
+                      className="sm:col-span-8 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all"
+                    >
+                      {copiedKey === 'main-copy' ? (
+                        <>
+                          <Check className="w-4 h-4 stroke-[3]" />
+                          <span>¡Prompt Copiado! Pégalo en Flow</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          <span>Copiar Prompt para Flow</span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy');
+                        window.open('https://flow.google', '_blank');
+                      }}
+                      className="sm:col-span-4 py-3.5 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer border border-emerald-500/40 transition-all shadow"
+                      title="Copia el prompt automáticamente y abre Google Flow en una nueva pestaña"
+                    >
+                      <ExternalLink className="w-4 h-4 shrink-0" />
+                      <span>Abrir Flow ↗</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
