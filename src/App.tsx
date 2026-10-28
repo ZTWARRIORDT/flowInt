@@ -169,87 +169,87 @@ export function App() {
                 <div className="grid grid-cols-6 gap-2">
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('uro-cranberry-probioticos')}
-                    className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square cursor-pointer"
+                    onClick={() => setExternalPresetId('colageno-magnesio')}
+                    className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/uro-poster-medallones.jpg"
-                      alt="URO Cranberry Probióticos"
+                      src="/images/colageno-magnesio.jpg"
+                      alt="Colágeno + Magnesio"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2">
-                      <span className="text-[10px] font-bold text-white block truncate">
-                        URO Probióticos Rosa
+                      <span className="text-[10px] font-bold text-white block">
+                        Colágeno + Magnesio
                       </span>
-                      <span className="text-[9px] text-amber-300">Póster 4 Medallones Flow</span>
+                      <span className="text-[9px] text-amber-300">Póster 4 Medallones</span>
                     </div>
                   </a>
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('glucosamina-condroitina-msm')}
-                    className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square cursor-pointer"
+                    onClick={() => setExternalPresetId('curcuma-ashwagandha')}
+                    className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/glucosamina-poster.jpg"
-                      alt="Glucosamin Chondroitin MSM"
+                      src="/images/curcuma-ashwagandha.jpg"
+                      alt="Cúrcuma + Jengibre"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2">
-                      <span className="text-[10px] font-bold text-white block truncate">
-                        Glucosamina + MSM
+                      <span className="text-[10px] font-bold text-white block">
+                        Cúrcuma + Jengibre
                       </span>
-                      <span className="text-[9px] text-amber-300">Póster E-Commerce DTC</span>
+                      <span className="text-[9px] text-amber-300">Acción Alta Velocidad</span>
                     </div>
                   </a>
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('colageno-magnesio')}
-                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square cursor-pointer"
+                    onClick={() => setExternalPresetId('clorofila-matcha')}
+                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/vitamina-d3-k2-frasco.jpg"
-                      alt="Vitamina D3 + K2 Complex"
+                      src="/images/clorofila-matcha.jpg"
+                      alt="Clorofila & Matcha"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
                       <span className="text-[10px] font-bold text-white block truncate">
-                        D3+K2 en Bosque
-                      </span>
-                    </div>
-                  </a>
-
-                  <a
-                    href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('uro-cranberry-probioticos')}
-                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square cursor-pointer"
-                  >
-                    <img
-                      src="/images/uro-macro-textura.jpg"
-                      alt="URO Macro Textura y Rocío"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
-                      <span className="text-[10px] font-bold text-white block truncate">
-                        URO Macro 100mm
+                        Clorofila Splash
                       </span>
                     </div>
                   </a>
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('colageno-magnesio')}
-                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square cursor-pointer"
+                    onClick={() => setExternalPresetId('serum-botanico')}
+                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/vitamina-d3-k2-pouch.jpg"
-                      alt="D3+K2 Pouch Medallones 3D"
+                      src="/images/serum-botanico.jpg"
+                      alt="Sérum Rosa Mosqueta"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
                       <span className="text-[10px] font-bold text-white block truncate">
-                        D3+K2 Pouch Oro
+                        Sérum Podio Spa
+                      </span>
+                    </div>
+                  </a>
+
+                  <a
+                    href="#estudio-imagenes"
+                    onClick={() => setExternalPresetId('miel-propoleo')}
+                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
+                  >
+                    <img
+                      src="/images/miel-propoleo.jpg"
+                      alt="Miel & Propóleo"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
+                      <span className="text-[10px] font-bold text-white block truncate">
+                        Miel Macro Textura
                       </span>
                     </div>
                   </a>
