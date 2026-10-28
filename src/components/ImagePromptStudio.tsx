@@ -840,7 +840,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                       <span>Modo Frasco Real Activo · Herencia Cromática Automática</span>
                     </p>
                     <p className="text-[11px] text-slate-300 leading-relaxed">
-                      El prompt ordena a Flow / Gemini <strong>extraer y clonar directamente los colores, tonalidades, logotipos y materiales del objeto de la foto adjunta</strong> (📎), prohibiendo de forma estricta cualquier recoloreo o tinte verde/dorado ajeno.
+                      El prompt ordena a Flow <strong>extraer y clonar directamente los colores, tonalidades, logotipos y materiales del objeto de la foto adjunta</strong> (📎), prohibiendo de forma estricta cualquier recoloreo o tinte verde/dorado ajeno.
                     </p>
                   </div>
                 </div>

@@ -61,19 +61,19 @@ export function App() {
               href="#catalogo-prompts"
               className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5"
             >
-              <BookOpen className="w-3.5 h-3.5" /> Galería de Inspiración (5)
+              <BookOpen className="w-3.5 h-3.5" /> Galería de Inspiración (16)
             </a>
           </nav>
 
           {/* Right Actions */}
           <div className="flex items-center gap-2.5">
             <a
-              href="https://gemini.google.com"
+              href="https://flow.google"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-amber-500 text-slate-950 shadow hover:opacity-95 transition-all"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-amber-500 text-slate-950 shadow hover:opacity-95 transition-all cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 fill-slate-950" /> Abrir Gemini
+              <Sparkles className="w-3.5 h-3.5 fill-slate-950" /> Abrir Flow
               <ExternalLink className="w-3 h-3" />
             </a>
 
@@ -125,7 +125,7 @@ export function App() {
                   isDark ? 'text-slate-300' : 'text-stone-600'
                 }`}
               >
-                Sin tecnicismos ni fórmulas complicadas. Elige el estilo de foto que necesitas (Catálogo, Póster con beneficios, Splash o Primer plano) y copia el prompt optimizado para <strong>Google Gemini / Imagen 3</strong> en un solo clic.
+                Sin tecnicismos ni fórmulas complicadas. Elige el estilo de foto que necesitas (Catálogo, Póster con beneficios, Splash o Primer plano) y copia el prompt optimizado para <strong>Google Flow</strong> en un solo clic.
               </p>
 
               {/* CTA Buttons */}
@@ -145,7 +145,7 @@ export function App() {
                       : 'bg-white border-stone-300 text-stone-800 hover:border-emerald-600'
                   }`}
                 >
-                  <BookOpen className="w-4 h-4 text-emerald-400" /> Ver 5 Fotos de Ejemplo
+                  <BookOpen className="w-4 h-4 text-emerald-400" /> Ver 16 Fotos de Ejemplo
                 </a>
               </div>
             </div>
@@ -284,7 +284,7 @@ export function App() {
               N
             </div>
             <span className="font-bold text-xs text-white">
-              NaturalStudio · Generador Visual de Prompts para Gemini / Imagen 3
+              NaturalStudio · Generador Visual de Prompts para Google Flow
             </span>
           </div>
           <div className="flex items-center gap-4 text-xs">

@@ -234,7 +234,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark, syncedProduct }) 
 
   const fullExportBundle =
     `=== PROYECTO TODO-EN-UNO: ${productName} ===\n\n` +
-    `1) PROMPT DE IMAGEN GEMINI (TODO EN UNO):\n${
+    `1) PROMPT DE IMAGEN FLOW (TODO EN UNO):\n${
       outputLang === 'es' ? generatedPosterPromptEs : generatedPosterPromptEn
     }\n\n` +
     `2) PROMPT MAESTRO DE VIDEO FLOW EN 1 SOLO BLOQUE (TODO EN UNO):\n${
