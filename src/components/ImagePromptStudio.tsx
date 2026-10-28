@@ -21,6 +21,10 @@ import {
   ShoppingBag,
   Droplet,
   Box,
+  Database,
+  ExternalLink,
+  FileCode,
+  X,
 } from 'lucide-react';
 import {
   PHOTO_TYPES,
@@ -40,6 +44,12 @@ import {
   ProductQuickPreset,
 } from '../data/imageStudioData';
 import { LensVisualModal } from './LensVisualModal';
+import {
+  fetchCustomItemsFromSupabase,
+  saveCustomItemToSupabase,
+  deleteCustomItemFromSupabase,
+  checkSupabaseStatus,
+} from '../lib/supabase';
 
 interface Props {
   isDark: boolean;
@@ -137,6 +147,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
 
   // UI State for Output, Modal & Add-Custom forms
   const [isLensModalOpen, setIsLensModalOpen] = useState<boolean>(false);
+  const [modalTab, setModalTab] = useState<'lenses' | 'packagings'>('lenses');
   const [showMorePackagings, setShowMorePackagings] = useState<boolean>(false);
   const [outputLang, setOutputLang] = useState<'es' | 'en'>('es');
   const [outputTab, setOutputTab] = useState<'single' | 'session6'>('single');
@@ -145,6 +156,38 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const [newCustomLabel, setNewCustomLabel] = useState<string>('');
   const [newCustomPrompt, setNewCustomPrompt] = useState<string>('');
   const [newIngredientInput, setNewIngredientInput] = useState<string>('');
+
+  // Supabase live status & sync feedback
+  const [supabaseStatus, setSupabaseStatus] = useState<
+    'checking' | 'connected' | 'table_missing' | 'error'
+  >('checking');
+  const [isSupabaseModalOpen, setIsSupabaseModalOpen] = useState<boolean>(false);
+  const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+
+  // Check Supabase status and fetch remote custom items on mount
+  useEffect(() => {
+    checkSupabaseStatus().then((status) => {
+      setSupabaseStatus(status);
+      if (status === 'connected') {
+        fetchCustomItemsFromSupabase().then((remoteMap) => {
+          if (remoteMap) {
+            setCustomItems((prev) => {
+              const updated: CustomItemsMap = { ...prev };
+              (Object.keys(remoteMap) as CustomCategoryKey[]).forEach((cat) => {
+                const remoteList = (remoteMap[cat] as StudioOptionItem[]) || [];
+                const localList = (prev[cat] as StudioOptionItem[]) || [];
+                const dict = new Map<string, StudioOptionItem>();
+                localList.forEach((item) => dict.set(item.id, item));
+                remoteList.forEach((item) => dict.set(item.id, item));
+                updated[cat] = Array.from(dict.values()) as any;
+              });
+              return updated;
+            });
+          }
+        });
+      }
+    });
+  }, []);
 
   const handleQuickAddIngredient = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -169,6 +212,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
 
     setSelectedIngredientIds((prev) => [...prev, newId]);
     setNewIngredientInput('');
+
+    // Persist to Supabase
+    saveCustomItemToSupabase('ingredients', newItem).then((ok) => {
+      if (ok) {
+        setSyncFeedback(`✓ Ingrediente "${clean}" guardado en Supabase`);
+        setTimeout(() => setSyncFeedback(null), 3000);
+      }
+    });
   };
 
   // Merged lists (Default + User Custom)
@@ -291,6 +342,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
       if (category === 'ingredients') {
         setSelectedIngredientIds((prev) => [...prev, newId]);
       }
+
+      // Persist to Supabase
+      saveCustomItemToSupabase(category, newItem).then((ok) => {
+        if (ok) {
+          setSyncFeedback(`✓ Guardado en Supabase: "${cleanLabel}"`);
+          setTimeout(() => setSyncFeedback(null), 3000);
+        }
+      });
     }
 
     setNewCustomLabel('');
@@ -307,6 +366,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     if (category === 'ingredients') {
       setSelectedIngredientIds((prev) => prev.filter((item) => item !== id));
     }
+    deleteCustomItemFromSupabase(id);
   };
 
   const copyText = (text: string, key: string) => {
@@ -488,8 +548,41 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
         {/* Top Header + Quick Product Buttons */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mb-1.5">
-              <Camera className="w-3.5 h-3.5 text-amber-400" /> Creador Visual de Fotos Comerciales
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                <Camera className="w-3.5 h-3.5 text-amber-400" /> Creador Visual de Fotos Comerciales
+              </span>
+
+              {/* Supabase connection indicator button */}
+              <button
+                type="button"
+                onClick={() => setIsSupabaseModalOpen(true)}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
+                  supabaseStatus === 'connected'
+                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25'
+                    : supabaseStatus === 'table_missing'
+                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-300 hover:bg-amber-500/25'
+                    : 'bg-black/40 border-slate-700 text-slate-300'
+                }`}
+                title="Estado de conexión con Supabase (clic para ver configuración)"
+              >
+                <Database className="w-3 h-3" />
+                <span>
+                  {supabaseStatus === 'connected'
+                    ? '🟢 Supabase Conectado'
+                    : supabaseStatus === 'table_missing'
+                    ? '🟡 Supabase (Crear Tabla)'
+                    : supabaseStatus === 'checking'
+                    ? '⚪ Supabase...'
+                    : '🔴 Supabase Local'}
+                </span>
+              </button>
+
+              {syncFeedback && (
+                <span className="text-[11px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-400/40">
+                  {syncFeedback}
+                </span>
+              )}
             </div>
             <h2
               className={`text-2xl md:text-3xl font-bold font-serif ${
@@ -612,14 +705,23 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
               {/* Packaging Visual Selector */}
               <div className="space-y-3 pt-1">
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
                     <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                       <Package className="w-3.5 h-3.5 text-emerald-400" />
                       1. Elige el Formato de Envase o Empaque:
                     </label>
-                    <span className="text-[10px] text-amber-300 font-semibold">
-                      {activePackaging.label}
-                    </span>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setModalTab('packagings');
+                        setIsLensModalOpen(true);
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                    >
+                      <Eye className="w-3 h-3 text-amber-400" />
+                      <span>Ver fotos reales de cada empaque</span>
+                    </button>
                   </div>
 
                   {/* Primary 6 formats grid */}
@@ -842,7 +944,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                 {/* THE STAR BUTTON: OPEN VISUAL LENS MODAL */}
                 <button
                   type="button"
-                  onClick={() => setIsLensModalOpen(true)}
+                  onClick={() => {
+                    setModalTab('lenses');
+                    setIsLensModalOpen(true);
+                  }}
                   className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow"
                 >
                   <Eye className="w-3.5 h-3.5" />
@@ -859,7 +964,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                   </span>
                   <button
                     type="button"
-                    onClick={() => setIsLensModalOpen(true)}
+                    onClick={() => {
+                      setModalTab('lenses');
+                      setIsLensModalOpen(true);
+                    }}
                     className="text-[11px] text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <HelpCircle className="w-3 h-3" /> ¿Cuál me conviene?
@@ -1194,14 +1302,168 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
         </div>
       </div>
 
-      {/* Interactive Visual Lens Modal */}
+      {/* Interactive Visual Lens & Packaging Modal */}
       <LensVisualModal
         isOpen={isLensModalOpen}
         onClose={() => setIsLensModalOpen(false)}
         selectedLensId={lensId}
         onSelectLens={(newLensId) => handleSelectLens(newLensId)}
         isDark={isDark}
+        initialTab={modalTab}
+        selectedPackagingId={packagingId}
+        onSelectPackaging={(pkgId, pres) => {
+          setPackagingId(pkgId);
+          if (pres) setPackagingPresentation(pres);
+        }}
       />
+
+      {/* Supabase Connection & SQL Setup Modal */}
+      {isSupabaseModalOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setIsSupabaseModalOpen(false)}
+        >
+          <div
+            className={`max-w-2xl w-full rounded-3xl border p-6 space-y-5 shadow-2xl my-auto ${
+              isDark
+                ? 'bg-[#0F1713] border-emerald-500/40 text-white'
+                : 'bg-white border-stone-200 text-stone-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/30">
+                  <Database className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base">Conexión con Supabase</h3>
+                  <p className="text-xs text-slate-400">
+                    Almacenamiento persistente en tu nube PostgreSQL
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSupabaseModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Status Info */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 rounded-xl bg-black/40 border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 font-mono uppercase">URL del Proyecto:</span>
+                <div className="font-mono text-emerald-400 truncate">
+                  https://vqezqrqlxxdrldqldphc.supabase.co
+                </div>
+              </div>
+              <div className="p-3 rounded-xl bg-black/40 border border-slate-800 space-y-1">
+                <span className="text-[10px] text-slate-400 font-mono uppercase">
+                  Estado de la Base de Datos:
+                </span>
+                <div className="font-bold flex items-center gap-1.5">
+                  {supabaseStatus === 'connected' ? (
+                    <span className="text-emerald-400">🟢 Conectado y Listo</span>
+                  ) : supabaseStatus === 'table_missing' ? (
+                    <span className="text-amber-400">🟡 Requiere crear la tabla (ver script abajo)</span>
+                  ) : (
+                    <span className="text-slate-300">⚪ Conectando / Local</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Instruction & SQL box */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                  <FileCode className="w-4 h-4 text-emerald-400" />
+                  Script SQL para tu panel de Supabase:
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const sql = `-- Tabla de items del estudio
+create table if not exists public.studio_custom_items (
+  id text primary key,
+  category text not null,
+  label text not null,
+  badge text default 'Propio',
+  short_desc text,
+  prompt_es text not null,
+  prompt_en text not null,
+  is_custom boolean default true,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.studio_custom_items enable row level security;
+
+create policy "Permitir lectura publica" on public.studio_custom_items for select using (true);
+create policy "Permitir insercion publica" on public.studio_custom_items for insert with check (true);
+create policy "Permitir eliminacion publica" on public.studio_custom_items for delete using (true);`;
+                    navigator.clipboard.writeText(sql);
+                    copyText(sql, 'sql-copy');
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 text-xs font-bold transition-all cursor-pointer flex items-center gap-1"
+                >
+                  {copiedKey === 'sql-copy' ? (
+                    <Check className="w-3.5 h-3.5" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                  <span>{copiedKey === 'sql-copy' ? '¡SQL Copiado!' : 'Copiar SQL'}</span>
+                </button>
+              </div>
+
+              <pre className="p-3.5 rounded-xl bg-black border border-slate-800 text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-48 leading-relaxed">
+{`-- Ejecuta esto en el SQL Editor de tu Supabase:
+create table if not exists public.studio_custom_items (
+  id text primary key,
+  category text not null,
+  label text not null,
+  badge text default 'Propio',
+  short_desc text,
+  prompt_es text not null,
+  prompt_en text not null,
+  is_custom boolean default true,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table public.studio_custom_items enable row level security;
+create policy "Permitir lectura publica" on public.studio_custom_items for select using (true);
+create policy "Permitir insercion publica" on public.studio_custom_items for insert with check (true);
+create policy "Permitir eliminacion publica" on public.studio_custom_items for delete using (true);`}
+              </pre>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-800">
+              <a
+                href="https://supabase.com/dashboard/project/vqezqrqlxxdrldqldphc/sql"
+                target="_blank"
+                rel="noreferrer"
+                className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs flex items-center gap-1.5 transition-all shadow"
+              >
+                <span>Abrir SQL Editor en Supabase</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+
+              <button
+                type="button"
+                onClick={() => {
+                  checkSupabaseStatus().then((s) => setSupabaseStatus(s));
+                  setIsSupabaseModalOpen(false);
+                }}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs cursor-pointer"
+              >
+                Listo / Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
