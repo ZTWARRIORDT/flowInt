@@ -674,30 +674,6 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
               Configura tu Fotografía de Producto en 3 Pasos
             </h2>
           </div>
-
-          {/* Quick Product Presets */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs font-bold text-slate-400 mr-1">Ejemplos:</span>
-            {STUDIO_QUICK_PRESETS.map((preset) => {
-              const active = productName === preset.productName;
-              return (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => applyPreset(preset)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                    active
-                      ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md font-extrabold'
-                      : isDark
-                      ? 'bg-[#121B17] text-slate-300 border-slate-800 hover:border-emerald-500/50'
-                      : 'bg-white text-stone-700 border-stone-200 hover:border-emerald-500/50'
-                  }`}
-                >
-                  {preset.label}
-                </button>
-              );
-            })}
-          </div>
         </div>
 
         {/* Studio 2-Column Layout */}
