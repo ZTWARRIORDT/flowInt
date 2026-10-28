@@ -44,11 +44,11 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageSt
   };
 
   const categories = [
-    { id: 'all', label: 'Todas las Variaciones (16)' },
+    { id: 'all', label: 'Todas las Variaciones (10)' },
     { id: 'uro', label: 'URO Cranberry Rosa (4)' },
-    { id: 'glucosamina', label: 'Glucosamina Frasco Blanco (4)' },
-    { id: 'vitamina-frasco', label: 'Vitamina D3 Frasco Ámbar (4)' },
-    { id: 'vitamina-pouch', label: 'Vitamina D3 Pouch Doypack (4)' },
+    { id: 'glucosamina', label: 'Glucosamina Frasco Blanco (3)' },
+    { id: 'vitamina-frasco', label: 'Vitamina D3 Frasco Ámbar (2)' },
+    { id: 'vitamina-pouch', label: 'Vitamina D3 Pouch Doypack (1)' },
   ];
 
   const filteredProducts =
@@ -224,7 +224,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageSt
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              16 Variaciones Fotográficas de tus Productos Reales
+              10 Variaciones Fotográficas de tus Productos Reales
             </h2>
             <p className={`mt-1 text-xs md:text-sm ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
               Composiciones comerciales listas para Flow generadas a partir de tus fotos reales: <strong>URO</strong> (Doypack Rosa), <strong>Glucosamina</strong> (Frasco Blanco) y <strong>Vitamina D3</strong> (Frasco Ámbar y Pouch). Haz clic en "Editar en el Estudio ↑" para cargar fielmente su entorno, óptica, iluminación e infografía en el generador.

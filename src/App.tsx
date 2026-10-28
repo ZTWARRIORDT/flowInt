@@ -61,7 +61,7 @@ export function App() {
               href="#catalogo-prompts"
               className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5"
             >
-              <BookOpen className="w-3.5 h-3.5" /> Galería de Inspiración (16)
+              <BookOpen className="w-3.5 h-3.5" /> Galería de Inspiración (10)
             </a>
           </nav>
 
@@ -145,7 +145,7 @@ export function App() {
                       : 'bg-white border-stone-300 text-stone-800 hover:border-emerald-600'
                   }`}
                 >
-                  <BookOpen className="w-4 h-4 text-emerald-400" /> Ver 16 Fotos de Ejemplo
+                  <BookOpen className="w-4 h-4 text-emerald-400" /> Ver 10 Fotos de Ejemplo
                 </a>
               </div>
             </div>
