@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Plus,
+  Trash2,
   ExternalLink,
   Camera,
   Sparkles,
@@ -59,10 +61,12 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   // Product Identity State
   const [productName, setProductName] = useState(STUDIO_QUICK_PRESETS[0].productName);
   const [headline, setHeadline] = useState(STUDIO_QUICK_PRESETS[0].headline);
-  const [benefit1, setBenefit1] = useState(STUDIO_QUICK_PRESETS[0].benefit1);
-  const [benefit2, setBenefit2] = useState(STUDIO_QUICK_PRESETS[0].benefit2);
-  const [benefit3, setBenefit3] = useState(STUDIO_QUICK_PRESETS[0].benefit3);
-  const [benefit4, setBenefit4] = useState(STUDIO_QUICK_PRESETS[0].benefit4);
+  const [benefits, setBenefits] = useState<string[]>([
+    STUDIO_QUICK_PRESETS[0].benefit1,
+    STUDIO_QUICK_PRESETS[0].benefit2,
+    STUDIO_QUICK_PRESETS[0].benefit3,
+    STUDIO_QUICK_PRESETS[0].benefit4,
+  ]);
 
   // Photography Configuration State
   const [photoTypeId, setPhotoTypeId] = useState<string>(STUDIO_QUICK_PRESETS[0].photoTypeId);
@@ -70,24 +74,115 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   const [lensId, setLensId] = useState<string>(STUDIO_QUICK_PRESETS[0].lensId);
   const [packagingId, setPackagingId] = useState<string>(STUDIO_QUICK_PRESETS[0].packagingId);
   const [packagingPresentation, setPackagingPresentation] = useState<PackagingPresentationMode>(
-    STUDIO_QUICK_PRESETS[0].packagingPresentation || 'con-contenido'
+    STUDIO_QUICK_PRESETS[0].packagingPresentation || 'solo'
   );
-  const [environmentId, setEnvironmentId] = useState<string>('estudio-neutro');
-  const [aspectRatio, setAspectRatio] = useState<'1:1' | '9:16' | '4:5' | '16:9'>(
+  const [environmentId, setEnvironmentId] = useState<string>(STUDIO_QUICK_PRESETS[0].environmentId || 'arena-zen');
+  const [aspectRatio, setAspectRatio] = useState<string>(
     STUDIO_QUICK_PRESETS[0].aspectRatio
   );
 
   // Infographics, Reference & Extra Modifiers
-  const [infographicStyle, setInfographicStyle] = useState<InfographicStyle>('pill-badges');
+  const [infographicStyle, setInfographicStyle] = useState<string>(STUDIO_QUICK_PRESETS[0].infographicStyle || 'pill-badges');
+  const [realProductColor, setRealProductColor] = useState<string>(
+    STUDIO_QUICK_PRESETS[0].realProductColor || ''
+  );
   const [useReferencePhotoMode, setUseReferencePhotoMode] = useState<boolean>(true);
   const [extraCustomNotes, setExtraCustomNotes] = useState<string>('');
+
+  // Custom User-Created Options (persisted in localStorage)
+  const [customEnvironments, setCustomEnvironments] = useState<CommercialEnvironmentOption[]>(() => {
+    try {
+      const s = localStorage.getItem('natural_studio_custom_envs');
+      return s ? JSON.parse(s) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [customInfographicStyles, setCustomInfographicStyles] = useState<{
+    id: string;
+    label: string;
+    badge: string;
+    shortDesc: string;
+    promptEs: string;
+    promptEn: string;
+  }[]>(() => {
+    try {
+      const s = localStorage.getItem('natural_studio_custom_infographics');
+      return s ? JSON.parse(s) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [customPhotoTypes, setCustomPhotoTypes] = useState<PhotoTypeOption[]>(() => {
+    try {
+      const s = localStorage.getItem('natural_studio_custom_phototypes');
+      return s ? JSON.parse(s) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [customAspectRatios, setCustomAspectRatios] = useState<{
+    id: string;
+    label: string;
+    sub: string;
+    promptEs: string;
+    promptEn: string;
+  }[]>(() => {
+    try {
+      const s = localStorage.getItem('natural_studio_custom_ratios');
+      return s ? JSON.parse(s) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Modals for Custom Items
+  const [isAddEnvModalOpen, setIsAddEnvModalOpen] = useState<boolean>(false);
+  const [newEnvForm, setNewEnvForm] = useState({
+    label: '',
+    badge: 'Personalizado',
+    shortDesc: '',
+    surfaceEs: '',
+    surfaceEn: '',
+    lightingEs: '',
+    lightingEn: '',
+  });
+
+  const [isAddInfographicModalOpen, setIsAddInfographicModalOpen] = useState<boolean>(false);
+  const [newInfographicForm, setNewInfographicForm] = useState({
+    label: '',
+    badge: 'Diseño Personalizado',
+    shortDesc: '',
+    promptEs: '',
+    promptEn: '',
+  });
+
+  const [isAddPhotoTypeModalOpen, setIsAddPhotoTypeModalOpen] = useState<boolean>(false);
+  const [newPhotoTypeForm, setNewPhotoTypeForm] = useState({
+    label: '',
+    badge: 'Personalizado',
+    shortDesc: '',
+    promptEs: '',
+    promptEn: '',
+  });
+
+  const [isAddRatioModalOpen, setIsAddRatioModalOpen] = useState<boolean>(false);
+  const [newRatioForm, setNewRatioForm] = useState({
+    id: '',
+    label: '',
+    sub: '',
+    promptEs: '',
+    promptEn: '',
+  });
 
   // UI State for Output, Modal & Preview
   const [isLensModalOpen, setIsLensModalOpen] = useState<boolean>(false);
   const [modalTab, setModalTab] = useState<'lenses' | 'packagings'>('lenses');
   const [showMorePackagings, setShowMorePackagings] = useState<boolean>(false);
   const [outputLang, setOutputLang] = useState<'es' | 'en'>('es');
-  const [outputTab, setOutputTab] = useState<'single' | 'session6'>('single');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   // Supabase live status & sync feedback
@@ -135,7 +230,156 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     }
   };
 
-  const handleToggleInfographicStyle = (style: InfographicStyle) => {
+  // Dynamic Benefits Helpers
+  const handleAddBenefit = () => {
+    if (benefits.length < 8) {
+      setBenefits([...benefits, '']);
+    }
+  };
+
+  const handleRemoveBenefit = (index: number) => {
+    if (benefits.length > 1) {
+      setBenefits(benefits.filter((_, i) => i !== index));
+    }
+  };
+
+  const handleUpdateBenefit = (index: number, val: string) => {
+    const next = [...benefits];
+    next[index] = val;
+    setBenefits(next);
+  };
+
+  const handleQuickAddBenefit = (chip: string) => {
+    const emptyIdx = benefits.findIndex((b) => !b.trim());
+    if (emptyIdx !== -1) {
+      handleUpdateBenefit(emptyIdx, chip);
+    } else if (benefits.length < 8) {
+      setBenefits([...benefits, chip]);
+    }
+  };
+
+  // Custom Items Handlers
+  const handleSaveCustomEnv = () => {
+    if (!newEnvForm.label.trim()) return;
+    const id = `custom-env-${Date.now()}`;
+    const created: CommercialEnvironmentOption = {
+      id,
+      label: newEnvForm.label.trim(),
+      badge: newEnvForm.badge.trim() || 'Personalizado',
+      shortDesc: newEnvForm.shortDesc.trim() || newEnvForm.surfaceEs.slice(0, 75),
+      surfaceEs: newEnvForm.surfaceEs.trim() || `sobre superficie personalizada de ${newEnvForm.label}`,
+      surfaceEn: newEnvForm.surfaceEn.trim() || `on custom surface for ${newEnvForm.label}`,
+      lightingEs: newEnvForm.lightingEs.trim() || 'bajo luz comercial cálida de estudio',
+      lightingEn: newEnvForm.lightingEn.trim() || 'under warm commercial studio light',
+    };
+    const updated = [created, ...customEnvironments];
+    setCustomEnvironments(updated);
+    localStorage.setItem('natural_studio_custom_envs', JSON.stringify(updated));
+    setEnvironmentId(id);
+    setIsAddEnvModalOpen(false);
+    setNewEnvForm({ label: '', badge: 'Personalizado', shortDesc: '', surfaceEs: '', surfaceEn: '', lightingEs: '', lightingEn: '' });
+    setSyncFeedback(`✓ Escenario añadido: "${created.label}"`);
+    setTimeout(() => setSyncFeedback(null), 3000);
+  };
+
+  const handleDeleteCustomEnv = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = customEnvironments.filter((x) => x.id !== id);
+    setCustomEnvironments(updated);
+    localStorage.setItem('natural_studio_custom_envs', JSON.stringify(updated));
+    if (environmentId === id) setEnvironmentId('arena-zen');
+  };
+
+  const handleSaveCustomInfographic = () => {
+    if (!newInfographicForm.label.trim()) return;
+    const id = `custom-info-${Date.now()}`;
+    const created = {
+      id,
+      label: newInfographicForm.label.trim(),
+      badge: newInfographicForm.badge.trim() || 'Diseño Personalizado',
+      shortDesc: newInfographicForm.shortDesc.trim() || 'Estilo infográfico personalizado.',
+      promptEs: newInfographicForm.promptEs.trim() || 'Flotando alrededor del envase con diseño gráfico personalizado.',
+      promptEn: newInfographicForm.promptEn.trim() || 'Floating around the container with custom graphic design.',
+    };
+    const updated = [created, ...customInfographicStyles];
+    setCustomInfographicStyles(updated);
+    localStorage.setItem('natural_studio_custom_infographics', JSON.stringify(updated));
+    setInfographicStyle(id);
+    setIsAddInfographicModalOpen(false);
+    setNewInfographicForm({ label: '', badge: 'Diseño Personalizado', shortDesc: '', promptEs: '', promptEn: '' });
+    setSyncFeedback(`✓ Estilo de diseño añadido: "${created.label}"`);
+    setTimeout(() => setSyncFeedback(null), 3000);
+  };
+
+  const handleDeleteCustomInfographic = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = customInfographicStyles.filter((x) => x.id !== id);
+    setCustomInfographicStyles(updated);
+    localStorage.setItem('natural_studio_custom_infographics', JSON.stringify(updated));
+    if (infographicStyle === id) setInfographicStyle('pill-badges');
+  };
+
+  const handleSaveCustomPhotoType = () => {
+    if (!newPhotoTypeForm.label.trim()) return;
+    const id = `custom-pt-${Date.now()}`;
+    const created: PhotoTypeOption = {
+      id,
+      label: newPhotoTypeForm.label.trim(),
+      badge: newPhotoTypeForm.badge.trim() || 'Personalizado',
+      shortDesc: newPhotoTypeForm.shortDesc.trim() || 'Toma publicitaria personalizada.',
+      promptEs: newPhotoTypeForm.promptEs.trim() || `Fotografía publicitaria comercial de ${newPhotoTypeForm.label}`,
+      promptEn: newPhotoTypeForm.promptEn.trim() || `Commercial advertising photography of ${newPhotoTypeForm.label}`,
+      recommendedShotId: 'eye-level',
+      recommendedLensId: '85mm-f18',
+      includeMedallionsByDefault: true,
+    };
+    const updated = [created, ...customPhotoTypes];
+    setCustomPhotoTypes(updated);
+    localStorage.setItem('natural_studio_custom_phototypes', JSON.stringify(updated));
+    setPhotoTypeId(id);
+    setIsAddPhotoTypeModalOpen(false);
+    setNewPhotoTypeForm({ label: '', badge: 'Personalizado', shortDesc: '', promptEs: '', promptEn: '' });
+    setSyncFeedback(`✓ Tipo de foto añadido: "${created.label}"`);
+    setTimeout(() => setSyncFeedback(null), 3000);
+  };
+
+  const handleDeleteCustomPhotoType = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = customPhotoTypes.filter((x) => x.id !== id);
+    setCustomPhotoTypes(updated);
+    localStorage.setItem('natural_studio_custom_phototypes', JSON.stringify(updated));
+    if (photoTypeId === id) setPhotoTypeId('poster-infografico-flow');
+  };
+
+  const handleSaveCustomRatio = () => {
+    if (!newRatioForm.id.trim()) return;
+    const id = newRatioForm.id.trim();
+    const created = {
+      id,
+      label: newRatioForm.label.trim() || id,
+      sub: newRatioForm.sub.trim() || 'Personalizado',
+      promptEs: newRatioForm.promptEs.trim() || `formato personalizado ${id}`,
+      promptEn: newRatioForm.promptEn.trim() || `custom ${id} aspect ratio`,
+    };
+    const updated = [created, ...customAspectRatios];
+    setCustomAspectRatios(updated);
+    localStorage.setItem('natural_studio_custom_ratios', JSON.stringify(updated));
+    setAspectRatio(id);
+    setIsAddRatioModalOpen(false);
+    setNewRatioForm({ id: '', label: '', sub: '', promptEs: '', promptEn: '' });
+    setSyncFeedback(`✓ Formato añadido: "${created.label}"`);
+    setTimeout(() => setSyncFeedback(null), 3000);
+  };
+
+  const handleDeleteCustomRatio = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const updated = customAspectRatios.filter((x) => x.id !== id);
+    setCustomAspectRatios(updated);
+    localStorage.setItem('natural_studio_custom_ratios', JSON.stringify(updated));
+    if (aspectRatio === id) setAspectRatio('1:1');
+  };
+
+  const handleToggleInfographicStyle = (style: string) => {
     if (infographicStyle === style) {
       setInfographicStyle('none'); // Deselect back to clean catalog
     } else {
@@ -154,10 +398,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   const applyPreset = (preset: ProductQuickPreset) => {
     setProductName(preset.productName);
     setHeadline(preset.headline);
-    setBenefit1(preset.benefit1);
-    setBenefit2(preset.benefit2);
-    setBenefit3(preset.benefit3);
-    setBenefit4(preset.benefit4);
+    setBenefits([preset.benefit1, preset.benefit2, preset.benefit3, preset.benefit4].filter(Boolean));
     setPhotoTypeId(preset.photoTypeId);
     setShotId(preset.shotId);
     setLensId(preset.lensId);
@@ -185,9 +426,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     ) {
       setInfographicStyle('none');
     } else {
-      setInfographicStyle('gold-3d');
+      setInfographicStyle('pill-badges');
     }
     setAspectRatio(preset.aspectRatio);
+    setRealProductColor(preset.realProductColor || '');
     setUseReferencePhotoMode(true);
     setSyncFeedback(`✓ Preset fiel cargado: "${preset.productName}"`);
     setTimeout(() => setSyncFeedback(null), 3500);
@@ -223,10 +465,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
       setShotId('contrapicado-heroico');
       setPhotoTypeId('splash-velocidad');
     } else if (id === '35mm-f2') {
-      setShotId('rasante-mesa');
+      setShotId('cenital-90');
     } else if (id === '85mm-f18') {
       if (shotId === 'macro-extremo') setShotId('eye-level');
-      if (photoTypeId === 'macro-textura') setPhotoTypeId('hero-estudio');
+      if (photoTypeId === 'macro-textura') setPhotoTypeId('poster-infografico-flow');
     } else if (id === '50mm-f14') {
       if (shotId === 'macro-extremo') setShotId('picado-45');
       if (photoTypeId === 'macro-textura') setPhotoTypeId('flat-lay-cenital');
@@ -236,10 +478,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   const handleApplyKnowledgeItem = (item: SupplementKnowledgeItem) => {
     setProductName(item.name);
     setHeadline(item.headline);
-    setBenefit1(item.benefit1);
-    setBenefit2(item.benefit2);
-    setBenefit3(item.benefit3);
-    setBenefit4(item.benefit4);
+    setBenefits([item.benefit1, item.benefit2, item.benefit3, item.benefit4].filter(Boolean));
     if (item.recommendedPackagingId) setPackagingId(item.recommendedPackagingId);
     if (item.recommendedPresentation) setPackagingPresentation(item.recommendedPresentation);
     setIsAssistantOpen(false);
@@ -272,90 +511,133 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     return <Package className="w-4 h-4 text-amber-300" />;
   };
 
-  // Resolve active items
+  // Resolve combined active items
+  const allPhotoTypes = [...PHOTO_TYPES, ...customPhotoTypes];
+  const allEnvironments = [...COMMERCIAL_ENVIRONMENTS, ...customEnvironments];
+  const allAspectRatios = [...ASPECT_RATIOS, ...customAspectRatios];
+  const allInfographicStyles = [...INFOGRAPHIC_STYLES, ...customInfographicStyles];
+
   const activePhotoType =
-    PHOTO_TYPES.find((x) => x.id === photoTypeId) ||
-    (photoTypeId === 'poster-infografico-flow' || photoTypeId === 'poster-medallones'
-      ? PHOTO_TYPES[0]
-      : PHOTO_TYPES[0]);
+    allPhotoTypes.find((x) => x.id === photoTypeId) ||
+    allPhotoTypes[0];
   const activeShot = CAMERA_SHOTS.find((x) => x.id === shotId) || CAMERA_SHOTS[0];
   const activeLens = CAMERA_LENSES.find((x) => x.id === lensId) || CAMERA_LENSES[0];
   const activePackaging = PACKAGING_OPTIONS.find((x) => x.id === packagingId) || PACKAGING_OPTIONS[0];
   const activePackagingPresentation =
     PACKAGING_PRESENTATIONS.find((x) => x.id === packagingPresentation) || PACKAGING_PRESENTATIONS[0];
   const activeEnvironment =
-    COMMERCIAL_ENVIRONMENTS.find((x) => x.id === environmentId) || COMMERCIAL_ENVIRONMENTS[0];
-  const activeRatio = ASPECT_RATIOS.find((x) => x.id === aspectRatio) || ASPECT_RATIOS[0];
+    allEnvironments.find((x) => x.id === environmentId) || allEnvironments[0];
+  const activeRatio = allAspectRatios.find((x) => x.id === aspectRatio) || allAspectRatios[0];
 
   const presentationEs = activePackagingPresentation.promptEs ? `, ${activePackagingPresentation.promptEs}` : '';
   const presentationEn = activePackagingPresentation.promptEn ? `, ${activePackagingPresentation.promptEn}` : '';
 
-  // Infographic & Claims Design Fragment
-  const getInfographicFragmentEs = (style: InfographicStyle) => {
-    const b1 = benefit1?.trim() || 'Salud y Vitalidad';
-    const b2 = benefit2?.trim() || 'Fórmula 100% Pura';
-    const b3 = benefit3?.trim() || 'Protección Diaria';
-    const b4 = benefit4?.trim() || 'Bienestar Integral';
+  // Infographic & Claims Design Fragment with Dynamic Benefits
+  const getInfographicFragmentEs = (style: string) => {
+    const activeBenefits = benefits.filter((b) => b.trim().length > 0);
+    const list = activeBenefits.length > 0 ? activeBenefits : ['Salud y Vitalidad', 'Fórmula Pura', 'Protección Diaria', 'Bienestar Integral'];
+
+    const customFound = customInfographicStyles.find((c) => c.id === style);
+    if (customFound) {
+      const customFormatted = list.map((b, i) => `${i + 1}) "${b}"`).join(', ');
+      return customFound.promptEs.includes('{beneficios}')
+        ? customFound.promptEs.replace('{beneficios}', customFormatted)
+        : `${customFound.promptEs} Mostrando los beneficios clave: ${customFormatted}.`;
+    }
 
     switch (style) {
       case 'none':
         return 'Composición 100% limpia de catálogo comercial sin medallones, sin textos flotantes ni tarjetas externas, dejando el protagonismo visual absoluto y puro en el envase.';
 
-      case 'pill-badges':
-        return `Flotando de forma armónica y simétrica a los costados del envase hay 4 etiquetas alargadas tipo "pill badge" minimalistas con esquinas redondeadas, fondo blanco translúcido suave y texto tipográfico nítido en relieve con palabras clave legibles: 1) "+ ${b1}", 2) "+ ${b2}", 3) "+ ${b3}", 4) "+ ${b4}". Diseño moderno, limpio y de alta conversión estilo e-commerce internacional.`;
+      case 'pill-badges': {
+        const formatted = list.map((b, i) => `${i + 1}) "+ ${b}"`).join(', ');
+        return `Flotando de forma armónica y simétrica a los costados del envase hay ${list.length} etiquetas alargadas tipo "pill badge" minimalistas con esquinas redondeadas, fondo blanco translúcido suave y texto tipográfico nítido en relieve con palabras clave legibles: ${formatted}. Diseño moderno, limpio y de alta conversión estilo e-commerce internacional.`;
+      }
 
-      case 'callout-pins':
-        return `Composición infográfica publicitaria clínica con finas líneas guía de precisión conectando puntos clave del envase hacia 4 punteros flotantes con tipografía nítida y moderna indicando beneficios verificados: 1) "${b1}", 2) "${b2}", 3) "${b3}", 4) "${b4}". Estilo infográfico científico de alta gama sin saturar la escena.`;
+      case 'callout-pins': {
+        const formatted = list.map((b, i) => `${i + 1}) "${b}"`).join(', ');
+        return `Composición infográfica publicitaria clínica con finas líneas guía de precisión conectando puntos clave del envase hacia ${list.length} punteros flotantes con tipografía nítida y moderna indicando beneficios verificados: ${formatted}. Estilo infográfico científico de alta gama sin saturar la escena.`;
+      }
 
-      case 'live-ingredients-labels':
-        return `Alrededor del envase se presentan los ingredientes naturales frescos y vivos en alta definición con pequeñas etiquetas tipográficas nítidas en papel mate blanco flotando sutilmente al lado de cada ingrediente activo: "${b1}", "${b2}", "${b3}". Fotografía publicitaria sensorial y orgánica donde la naturaleza viva y la tipografía editorial se integran perfectamente.`;
+      case 'live-ingredients-labels': {
+        const formatted = list.map((b) => `"${b}"`).join(', ');
+        return `Alrededor del envase se presentan los ingredientes naturales frescos y vivos en alta definición con pequeñas etiquetas tipográficas nítidas en papel mate blanco flotando sutilmente al lado de cada ingrediente activo: ${formatted}. Fotografía publicitaria sensorial y orgánica donde la naturaleza viva y la tipografía editorial se integran perfectamente.`;
+      }
 
-      case 'metric-cards':
-        return `Flotando armónicamente a los lados del envase hay 3 tarjetas publicitarias de vidrio esmerilado (frosted glass) con datos clínicos de alto impacto impresos con tipografía bold ultra nítida: Tarjeta 1: "24/7 EFECTIVIDAD · ${b1}", Tarjeta 2: "100% FÓRMULA PURA · ${b2}", Tarjeta 3: "DOSIS ACTIVA · ${b3}". Formato publicitario de alta respuesta y conversión directa.`;
+      case 'metric-cards': {
+        const formatted = list.slice(0, 3).map((b, i) => `Tarjeta ${i + 1}: "100% EFECTIVIDAD · ${b}"`).join(', ');
+        return `Flotando armónicamente a los lados del envase hay tarjetas publicitarias de vidrio esmerilado (frosted glass) con datos clínicos de alto impacto impresos con tipografía bold ultra nítida: ${formatted}. Formato publicitario de alta respuesta y conversión directa.`;
+      }
 
-      case 'editorial-typography':
-        return `Diseño publicitario editorial estilo revista de bienestar (wellness editorial layout): en la parte superior e integrada con el aire de la escena destaca una tipografía serif moderna con titulares elegantes y viñetas minimalistas legibles: "· ${b1} · ${b2} · ${b3}". Sin elementos pesados flotando, composición limpia y sofisticada con protagonismo central en el empaque.`;
+      case 'editorial-typography': {
+        const formatted = list.map((b) => `· ${b}`).join(' ');
+        return `Diseño publicitario editorial estilo revista de bienestar (wellness editorial layout): en la parte superior e integrada con el aire de la escena destaca una tipografía serif moderna con titulares elegantes y viñetas minimalistas legibles: "${formatted}". Sin elementos pesados flotando, composición limpia y sofisticada con protagonismo central en el empaque.`;
+      }
 
-      case 'crystal-minimal':
-        return `Flotando de forma armónica alrededor del envase hay 4 esferas traslúcidas de cristal y borde dorado que contienen ÚNICAMENTE iconos/logos simbólicos minimalistas en 3D representando: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, prohibido incluir letras pequeñas o textos largos que se deformen.`;
+      case 'crystal-minimal': {
+        const formatted = list.map((b, i) => `${i + 1}) ${b}`).join(', ');
+        return `Flotando de forma armónica alrededor del envase hay esferas traslúcidas de cristal y borde dorado que contienen ÚNICAMENTE iconos/logos simbólicos minimalistas en 3D representando: ${formatted}, prohibido incluir letras pequeñas o textos largos que se deformen.`;
+      }
 
       case 'gold-3d':
-      default:
-        return `Flotando simétricamente alrededor del envase hay 4 medallones circulares de oro cepillado que contienen ÚNICAMENTE iconos/logos simbólicos grabados en relieve 3D representando: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, prohibido incluir letras pequeñas o textos largos para evitar deformaciones.`;
+      default: {
+        const formatted = list.map((b, i) => `${i + 1}) ${b}`).join(', ');
+        return `Flotando simétricamente alrededor del envase hay medallones circulares de oro cepillado que contienen ÚNICAMENTE iconos/logos simbólicos grabados en relieve 3D representando: ${formatted}, prohibido incluir letras pequeñas o textos largos para evitar deformaciones.`;
+      }
     }
   };
 
-  const getInfographicFragmentEn = (style: InfographicStyle) => {
-    const b1 = benefit1?.trim() || 'Health & Vitality';
-    const b2 = benefit2?.trim() || '100% Pure Formula';
-    const b3 = benefit3?.trim() || 'Daily Protection';
-    const b4 = benefit4?.trim() || 'Total Wellness';
+  const getInfographicFragmentEn = (style: string) => {
+    const activeBenefits = benefits.filter((b) => b.trim().length > 0);
+    const list = activeBenefits.length > 0 ? activeBenefits : ['Health & Vitality', 'Pure Formula', 'Daily Protection', 'Total Wellness'];
+
+    const customFound = customInfographicStyles.find((c) => c.id === style);
+    if (customFound) {
+      const customFormatted = list.map((b, i) => `${i + 1}) "${b}"`).join(', ');
+      return customFound.promptEn.includes('{benefits}')
+        ? customFound.promptEn.replace('{benefits}', customFormatted)
+        : `${customFound.promptEn} Featuring key benefits: ${customFormatted}.`;
+    }
 
     switch (style) {
       case 'none':
         return '100% clean commercial catalog composition with no external medallions, floating text, or cards, showcasing only the pure product container and its textures.';
 
-      case 'pill-badges':
-        return `Floating harmoniously and symmetrically beside the container are 4 minimalist elongated pill-shaped badges with soft translucent white frosted backgrounds, rounded corners, and crisp embossed typography highlighting key claims: 1) "+ ${b1}", 2) "+ ${b2}", 3) "+ ${b3}", 4) "+ ${b4}". Clean modern DTC supplement aesthetic.`;
+      case 'pill-badges': {
+        const formatted = list.map((b, i) => `${i + 1}) "+ ${b}"`).join(', ');
+        return `Floating harmoniously and symmetrically beside the container are ${list.length} minimalist elongated pill-shaped badges with soft translucent white frosted backgrounds, rounded corners, and crisp embossed typography highlighting key claims: ${formatted}. Clean modern DTC supplement aesthetic.`;
+      }
 
-      case 'callout-pins':
-        return `Clinical advertising infographic composition featuring fine precision guideline pins connecting key container details to 4 floating callout pointers with clean modern typography indicating verified benefits: 1) "${b1}", 2) "${b2}", 3) "${b3}", 4) "${b4}". High-end scientific infographic aesthetic.`;
+      case 'callout-pins': {
+        const formatted = list.map((b, i) => `${i + 1}) "${b}"`).join(', ');
+        return `Clinical advertising infographic composition featuring fine precision guideline pins connecting key container details to ${list.length} floating callout pointers with clean modern typography indicating verified benefits: ${formatted}. High-end scientific infographic aesthetic.`;
+      }
 
-      case 'live-ingredients-labels':
-        return `Fresh live raw natural botanical ingredients are artfully presented around the container in high definition, each paired with a small minimalist white matte label featuring crisp typography: "${b1}", "${b2}", "${b3}". Sensory organic advertising photography blending nature with editorial typography.`;
+      case 'live-ingredients-labels': {
+        const formatted = list.map((b) => `"${b}"`).join(', ');
+        return `Fresh live raw natural botanical ingredients are artfully presented around the container in high definition, each paired with a small minimalist white matte label featuring crisp typography: ${formatted}. Sensory organic advertising photography blending nature with editorial typography.`;
+      }
 
-      case 'metric-cards':
-        return `Floating harmoniously beside the container are 3 frosted glass advertising claim cards featuring bold crisp clinical typography: Card 1: "24/7 EFFECTIVENESS · ${b1}", Card 2: "100% PURE FORMULA · ${b2}", Card 3: "CLINICAL DOSE · ${b3}". High-conversion direct response advertising format.`;
+      case 'metric-cards': {
+        const formatted = list.slice(0, 3).map((b, i) => `Card ${i + 1}: "100% CLINICAL EFFECTIVENESS · ${b}"`).join(', ');
+        return `Floating harmoniously beside the container are frosted glass advertising claim cards featuring bold crisp clinical typography: ${formatted}. High-conversion direct response advertising format.`;
+      }
 
-      case 'editorial-typography':
-        return `Wellness editorial magazine advertising layout: integrated into the upper breathing space is sophisticated modern serif typography with elegant headline subtext and clean minimalist bullet points: "· ${b1} · ${b2} · ${b3}". Clean, sophisticated composition with central focus on the product container.`;
+      case 'editorial-typography': {
+        const formatted = list.map((b) => `· ${b}`).join(' ');
+        return `Wellness editorial magazine advertising layout: integrated into the upper breathing space is sophisticated modern serif typography with elegant headline subtext and clean minimalist bullet points: "${formatted}". Clean, sophisticated composition with central focus on the product container.`;
+      }
 
-      case 'crystal-minimal':
-        return `Floating harmoniously around the container are 4 translucent glass orbs with gold rims featuring ONLY minimalist 3D symbolic icons/logos representing: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, strictly no small letters or text that could warp.`;
+      case 'crystal-minimal': {
+        const formatted = list.map((b, i) => `${i + 1}) ${b}`).join(', ');
+        return `Floating harmoniously around the container are translucent glass orbs with gold rims featuring ONLY minimalist 3D symbolic icons/logos representing: ${formatted}, strictly no small letters or text that could warp.`;
+      }
 
       case 'gold-3d':
-      default:
-        return `Floating symmetrically around the container are 4 circular brushed gold medallions featuring ONLY 3D engraved symbolic icons/logos representing: 1) ${b1}, 2) ${b2}, 3) ${b3}, 4) ${b4}, strictly no small letters or text so nothing warps.`;
+      default: {
+        const formatted = list.map((b, i) => `${i + 1}) ${b}`).join(', ');
+        return `Floating symmetrically around the container are circular brushed gold medallions featuring ONLY 3D engraved symbolic icons/logos representing: ${formatted}, strictly no small letters or text so nothing warps.`;
+      }
     }
   };
 
@@ -370,30 +652,31 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
   const headlineDirectiveEs =
     isPosterFlow && headline.trim()
-      ? ` Composición publicitaria de alta conversión dejando zona superior de aire negativo limpia (negative space) para titular de campaña: "${headline.trim()}".`
+      ? ` IMPORTANTE PARA FLOW: Deja la parte superior de la imagen (tercio superior) con espacio negativo limpio, aire y fondo continuo difuso, diseñado específicamente para que la frase publicitaria "${headline.trim()}" resalte con tipografía premium en pós-producción.`
       : '';
   const headlineDirectiveEn =
     isPosterFlow && headline.trim()
-      ? ` High-converting advertising composition with clean top negative breathing room for campaign headline: "${headline.trim()}".`
+      ? ` CRITICAL DIRECTIVE FOR FLOW: Reserve the upper third (top negative breathing space) with clean uncluttered continuous background, specifically composed so the marketing headline "${headline.trim()}" can be placed with premium typography.`
       : '';
 
-  const productColorNoticeEs =
-    ' [PALETA Y COLOR REAL DEL OBJETO ADJUNTO: Extraer, heredar y replicar con 100% de fidelidad fotográfica la paleta de colores reales, tonalidades, degradados, logotipos, tipografías y acabados de material del objeto presente en la foto adjunta. Queda terminantemente PROHIBIDO recolorear el producto, inventar paletas ajenas o teñirlo de verde esmeralda, dorado o cualquier otro tono que no esté presente en la foto del objeto subido; todos los colores y gráficas del empaque deben clonarse directamente de la imagen adjunta].';
+  // Macro mode detection
+  const isMacroMode = photoTypeId === 'macro-textura' || shotId === 'macro-extremo';
 
-  const productColorNoticeEn =
-    ' [AUTHENTIC COLOR INHERITANCE FROM ATTACHED PHOTO: Directly inherit and replicate with 100% chromatic fidelity the exact authentic colors, gradients, logos, typography, and container materials from the object in the attached reference photo. Strictly FORBIDDEN to recolor the container, apply foreign color casts, or tint the product emerald green, gold, or any other hue not present on the uploaded object; all container colors must originate directly from the attached image].';
+  // Product color protection directive
+  const productColorNoticeEs = realProductColor
+    ? ` REGLA ESTRICTA DE COLOR: Preserva exactamente la tonalidad real: "${realProductColor}". Está terminantemente prohibido recolorear, desaturar o inventar tonos.`
+    : '';
+  const productColorNoticeEn = realProductColor
+    ? ` STRICT COLOR INTEGRITY: Preserve true-to-life color: "${realProductColor}". Do not recolor, desaturate, or invent arbitrary shades.`
+    : '';
 
-  // Macro mode detection (prevents contradictory wide instructions like floating medallions or distant tables)
-  const isMacroMode =
-    lensId === '100mm-macro' || shotId === 'macro-extremo' || photoTypeId === 'macro-textura';
-
-  // 1. Framing & Lens harmony (Zero contradictions)
+  // 1. Framing & Lens harmony
   let photoStyleEs = `${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}.`;
   let photoStyleEn = `${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}.`;
 
   if (isMacroMode) {
-    photoStyleEs = `Fotografía macro sensorial de ultra detalle publicitario (extreme tight macro close-up a escasos centímetros) en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre microscópico cerrado enfocado en primerísimo plano sobre el relieve del logo, la textura táctil del material y las microgotas de rocío fresco condensadas, cortando estéticamente los bordes del envase para llenar por completo la toma con nitidez 8K (sin alejar la cámara ni mostrar el envase entero).`;
-    photoStyleEn = `Advertising sensory ultra-detail macro photography (extreme tight macro close-up shot from inches away) in ${activeRatio.promptEn} for the natural product "${productName}": tightly focused microscopic close-up framing on embossed logo relief, container material texture, and fresh micro-droplets, aesthetically cropping container edges to fill the entire frame with 8K clarity (not pulling back to show the full container).`;
+    photoStyleEs = `Fotografía macro sensorial de ultra detalle publicitario en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre microscópico cerrado enfocado en primerísimo plano sobre el relieve del logo, la textura táctil del material y las microgotas de rocío fresco condensadas, cortando estéticamente los bordes del envase para llenar por completo la toma con nitidez 8K.`;
+    photoStyleEn = `Advertising sensory ultra-detail macro photography in ${activeRatio.promptEn} for the natural product "${productName}": tightly focused microscopic close-up framing on embossed logo relief, container material texture, and fresh micro-droplets, aesthetically cropping container edges to fill the entire frame with 8K clarity.`;
   } else if (lensId === '35mm-f2') {
     photoStyleEs = `Fotografía ambiental comercial capturada con lente gran angular 35mm f/2.0 en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre amplio integrando el producto de forma orgánica en el entorno con gran profundidad de campo y atmósfera botánica pura.`;
     photoStyleEn = `Environmental commercial photography captured with a 35mm f/2.0 wide-angle lens in ${activeRatio.promptEn} for the natural product "${productName}": wide environmental framing organically integrating the product into the surrounding atmosphere.`;
@@ -402,7 +685,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     photoStyleEn = `High-speed 1/4000s freeze-motion commercial advertising photography captured with a 90mm f/4 studio lens in ${activeRatio.promptEn} for the natural product "${productName}": dynamic mid-air action freezing every botanical particle, splash, and droplet in crystal-clear focus.`;
   } else if (lensId === '85mm-f18') {
     photoStyleEs = `${activePhotoType.promptEs} con lente prime 85mm f/1.8 (bokeh cremoso de estudio) en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}.`;
-    photoStyleEn = `${activePhotoType.promptEn} with an 85mm f/1.8 prime lens (creamy studio bokeh) in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEs}.`;
+    photoStyleEn = `${activePhotoType.promptEn} with an 85mm f/1.8 prime lens (creamy studio bokeh) in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}.`;
   }
 
   // 2. Reference Photo Mode vs New Packaging
@@ -437,71 +720,6 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     ? `${photoStyleEn} ${macroPackagingEn} ${macroMedallionsEn} Featuring ${activeEnvironment.lightingEn}, captured with a 100mm f/2.8 macro lens with microscopic sharpness on textures and dew droplets. 8k commercial advertising photography.${extraEn}`
     : `${photoStyleEn} ${packagingDescriptionEn} ${getInfographicFragmentEn(infographicStyle)}${headlineDirectiveEn} Featuring ${activeEnvironment.lightingEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
 
-  // 6-Shot Complete Photo Session
-  const bottleRefEs = useReferencePhotoMode
-    ? 'el envase original de la foto de referencia adjunta (extrayendo y replicando directamente sus colores reales, silueta, tapa y diseño original de etiqueta sin recolorear ni alterar)'
-    : activePackaging.promptEs;
-  const bottleRefEn = useReferencePhotoMode
-    ? 'the authentic product container from the attached reference photo (directly extracting and replicating its true-to-life colors, silhouette, cap, and authentic label graphics without recoloring)'
-    : activePackaging.promptEn;
-
-  const sessionRefPrefixEs = useReferencePhotoMode
-    ? 'Tomando como referencia obligatoria la foto del envase adjunta (heredar fielmente sus colores reales, materiales, diseño y tipografías sin alterar ni recolorear): '
-    : '';
-  const sessionRefPrefixEn = useReferencePhotoMode
-    ? 'Using the attached product photo as mandatory reference (faithfully extract and clone its authentic real colors, design, materials, and typography without alterations): '
-    : '';
-
-  const session6Pack = [
-    {
-      id: 'shot-1-poster',
-      badge: 'Foto 1 · Póster de Beneficios',
-      title: 'Póster Comercial con Claims / Beneficios',
-      shotLabel: 'Eye-Level 0° · 85mm Bokeh',
-      promptEs: `${sessionRefPrefixEs}Fotografía comercial publicitaria tipo póster en ${activeRatio.promptEs} de "${productName}", en plano frontal eye-level perfectamente simétrico. En el centro, ${bottleRefEs}${presentationEs}, ${activeEnvironment.promptEs}. ${getInfographicFragmentEs(infographicStyle === 'none' ? 'pill-badges' : infographicStyle)}${headlineDirectiveEs} Lente 85mm f/1.8, 8k.${extraEs}`,
-      promptEn: `${sessionRefPrefixEn}Commercial advertising poster photography in ${activeRatio.promptEn} of "${productName}", straight-on symmetrical eye-level shot. Centered is ${bottleRefEn}${presentationEn}, ${activeEnvironment.promptEn}. ${getInfographicFragmentEn(infographicStyle === 'none' ? 'pill-badges' : infographicStyle)}${headlineDirectiveEn} 85mm f/1.8 lens, 8k.${extraEn}`,
-    },
-    {
-      id: 'shot-2-hero',
-      badge: 'Foto 2 · Catálogo Limpio',
-      title: 'Hero Shot Imponente (Sin Medallones)',
-      shotLabel: 'Contrapicado 15° · 85mm',
-      promptEs: `${sessionRefPrefixEs}Fotografía Hero Shot comercial limpia en ${activeRatio.promptEs} de "${productName}", en plano contrapicado heroico a 15 grados que engrandece la presencia del envase. Presenta ${bottleRefEs}${presentationEs}, ${activeEnvironment.promptEs}. Sin ningún texto flotante ni medallones externos. Lente 85mm f/1.8, 8k.${extraEs}`,
-      promptEn: `${sessionRefPrefixEn}Clean commercial Hero Shot photography in ${activeRatio.promptEn} of "${productName}", shot from a 15-degree low-angle heroic perspective. Featuring ${bottleRefEn}${presentationEn}, ${activeEnvironment.promptEn}. Strictly no floating text or external medallions. 85mm f/1.8 lens, 8k.${extraEn}`,
-    },
-    {
-      id: 'shot-3-flatlay',
-      badge: 'Foto 3 · Vista Cenital 90°',
-      title: 'Flat Lay Cenital Editorial',
-      shotLabel: 'Cenital Top-Down · 50mm',
-      promptEs: `${sessionRefPrefixEs}Fotografía Flat Lay cenital en ángulo perpendicular de 90 grados desde arriba en ${activeRatio.promptEs} de "${productName}": ${bottleRefEs}${presentationEs} reposando en el centro de la composición sobre ${activeEnvironment.surfaceEs}. Iluminación suave envolvente, lente 50mm f/1.4 editorial, 8k.${extraEs}`,
-      promptEn: `${sessionRefPrefixEn}Overhead 90-degree perpendicular top-down Flat Lay photography in ${activeRatio.promptEn} of "${productName}": ${bottleRefEn}${presentationEn} resting at the center on ${activeEnvironment.surfaceEn}. Soft enveloping lighting, 50mm f/1.4 editorial lens, 8k.${extraEn}`,
-    },
-    {
-      id: 'shot-4-macro',
-      badge: 'Foto 4 · Primer Plano Sensorial',
-      title: 'Macro de Gotas, Textura y Relieve',
-      shotLabel: 'Macro Extremo · 100mm f/2.8',
-      promptEs: `${sessionRefPrefixEs}Fotografía en primerísimo plano macro extremo (extreme tight close-up a escasos centímetros) en formato ${activeRatio.id} de "${productName}": encuadre microscópico cerrado cortando los bordes del frasco con enfoque ultra nítido sobre el relieve del logo y las microgotas de rocío fresco condensadas en ${bottleRefEs}. Fondo con suave bokeh cremoso en matices de ${activeEnvironment.label}. Iluminación ${activeEnvironment.lightingEs}, lente macro 100mm f/2.8, 8k.${extraEs}`,
-      promptEn: `${sessionRefPrefixEn}Extreme macro close-up photography (shot from inches away) in ${activeRatio.id} format of "${productName}": tightly cropped frame cutting container edges with razor-sharp microscopic focus on embossed logo relief and fresh dew micro-droplets on ${bottleRefEn}. Background with smooth creamy bokeh in tones of ${activeEnvironment.label}. Lighting: ${activeEnvironment.lightingEn}, 100mm f/2.8 macro lens, 8k.${extraEn}`,
-    },
-    {
-      id: 'shot-5-splash',
-      badge: 'Foto 5 · Splash / Acción Rápida',
-      title: 'Salpicadura o Dinamismo en el Aire',
-      shotLabel: 'High-Speed · 90mm f/4',
-      promptEs: `${sessionRefPrefixEs}Fotografía publicitaria de alta velocidad (1/4000s freeze motion) en ${activeRatio.promptEs} de "${productName}": en el centro, ${bottleRefEs}${presentationEs} permanece firme sobre ${activeEnvironment.surfaceEs} mientras una onda dinámica de microgotas o bruma atomizada estalla en el aire iluminada a contraluz. Con ${activeEnvironment.lightingEs}, lente de estudio 90mm f/4, nitidez absoluta en cada partícula en suspensión, 8k.${extraEs}`,
-      promptEn: `${sessionRefPrefixEn}High-speed 1/4000s freeze-motion advertising photography in ${activeRatio.promptEn} of "${productName}": centered ${bottleRefEn}${presentationEn} stands steady on ${activeEnvironment.surfaceEn} while a dynamic burst of fine droplets or atomized mist erupts suspended in mid-air backlit. With ${activeEnvironment.lightingEn}, 90mm f/4 studio lens, crystal-clear focus on every suspended particle, 8k.${extraEn}`,
-    },
-    {
-      id: 'shot-6-lifestyle',
-      badge: 'Foto 6 · En Uso Real',
-      title: 'Escena de Bienestar Cotidiano',
-      shotLabel: 'Picado 45° · 50mm',
-      promptEs: `${sessionRefPrefixEs}Fotografía editorial Lifestyle de bienestar en ${activeRatio.promptEs} para "${productName}", en plano diagonal de 45 grados: ${bottleRefEs}${presentationEs} sobre ${activeEnvironment.surfaceEs}, mientras unas manos cuidadas interactúan con el producto bajo luz suave matutina. Atmósfera cálida, confiable y de alta gama, ${activeEnvironment.lightingEs}, lente 50mm f/1.4, 8k.${extraEs}`,
-      promptEn: `${sessionRefPrefixEn}Wellness editorial Lifestyle photography in ${activeRatio.promptEn} for "${productName}", 45-degree angle: ${bottleRefEn}${presentationEn} on ${activeEnvironment.surfaceEn}, while elegant hands interact with the product under soft morning light. Warm, trustworthy atmosphere, ${activeEnvironment.lightingEn}, 50mm f/1.4 lens, 8k.${extraEn}`,
-    },
-  ];
 
   return (
     <section id="estudio-imagenes" className="py-10 scroll-mt-16">
@@ -677,54 +895,79 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
               </div>
 
-              {/* 4 Benefits / Claims Fields (Universal for ANY product) */}
-              <div className="space-y-1.5 pt-1 border-t border-slate-800/40">
-                <div className="flex items-center justify-between">
+              {/* Dynamic Benefits / Claims Fields (Universal for ANY product) */}
+              <div className="space-y-2 pt-1 border-t border-slate-800/40">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    4 Beneficios / Palabras Clave del Producto (Aparecen en las píldoras/diseño):
+                    Beneficios y Claims del Producto ({benefits.length} activos):
                   </label>
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    Textos de tu empaque
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-slate-400 font-mono">
+                      Aparecen en tus infografías/Flow
+                    </span>
+                    {benefits.length < 8 && (
+                      <button
+                        type="button"
+                        onClick={handleAddBenefit}
+                        className="px-2 py-0.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-400 text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all border border-emerald-500/30"
+                      >
+                        <Plus className="w-3 h-3" />
+                        <span>Añadir Beneficio</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {/* Quick chip pills for rapid insertion */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                  <span className="text-[9.5px] text-slate-400 font-medium">Sugerencias rápidas:</span>
+                  {[
+                    'Absorción Rápida',
+                    'Cero Azúcar / Keto',
+                    '100% Orgánico',
+                    'Refuerzo Inmune',
+                    'Energía Limpia',
+                    'Digestión Ligera',
+                    'Piel Firme y Radiante',
+                    'Sin Rellenos Químicos'
+                  ].map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => handleQuickAddBenefit(chip)}
+                      className="px-2 py-0.5 rounded-md text-[9.5px] font-medium bg-black/40 hover:bg-amber-500/20 text-slate-300 hover:text-amber-300 border border-slate-800 hover:border-amber-400/50 transition-all cursor-pointer"
+                    >
+                      + {chip}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Benefits Inputs Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <input
-                    type="text"
-                    value={benefit1}
-                    onChange={(e) => setBenefit1(e.target.value)}
-                    placeholder="1. Beneficio / Claim principal"
-                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
-                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
-                  <input
-                    type="text"
-                    value={benefit2}
-                    onChange={(e) => setBenefit2(e.target.value)}
-                    placeholder="2. Segundo beneficio / Certificación"
-                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
-                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
-                  <input
-                    type="text"
-                    value={benefit3}
-                    onChange={(e) => setBenefit3(e.target.value)}
-                    placeholder="3. Ingrediente activo o dosis"
-                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
-                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
-                  <input
-                    type="text"
-                    value={benefit4}
-                    onChange={(e) => setBenefit4(e.target.value)}
-                    placeholder="4. Efecto o valor agregado"
-                    className={`w-full px-2.5 py-1.5 rounded-lg border text-xs font-medium ${
-                      isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
-                    }`}
-                  />
+                  {benefits.map((b, idx) => (
+                    <div key={idx} className="relative flex items-center">
+                      <input
+                        type="text"
+                        value={b}
+                        onChange={(e) => handleUpdateBenefit(idx, e.target.value)}
+                        placeholder={`${idx + 1}. Beneficio / Claim del producto`}
+                        className={`w-full pl-2.5 pr-7 py-1.5 rounded-lg border text-xs font-medium ${
+                          isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
+                        }`}
+                      />
+                      {benefits.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveBenefit(idx)}
+                          className="absolute right-1.5 p-1 text-slate-500 hover:text-rose-400 rounded transition-colors cursor-pointer"
+                          title="Eliminar beneficio"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -937,12 +1180,24 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
               {/* 1. Tipo de Foto / Encuadre */}
               <div className="space-y-1.5">
-                <label className="text-[11px] font-bold text-slate-300 block">
-                  1. ¿Qué Estilo de Fotografía Necesitas?
-                </label>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <label className="text-[11px] font-bold text-slate-300 block">
+                    1. ¿Qué Estilo de Fotografía Necesitas?
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddPhotoTypeModalOpen(true)}
+                    className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Añadir Tipo de Foto</span>
+                  </button>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
-                  {PHOTO_TYPES.map((pt) => {
+                  {allPhotoTypes.map((pt) => {
                     const isSelected = photoTypeId === pt.id;
+                    const isCustom = customPhotoTypes.some((c) => c.id === pt.id);
                     return (
                       <div
                         key={pt.id}
@@ -968,6 +1223,16 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                             >
                               {pt.label}
                             </span>
+                            {isCustom && (
+                              <button
+                                type="button"
+                                onClick={(e) => handleDeleteCustomPhotoType(pt.id, e)}
+                                className="text-slate-500 hover:text-rose-400 p-0.5"
+                                title="Eliminar tipo personalizado"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            )}
                           </div>
                           <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 inline-block mt-0.5">
                             {pt.badge}
@@ -988,28 +1253,52 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   <label className="text-[11px] font-bold text-slate-300 block">
                     2. Formato de Imagen (Relación de Aspecto):
                   </label>
-                  <span className="text-[10px] text-slate-400 font-normal">
-                    (Adapta el encuadre en el prompt; elígela también en los botones de Flow o Midjourney)
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-slate-400 font-normal">
+                      (Elige o añade tu formato preferido)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsAddRatioModalOpen(true)}
+                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Añadir Formato</span>
+                    </button>
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {ASPECT_RATIOS.map((ar) => (
-                    <button
-                      key={ar.id}
-                      type="button"
-                      onClick={() => setAspectRatio(ar.id)}
-                      className={`p-2 rounded-xl border text-left transition-all cursor-pointer ${
-                        aspectRatio === ar.id
-                          ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-extrabold shadow'
-                          : isDark
-                          ? 'bg-black/30 border-slate-800 text-slate-200'
-                          : 'bg-stone-50 border-stone-200 text-stone-700'
-                      }`}
-                    >
-                      <div className="text-xs font-bold">{ar.label}</div>
-                      <div className="text-[9px] opacity-75">{ar.sub.split('/')[0]}</div>
-                    </button>
-                  ))}
+                  {allAspectRatios.map((ar) => {
+                    const isCustom = customAspectRatios.some((c) => c.id === ar.id);
+                    return (
+                      <button
+                        key={ar.id}
+                        type="button"
+                        onClick={() => setAspectRatio(ar.id)}
+                        className={`p-2 rounded-xl border text-left transition-all cursor-pointer relative ${
+                          aspectRatio === ar.id
+                            ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-extrabold shadow'
+                            : isDark
+                            ? 'bg-black/30 border-slate-800 text-slate-200'
+                            : 'bg-stone-50 border-stone-200 text-stone-700'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold">{ar.label}</span>
+                          {isCustom && (
+                            <span
+                              onClick={(e) => handleDeleteCustomRatio(ar.id, e)}
+                              className="text-slate-400 hover:text-rose-400 p-0.5"
+                              title="Eliminar formato"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[9px] opacity-75">{ar.sub.split('/')[0]}</div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1022,23 +1311,34 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                       3. Diseño de Beneficios e Infografía:
                     </label>
                     <span className="text-[10px] text-slate-400 block">
-                      Aprovecha que Flow genera tipografía y palabras nítidas. Elige cómo mostrar tus textos o desactívalos con 1 clic.
+                      Aprovecha que Flow genera tipografía y palabras nítidas. Elige cómo mostrar tus textos o añade tu diseño.
                     </span>
                   </div>
-                  {infographicStyle !== 'none' && (
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={() => setInfographicStyle('none')}
-                      className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                      onClick={() => setIsAddInfographicModalOpen(true)}
+                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1 cursor-pointer transition-all"
                     >
-                      Deseleccionar (Foto 100% Limpia sin Textos)
+                      <Plus className="w-3 h-3" />
+                      <span>Añadir Estilo de Diseño</span>
                     </button>
-                  )}
+                    {infographicStyle !== 'none' && (
+                      <button
+                        type="button"
+                        onClick={() => setInfographicStyle('none')}
+                        className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                      >
+                        Deseleccionar (Foto Limpia)
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-                  {INFOGRAPHIC_STYLES.map((styleOpt) => {
+                  {allInfographicStyles.map((styleOpt) => {
                     const isSelected = infographicStyle === styleOpt.id;
+                    const isCustom = customInfographicStyles.some((c) => c.id === styleOpt.id);
                     return (
                       <button
                         key={styleOpt.id}
@@ -1056,7 +1356,18 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                           <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 truncate">
                             {styleOpt.badge}
                           </span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                          <div className="flex items-center gap-1">
+                            {isCustom && (
+                              <span
+                                onClick={(e) => handleDeleteCustomInfographic(styleOpt.id, e)}
+                                className="text-slate-400 hover:text-rose-400 p-0.5"
+                                title="Eliminar diseño"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </span>
+                            )}
+                            {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                          </div>
                         </div>
                         <div className={`text-xs font-bold leading-snug ${isSelected ? 'text-amber-200' : ''}`}>
                           {styleOpt.label}
@@ -1082,9 +1393,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                    4. Entorno / Fondo Comercial Unificado (Superficie & Luz Cohesiva):
+                    4. Entorno / Fondo Comercial Unificado ({allEnvironments.length} disponibles):
                   </label>
                   <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsAddEnvModalOpen(true)}
+                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Añadir Escenario</span>
+                    </button>
                     {environmentId !== 'estudio-neutro' && (
                       <button
                         type="button"
@@ -1101,8 +1420,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 max-h-[500px] overflow-y-auto pr-1">
-                  {COMMERCIAL_ENVIRONMENTS.map((env) => {
+                  {allEnvironments.map((env) => {
                     const isSelected = environmentId === env.id;
+                    const isCustom = customEnvironments.some((c) => c.id === env.id);
                     return (
                       <button
                         key={env.id}
@@ -1117,10 +1437,21 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         }`}
                       >
                         <div className="flex items-center justify-between gap-1">
-                          <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 font-bold">
+                          <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 font-bold truncate">
                             {env.badge}
                           </span>
-                          {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                          <div className="flex items-center gap-1">
+                            {isCustom && (
+                              <span
+                                onClick={(e) => handleDeleteCustomEnv(env.id, e)}
+                                className="text-slate-400 hover:text-rose-400 p-0.5"
+                                title="Eliminar escenario"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </span>
+                            )}
+                            {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                          </div>
                         </div>
                         <div>
                           <div className={`text-xs font-bold leading-snug ${isSelected ? 'text-white' : ''}`}>
@@ -1203,150 +1534,76 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </span>
               </div>
 
-              {/* Mode Tabs: 1 Foto vs Sesión de 6 */}
-              <div className="grid grid-cols-2 gap-1 p-1 rounded-xl bg-black/40 border border-slate-800">
-                <button
-                  type="button"
-                  onClick={() => setOutputTab('single')}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    outputTab === 'single'
-                      ? 'bg-emerald-500 text-slate-950 shadow'
-                      : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  1 Foto a Medida
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOutputTab('session6')}
-                  className={`py-1.5 px-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    outputTab === 'session6'
-                      ? 'bg-amber-500 text-slate-950 shadow'
-                      : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  Pack de 6 Planos
-                </button>
-              </div>
+              <div className="space-y-3 pt-2">
+                <div className="p-3.5 rounded-xl bg-black/85 border border-emerald-500/30 font-mono text-xs text-slate-100 leading-relaxed select-all max-h-[260px] overflow-y-auto">
+                  {outputLang === 'es' ? mainPromptEs : mainPromptEn}
+                </div>
 
-              {/* TAB 1: SINGLE PROMPT */}
-              {outputTab === 'single' && (
-                <div className="space-y-3">
-                  <div className="p-3.5 rounded-xl bg-black/85 border border-emerald-500/30 font-mono text-xs text-slate-100 leading-relaxed select-all max-h-[220px] overflow-y-auto">
-                    {outputLang === 'es' ? mainPromptEs : mainPromptEn}
-                  </div>
-
-                  {/* Smart Guidance Badges */}
-                  <div className="space-y-2">
-                    {isMacroMode && (
-                      <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-xs text-amber-200 flex items-start gap-2 shadow-xs">
-                        <Eye className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
-                        <div>
-                          <strong className="text-amber-300">Modo Macro Ultra Detalle Activo: </strong>
-                          El prompt enfoca a escasos centímetros sobre la textura, logotipo y microgotas. Se han retirado elementos externos para que la IA nunca aleje el producto.
-                        </div>
+                {/* Smart Guidance Badges */}
+                <div className="space-y-2">
+                  {isMacroMode && (
+                    <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-xs text-amber-200 flex items-start gap-2 shadow-xs">
+                      <Eye className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
+                      <div>
+                        <strong className="text-amber-300">Modo Macro Ultra Detalle Activo: </strong>
+                        El prompt enfoca a escasos centímetros sobre la textura, logotipo y microgotas. Se han retirado elementos externos para que la IA nunca aleje el producto.
                       </div>
-                    )}
-
-                    {useReferencePhotoMode && (
-                      <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-xs text-emerald-200 flex items-start gap-2 shadow-xs">
-                        <Upload className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                        <div>
-                          <strong className="text-emerald-300">Foto de Referencia Activa: </strong>
-                          Recuerda adjuntar la foto de tu envase real. El prompt ordena clonar fielmente la forma, tapa, colores y diseño original de tu empaque.
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-200 leading-relaxed">
-                      ✨ <strong>Lo que generará:</strong> Una foto de estudio con{' '}
-                      <strong className="text-white">{productName}</strong> al centro en{' '}
-                      <strong className="text-white">{activeEnvironment.label}</strong>,{' '}
-                      {activePhotoType.shortDesc.toLowerCase()}
                     </div>
-                  </div>
+                  )}
 
-                  <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')
-                      }
-                      className="sm:col-span-8 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all"
-                    >
-                      {copiedKey === 'main-copy' ? (
-                        <>
-                          <Check className="w-4 h-4 stroke-[3]" />
-                          <span>¡Prompt Copiado! Pégalo en Flow</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="w-4 h-4" />
-                          <span>Copiar Prompt para Flow</span>
-                        </>
-                      )}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy');
-                        window.open('https://flow.google', '_blank');
-                      }}
-                      className="sm:col-span-4 py-3.5 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer border border-emerald-500/40 transition-all shadow"
-                      title="Copia el prompt automáticamente y abre Google Flow en una nueva pestaña"
-                    >
-                      <ExternalLink className="w-4 h-4 shrink-0" />
-                      <span>Abrir Flow ↗</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 2: PACK DE 6 PLANOS */}
-              {outputTab === 'session6' && (
-                <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
-                  <div className="flex items-center justify-between text-xs text-amber-300 font-bold">
-                    <span>6 Planos fotográficos listos:</span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const allSix = session6Pack
-                          .map((s) => `=== ${s.badge} ===\n${outputLang === 'es' ? s.promptEs : s.promptEn}`)
-                          .join('\n\n');
-                        copyText(allSix, 'copy-all-shots');
-                      }}
-                      className="px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-bold text-[10px] cursor-pointer"
-                    >
-                      {copiedKey === 'copy-all-shots' ? '¡Copiados los 6!' : 'Copiar los 6'}
-                    </button>
-                  </div>
-
-                  {session6Pack.map((shot) => {
-                    const text = outputLang === 'es' ? shot.promptEs : shot.promptEn;
-                    return (
-                      <div
-                        key={shot.id}
-                        className="p-2.5 rounded-xl bg-black/70 border border-slate-800 space-y-1"
-                      >
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-[11px] font-bold text-white">{shot.badge}</span>
-                          <button
-                            type="button"
-                            onClick={() => copyText(text, shot.id)}
-                            className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500 hover:text-slate-950 text-[10px] font-bold transition-all cursor-pointer"
-                          >
-                            {copiedKey === shot.id ? 'Copiado' : 'Copiar'}
-                          </button>
-                        </div>
-                        <p className="text-[10px] text-slate-400 line-clamp-2 select-all font-mono">
-                          {text}
-                        </p>
+                  {useReferencePhotoMode && (
+                    <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-xs text-emerald-200 flex items-start gap-2 shadow-xs">
+                      <Upload className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
+                      <div>
+                        <strong className="text-emerald-300">Foto de Referencia Activa: </strong>
+                        Recuerda adjuntar la foto de tu envase real. El prompt ordena clonar fielmente la forma, tapa, colores y diseño original de tu empaque.
                       </div>
-                    );
-                  })}
+                    </div>
+                  )}
+
+                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-200 leading-relaxed">
+                    ✨ <strong>Lo que generará:</strong> Una foto de estudio con{' '}
+                    <strong className="text-white">{productName}</strong> al centro en{' '}
+                    <strong className="text-white">{activeEnvironment.label}</strong>,{' '}
+                    {activePhotoType.shortDesc.toLowerCase()}
+                  </div>
                 </div>
-              )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')
+                    }
+                    className="sm:col-span-8 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all"
+                  >
+                    {copiedKey === 'main-copy' ? (
+                      <>
+                        <Check className="w-4 h-4 stroke-[3]" />
+                        <span>¡Prompt Copiado! Pégalo en Flow</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        <span>Copiar Prompt para Flow</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy');
+                      window.open('https://flow.google', '_blank');
+                    }}
+                    className="sm:col-span-4 py-3.5 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer border border-emerald-500/40 transition-all shadow"
+                    title="Copia el prompt automáticamente y abre Google Flow en una nueva pestaña"
+                  >
+                    <ExternalLink className="w-4 h-4 shrink-0" />
+                    <span>Abrir Flow ↗</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1371,6 +1628,314 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
           }
         }}
       />
+
+      {/* Modal: Añadir Escenario Personalizado */}
+      {isAddEnvModalOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setIsAddEnvModalOpen(false)}
+        >
+          <div
+            className={`max-w-md w-full rounded-2xl border p-5 space-y-4 shadow-2xl my-auto ${
+              isDark ? 'bg-[#0E1612] border-emerald-500/40 text-white' : 'bg-white border-stone-200 text-stone-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 className="font-bold text-sm flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-emerald-400" />
+                Añadir Escenario / Entorno Personalizado
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsAddEnvModalOpen(false)}
+                className="p-1 rounded text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Nombre del Escenario</label>
+                <input
+                  type="text"
+                  value={newEnvForm.label}
+                  onChange={(e) => setNewEnvForm({ ...newEnvForm, label: e.target.value })}
+                  placeholder="Ej: Terraza Mediterránea de Olivos"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Categoría / Etiqueta</label>
+                <input
+                  type="text"
+                  value={newEnvForm.badge}
+                  onChange={(e) => setNewEnvForm({ ...newEnvForm, badge: e.target.value })}
+                  placeholder="Ej: Exterior, Rústico, Spa, Lujo"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Superficie y Fondo (Descripción para Flow)</label>
+                <textarea
+                  value={newEnvForm.surfaceEs}
+                  onChange={(e) => setNewEnvForm({ ...newEnvForm, surfaceEs: e.target.value })}
+                  placeholder="Ej: sobre mesa de madera rústica de olivo frente al mar con flores secas y fondo de colinas doradas"
+                  rows={2}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Iluminación (Descripción técnica)</label>
+                <input
+                  type="text"
+                  value={newEnvForm.lightingEs}
+                  onChange={(e) => setNewEnvForm({ ...newEnvForm, lightingEs: e.target.value })}
+                  placeholder="Ej: bajo luz dorada cálida de poniente con reflejos sutiles y sombras alargadas"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setIsAddEnvModalOpen(false)}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveCustomEnv}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
+              >
+                Guardar Escenario
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Añadir Estilo de Diseño / Infografía */}
+      {isAddInfographicModalOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setIsAddInfographicModalOpen(false)}
+        >
+          <div
+            className={`max-w-md w-full rounded-2xl border p-5 space-y-4 shadow-2xl my-auto ${
+              isDark ? 'bg-[#0E1612] border-amber-500/40 text-white' : 'bg-white border-stone-200 text-stone-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 className="font-bold text-sm flex items-center gap-2">
+                <Tag className="w-4 h-4 text-amber-400" />
+                Añadir Estilo de Diseño e Infografía
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsAddInfographicModalOpen(false)}
+                className="p-1 rounded text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Nombre del Estilo</label>
+                <input
+                  type="text"
+                  value={newInfographicForm.label}
+                  onChange={(e) => setNewInfographicForm({ ...newInfographicForm, label: e.target.value })}
+                  placeholder="Ej: Etiquetas Neumórficas de Cristal"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Descripción Corta</label>
+                <input
+                  type="text"
+                  value={newInfographicForm.shortDesc}
+                  onChange={(e) => setNewInfographicForm({ ...newInfographicForm, shortDesc: e.target.value })}
+                  placeholder="Ej: Tarjetas de vidrio esmerilado con bordes brillantes y tipografía nítida."
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Instrucción para Flow (Usa {beneficios} donde van los textos)</label>
+                <textarea
+                  value={newInfographicForm.promptEs}
+                  onChange={(e) => setNewInfographicForm({ ...newInfographicForm, promptEs: e.target.value })}
+                  placeholder="Ej: Flotando armónicamente alrededor del envase destacan tarjetas de cristal esmerilado con bordes suaves que exhiben los beneficios: {beneficios}."
+                  rows={3}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setIsAddInfographicModalOpen(false)}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveCustomInfographic}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 shadow"
+              >
+                Guardar Estilo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Añadir Tipo de Foto / Estilo Visual */}
+      {isAddPhotoTypeModalOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setIsAddPhotoTypeModalOpen(false)}
+        >
+          <div
+            className={`max-w-md w-full rounded-2xl border p-5 space-y-4 shadow-2xl my-auto ${
+              isDark ? 'bg-[#0E1612] border-emerald-500/40 text-white' : 'bg-white border-stone-200 text-stone-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 className="font-bold text-sm flex items-center gap-2">
+                <Camera className="w-4 h-4 text-emerald-400" />
+                Añadir Tipo de Foto / Estilo Visual
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsAddPhotoTypeModalOpen(false)}
+                className="p-1 rounded text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Nombre del Tipo de Foto</label>
+                <input
+                  type="text"
+                  value={newPhotoTypeForm.label}
+                  onChange={(e) => setNewPhotoTypeForm({ ...newPhotoTypeForm, label: e.target.value })}
+                  placeholder="Ej: Levitación Cinematográfica Botánica"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Descripción del Efecto / Encuadre</label>
+                <textarea
+                  value={newPhotoTypeForm.promptEs}
+                  onChange={(e) => setNewPhotoTypeForm({ ...newPhotoTypeForm, promptEs: e.target.value })}
+                  placeholder="Ej: Fotografía comercial publicitaria con el envase suspendido en levitación sutil en el centro con humo botánico difuso y partículas de luz"
+                  rows={2}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setIsAddPhotoTypeModalOpen(false)}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveCustomPhotoType}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
+              >
+                Guardar Tipo de Foto
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Añadir Formato / Aspect Ratio */}
+      {isAddRatioModalOpen && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          onClick={() => setIsAddRatioModalOpen(false)}
+        >
+          <div
+            className={`max-w-md w-full rounded-2xl border p-5 space-y-4 shadow-2xl my-auto ${
+              isDark ? 'bg-[#0E1612] border-emerald-500/40 text-white' : 'bg-white border-stone-200 text-stone-900'
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h3 className="font-bold text-sm flex items-center gap-2">
+                <Box className="w-4 h-4 text-emerald-400" />
+                Añadir Formato / Relación de Aspecto
+              </h3>
+              <button
+                type="button"
+                onClick={() => setIsAddRatioModalOpen(false)}
+                className="p-1 rounded text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Relación (ej: 3:4, 2:3, 21:9)</label>
+                <input
+                  type="text"
+                  value={newRatioForm.id}
+                  onChange={(e) => setNewRatioForm({ ...newRatioForm, id: e.target.value })}
+                  placeholder="Ej: 3:4"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Nombre / Uso</label>
+                <input
+                  type="text"
+                  value={newRatioForm.label}
+                  onChange={(e) => setNewRatioForm({ ...newRatioForm, label: e.target.value })}
+                  placeholder="Ej: 3:4 Retrato Editorial"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+              <div>
+                <label className="font-bold block mb-1 text-slate-300">Instrucción de Encuadre para Flow</label>
+                <input
+                  type="text"
+                  value={newRatioForm.promptEs}
+                  onChange={(e) => setNewRatioForm({ ...newRatioForm, promptEs: e.target.value })}
+                  placeholder="Ej: formato vertical 3:4 con encuadre editorial equilibrado"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setIsAddRatioModalOpen(false)}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveCustomRatio}
+                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
+              >
+                Guardar Formato
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Intelligent Supplement Knowledge Base & Autocomplete Assistant */}
       {isAssistantOpen && (

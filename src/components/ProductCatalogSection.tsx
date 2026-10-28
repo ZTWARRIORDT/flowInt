@@ -44,13 +44,11 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageSt
   };
 
   const categories = [
-    { id: 'all', label: 'Todas las Referencias (16)' },
-    { id: 'suplementos', label: 'Cápsulas & Suplementos (4)' },
-    { id: 'doypack', label: 'Bolsas Doypack & Gomitas (3)' },
-    { id: 'goteros', label: 'Goteros & Cosmética (2)' },
-    { id: 'sprays', label: 'Sprays & Atomizadores (3)' },
-    { id: 'tarros', label: 'Tarros & Miel (2)' },
-    { id: 'polvos', label: 'Proteínas & Polvos (2)' },
+    { id: 'all', label: 'Todas las Variaciones (16)' },
+    { id: 'uro', label: 'URO Cranberry Rosa (4)' },
+    { id: 'glucosamina', label: 'Glucosamina Frasco Blanco (4)' },
+    { id: 'vitamina-frasco', label: 'Vitamina D3 Frasco Ámbar (4)' },
+    { id: 'vitamina-pouch', label: 'Vitamina D3 Pouch Doypack (4)' },
   ];
 
   const filteredProducts =
@@ -226,10 +224,10 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageSt
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              16 Referencias Fotográficas de Estudio y Catálogo
+              16 Variaciones Fotográficas de tus Productos Reales
             </h2>
             <p className={`mt-1 text-xs md:text-sm ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Explora todos los formatos de empaque (frascos, doypack, goteros, sprays, tarros y polvos). Haz clic en "Editar en el Estudio ↑" para cargar fielmente todos los paneles y selectores en el generador.
+              Composiciones comerciales listas para Flow generadas a partir de tus fotos reales: <strong>URO</strong> (Doypack Rosa), <strong>Glucosamina</strong> (Frasco Blanco) y <strong>Vitamina D3</strong> (Frasco Ámbar y Pouch). Haz clic en "Editar en el Estudio ↑" para cargar fielmente su entorno, óptica, iluminación e infografía en el generador.
             </p>
           </div>
 

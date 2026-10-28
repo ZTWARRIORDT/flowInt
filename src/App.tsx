@@ -169,87 +169,87 @@ export function App() {
                 <div className="grid grid-cols-6 gap-2">
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => { setExternalPresetPayload({ id: 'colageno-magnesio', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
+                    onClick={() => { setExternalPresetPayload({ id: 'uro-cranberry-zen-pill', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/colageno-magnesio.jpg"
-                      alt="Colágeno + Magnesio"
+                      src="/images/uro-poster.jpg"
+                      alt="URO Cranberry Rosa"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2">
                       <span className="text-[10px] font-bold text-white block">
-                        Colágeno + Magnesio
+                        URO Cranberry Rosa
                       </span>
-                      <span className="text-[9px] text-amber-300">Póster 4 Medallones</span>
+                      <span className="text-[9px] text-amber-300">Doypack · Arena Zen</span>
                     </div>
                   </a>
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => { setExternalPresetPayload({ id: 'curcuma-ashwagandha', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
+                    onClick={() => { setExternalPresetPayload({ id: 'glucosamina-travertino-spa', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/curcuma-ashwagandha.jpg"
-                      alt="Cúrcuma + Jengibre"
+                      src="/images/glucosamina-hero.jpg"
+                      alt="Glucosamina + MSM"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2">
                       <span className="text-[10px] font-bold text-white block">
-                        Cúrcuma + Jengibre
+                        Glucosamina + MSM
                       </span>
-                      <span className="text-[9px] text-amber-300">Acción Alta Velocidad</span>
+                      <span className="text-[9px] text-amber-300">Frasco Blanco · Travertino</span>
                     </div>
                   </a>
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => { setExternalPresetPayload({ id: 'clorofila-matcha', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
+                    onClick={() => { setExternalPresetPayload({ id: 'vitamina-d3-frasco-botica', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/clorofila-matcha.jpg"
-                      alt="Clorofila & Matcha"
+                      src="/images/vitamina-frasco.jpg"
+                      alt="Vitamina D3 Frasco"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
                       <span className="text-[10px] font-bold text-white block truncate">
-                        Clorofila Splash
-                      </span>
-                    </div>
-                  </a>
-
-                  <a
-                    href="#estudio-imagenes"
-                    onClick={() => { setExternalPresetPayload({ id: 'serum-botanico', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
-                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
-                  >
-                    <img
-                      src="/images/serum-botanico.jpg"
-                      alt="Sérum Rosa Mosqueta"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
-                      <span className="text-[10px] font-bold text-white block truncate">
-                        Sérum Podio Spa
+                        D3 Frasco Ámbar
                       </span>
                     </div>
                   </a>
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => { setExternalPresetPayload({ id: 'miel-propoleo', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
+                    onClick={() => { setExternalPresetPayload({ id: 'vitamina-d3-pouch-cocina', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
                   >
                     <img
-                      src="/images/miel-propoleo.jpg"
-                      alt="Miel & Propóleo"
+                      src="/images/vitamina-pouch.jpg"
+                      alt="Vitamina D3 Pouch"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
                       <span className="text-[10px] font-bold text-white block truncate">
-                        Miel Macro Textura
+                        D3 Pouch Doypack
+                      </span>
+                    </div>
+                  </a>
+
+                  <a
+                    href="#estudio-imagenes"
+                    onClick={() => { setExternalPresetPayload({ id: 'uro-macro-textura', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
+                    className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
+                  >
+                    <img
+                      src="/images/uro-macro.jpg"
+                      alt="URO Macro 100mm"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
+                      <span className="text-[10px] font-bold text-white block truncate">
+                        URO Macro 100mm
                       </span>
                     </div>
                   </a>
