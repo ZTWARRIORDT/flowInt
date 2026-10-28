@@ -18,6 +18,8 @@ import {
   X,
   ChevronRight,
   BookOpen,
+  Camera,
+  Sliders,
 } from 'lucide-react';
 import {
   PRODUCTS_DATA,
@@ -27,13 +29,14 @@ import {
 
 interface Props {
   isDark: boolean;
+  onLoadInImageStudio?: (productId: string) => void;
 }
 
-export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
+export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageStudio }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedProduct, setSelectedProduct] = useState<NaturalProductExample>(PRODUCTS_DATA[0]);
   const [promptLang, setPromptLang] = useState<'es' | 'en'>('es');
-  const [imagePromptType, setImagePromptType] = useState<'poster' | 'clean'>('poster');
+  const [imagePromptType, setImagePromptType] = useState<'poster' | 'clean' | 'flatlay' | 'macro'>('poster');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [modalProduct, setModalProduct] = useState<NaturalProductExample | null>(null);
 
@@ -41,6 +44,16 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2200);
+  };
+
+  const handleOpenInStudio = (productId: string) => {
+    if (onLoadInImageStudio) {
+      onLoadInImageStudio(productId);
+    }
+    const el = document.getElementById('estudio-imagenes');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const renderBenefitIcon = (iconName: BenefitItem['iconName']) => {
@@ -87,6 +100,27 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
       ? PRODUCTS_DATA
       : PRODUCTS_DATA.filter((p) => p.categoryId === selectedCategory);
 
+  const getProductImagePromptByVariant = (
+    product: NaturalProductExample,
+    variant: 'poster' | 'clean' | 'flatlay' | 'macro',
+    lang: 'es' | 'en'
+  ) => {
+    if (variant === 'poster') {
+      return lang === 'es' ? product.geminiPromptEs : product.geminiPromptEn;
+    }
+    if (variant === 'clean') {
+      return lang === 'es' ? product.cleanHeroPromptEs : product.cleanHeroPromptEn;
+    }
+    if (variant === 'flatlay') {
+      return lang === 'es'
+        ? `Fotografía Flat Lay cenital en ángulo perpendicular de 90 grados desde arriba (top-down view) de "${product.name}": ${product.cleanHeroPromptEs} Composición geométrica ordenada de bodegón orgánico mostrando los ingredientes frescos dispuestos en círculo alrededor del envase, iluminación suave difusa, lente 50mm f/1.4, 8k.`
+        : `Overhead 90-degree perpendicular top-down Flat Lay photography of "${product.name}": ${product.cleanHeroPromptEn} Artfully arranged organic still-life composition showcasing raw fresh ingredients encircling the container, soft diffused daylight, 50mm f/1.4 lens, 8k.`;
+    }
+    return lang === 'es'
+      ? `Fotografía en primerísimo plano macro extremo (extreme close-up shot) de "${product.name}": enfoque microscópico ultra nítido en la textura del vidrio, las microgotas de rocío fresco y el relieve dorado del logo simbólico (sin letras pequeñas que se deformen), con los ingredientes botánicos en primer plano y bokeh cremoso de fondo, lente macro 100mm f/2.8, 8k.`
+      : `Extreme macro close-up photography of "${product.name}": razor-sharp microscopic focus on the glass texture, fresh micro-droplets, and embossed gold symbolic logo relief (strictly no small letters that could warp), with botanical ingredients in the immediate foreground and creamy bokeh, 100mm f/2.8 macro lens, 8k.`;
+  };
+
   const buildFullProductScript = (prod: NaturalProductExample) => {
     const imgPrompt = promptLang === 'es' ? prod.geminiPromptEs : prod.geminiPromptEn;
     const masterVideoPrompt = promptLang === 'es' ? prod.masterFlowPromptEs : prod.masterFlowPromptEn;
@@ -100,20 +134,17 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
     return (
       `=== ${prod.name.toUpperCase()} (PROMPTS TODO-EN-UNO) ===\n\n` +
       `1) PROMPT DE IMAGEN GEMINI (TODO INCLUIDO):\n${imgPrompt}\n\n` +
-      `2) PROMPT MAESTRO DE VIDEO FLOW EN 1 SOLO BLOQUE (ESCENA + SOLO LOGOS SIN ANIMAR LETRAS + MÚSICA + MISMA VOZ + DIÁLOGO):\n${masterVideoPrompt}\n\n` +
-      `3) SECUENCIA DE 4 ESCENAS FLOW (CADA PROMPT YA TIENE TODO ADENTRO):\n\n${scenesText}`
+      `2) PROMPT MAESTRO DE VIDEO FLOW EN 1 SOLO BLOQUE:\n${masterVideoPrompt}\n\n` +
+      `3) SECUENCIA DE 4 ESCENAS FLOW:\n\n${scenesText}`
     );
   };
 
   const renderDetailedProductInspector = (product: NaturalProductExample, isModal = false) => {
-    const activeGeminiPrompt =
-      imagePromptType === 'poster'
-        ? promptLang === 'es'
-          ? product.geminiPromptEs
-          : product.geminiPromptEn
-        : promptLang === 'es'
-        ? product.cleanHeroPromptEs
-        : product.cleanHeroPromptEn;
+    const activeGeminiPrompt = getProductImagePromptByVariant(
+      product,
+      imagePromptType,
+      promptLang
+    );
 
     const activeMasterFlowPrompt =
       promptLang === 'es' ? product.masterFlowPromptEs : product.masterFlowPromptEn;
@@ -128,7 +159,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
       >
         {/* Top Inspector Banner */}
         <div className="px-6 py-5 bg-gradient-to-r from-emerald-950 via-[#101C17] to-amber-950/60 border-b border-emerald-800/50 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-500 text-slate-950">
               {product.badgeText}
             </span>
@@ -137,7 +168,19 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Button to load into main Image Studio */}
+            <button
+              type="button"
+              onClick={() => {
+                if (isModal) setModalProduct(null);
+                handleOpenInStudio(product.id);
+              }}
+              className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow"
+            >
+              <Sliders className="w-3.5 h-3.5" /> Personalizar más Planos en el Estudio ↑
+            </button>
+
             {/* Language Switcher */}
             <div className="inline-flex rounded-xl bg-black/50 p-1 border border-slate-700">
               <button
@@ -149,7 +192,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
-                Español (Todo en 1)
+                Español
               </button>
               <button
                 type="button"
@@ -160,7 +203,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
-                English (Todo en 1)
+                English
               </button>
             </div>
 
@@ -175,7 +218,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4" /> Copiar Todo el Proyecto
+                  <Copy className="w-4 h-4" /> Copiar Todo
                 </>
               )}
             </button>
@@ -197,7 +240,6 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
         <div className="p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Studio Image + 4 Benefits Summary */}
           <div className="lg:col-span-5 space-y-5">
-            {/* Image Showcase */}
             <div className="relative rounded-2xl overflow-hidden border-2 border-amber-500/40 bg-black shadow-xl flex items-center justify-center">
               <img
                 src={product.image}
@@ -214,7 +256,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               </div>
             </div>
 
-            {/* 4 Key Benefits (Explained inside the unified prompt) */}
+            {/* 4 Key Benefits */}
             <div
               className={`rounded-2xl border p-5 ${
                 isDark ? 'bg-[#131C18] border-amber-500/30' : 'bg-amber-50/60 border-amber-200'
@@ -226,7 +268,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     isDark ? 'text-amber-300' : 'text-amber-900'
                   }`}
                 >
-                  <Award className="w-4 h-4 text-amber-400" /> 4 Beneficios ya integrados dentro del Prompt
+                  <Award className="w-4 h-4 text-amber-400" /> 4 Beneficios (Iconos 3D en Imagen + Guion)
                 </h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -258,56 +300,57 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
             </div>
           </div>
 
-          {/* Right Column: All-in-One Prompts (Nothing separated) */}
+          {/* Right Column: Image Prompts First (4 Shot Variants) + Video Prompts Below */}
           <div className="lg:col-span-7 space-y-6">
-            {/* BLOCK 1: ALL-IN-ONE GEMINI IMAGE PROMPT */}
+            {/* BLOCK 1: GEMINI IMAGE PROMPTS WITH 4 SHOT TYPES */}
             <div
               className={`rounded-2xl border p-5 space-y-4 ${
-                isDark ? 'bg-[#131C18] border-emerald-800/50' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#131C18] border-emerald-500/50 shadow-lg' : 'bg-stone-50 border-stone-200'
               }`}
             >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" /> 1. Prompt de Imagen Todo-en-Uno para Gemini
-                  </span>
-                  <h4 className={`text-lg font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                    Incluye Envase, Botánica, Luz y Logos Simbólicos 3D (Sin Letras Pequeñas)
-                  </h4>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                      <Camera className="w-3.5 h-3.5" /> 1. Prompts Fotográficos para Gemini (Elige Tipo de Foto / Plano)
+                    </span>
+                    <h4 className={`text-lg font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
+                      4 Planos Fotográficos Listos para {product.name}
+                    </h4>
+                  </div>
                 </div>
 
-                {/* Toggle Complete vs Clean Hero */}
-                <div className="inline-flex rounded-xl bg-black/30 p-1 border border-slate-700/80">
-                  <button
-                    type="button"
-                    onClick={() => setImagePromptType('poster')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      imagePromptType === 'poster'
-                        ? 'bg-amber-500 text-slate-950'
-                        : 'text-slate-300 hover:text-white'
-                    }`}
-                  >
-                    Con 4 Medallones de Logos
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setImagePromptType('clean')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                      imagePromptType === 'clean'
-                        ? 'bg-emerald-500 text-slate-950'
-                        : 'text-slate-300 hover:text-white'
-                    }`}
-                  >
-                    Solo Envase y Botánica
-                  </button>
+                {/* 4 Shot Variant Selector */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1 rounded-xl bg-black/40 border border-slate-700/80">
+                  {[
+                    { id: 'poster', label: '1. Póster 4 Logos' },
+                    { id: 'clean', label: '2. Hero Limpio' },
+                    { id: 'flatlay', label: '3. Flat Lay 90°' },
+                    { id: 'macro', label: '4. Macro Textura' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() =>
+                        setImagePromptType(tab.id as 'poster' | 'clean' | 'flatlay' | 'macro')
+                      }
+                      className={`px-2.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        imagePromptType === tab.id
+                          ? 'bg-emerald-500 text-slate-950 shadow'
+                          : 'text-slate-300 hover:text-white'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               {/* Single Unified Image Prompt Box */}
               <div className="relative rounded-xl bg-black/80 border border-emerald-500/40 p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-mono text-emerald-300">
-                    PROMPT DE IMAGEN COMPLETO ({promptLang.toUpperCase()})
+                  <span className="text-[11px] font-mono text-emerald-300 uppercase">
+                    PROMPT DE IMAGEN · PLANO {imagePromptType.toUpperCase()} ({promptLang.toUpperCase()})
                   </span>
                   <button
                     type="button"
@@ -333,7 +376,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               </div>
             </div>
 
-            {/* BLOCK 2: SINGLE UNIFIED MASTER FLOW VIDEO PROMPT (ALL IN ONE) */}
+            {/* BLOCK 2: SINGLE UNIFIED MASTER FLOW VIDEO PROMPT */}
             <div
               className={`rounded-2xl border p-5 space-y-3 ${
                 isDark
@@ -344,10 +387,10 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <span className="text-[11px] font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                    <Film className="w-3.5 h-3.5" /> 2. Prompt Maestro Todo-en-Uno para Google Flow (Un Solo Prompt con Todo)
+                    <Film className="w-3.5 h-3.5" /> 2. Prompt Maestro de Video para Google Flow (Todo en 1)
                   </span>
                   <h4 className={`text-base font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                    Escena + Regla de No Animar Letras (Solo Logos) + Música de Fondo + Misma Voz + Guion Completo
+                    Para animar la imagen anterior manteniendo el envase fijo y la misma voz
                   </h4>
                 </div>
                 <button
@@ -363,7 +406,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     </>
                   ) : (
                     <>
-                      <Copy className="w-4 h-4" /> Copiar Prompt Maestro Todo-en-Uno
+                      <Copy className="w-4 h-4" /> Copiar Video Todo-en-Uno
                     </>
                   )}
                 </button>
@@ -374,7 +417,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               </div>
             </div>
 
-            {/* BLOCK 3: THE 4 SCENES (EACH PROMPT HAS EVERYTHING UNIFIED INSIDE IT) */}
+            {/* BLOCK 3: THE 4 SCENES */}
             <div
               className={`rounded-2xl border p-5 space-y-4 ${
                 isDark ? 'bg-[#131C18] border-emerald-800/40' : 'bg-stone-50 border-stone-200'
@@ -382,11 +425,8 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
             >
               <div>
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                  <Film className="w-3.5 h-3.5" /> 3. Secuencia de 4 Escenas Todo-en-Uno (Cada Prompt ya Incluye Escena + Voz + Música + Diálogo)
+                  <Film className="w-3.5 h-3.5" /> 3. Secuencia de 4 Escenas para Video (4s cada una)
                 </span>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Si prefieres generar el video escena por escena (4s cada una), cada bloque de abajo ya tiene <strong>todo integrado adentro</strong> sin nada por separado:
-                </p>
               </div>
 
               <div className="space-y-3.5">
@@ -422,13 +462,12 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                             </>
                           ) : (
                             <>
-                              <Copy className="w-3.5 h-3.5" /> Copiar Prompt Todo-en-Uno
+                              <Copy className="w-3.5 h-3.5" /> Copiar Escena {scene.sceneNumber}
                             </>
                           )}
                         </button>
                       </div>
 
-                      {/* Single Self-Contained Scene Prompt Box */}
                       <div className="p-3.5 rounded-lg bg-black/85 border border-slate-800 font-mono text-xs text-slate-100 leading-relaxed select-all">
                         {scenePrompt}
                       </div>
@@ -444,23 +483,23 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
   };
 
   return (
-    <section id="catalogo-prompts" className="py-16 scroll-mt-20">
+    <section id="catalogo-prompts" className="py-16 border-t border-emerald-900/30 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 mb-3">
-              <BookOpen className="w-3.5 h-3.5" /> Catálogo de Prompts Todo-en-Uno (Nada por Separado)
+              <BookOpen className="w-3.5 h-3.5" /> Galería de Referencia · 5 Productos de Estudio
             </span>
             <h2
               className={`text-3xl md:text-4xl font-bold font-serif ${
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              5 Productos Naturales: Todo Integrado Dentro de Cada Prompt
+              Ejemplos Reales Generados: Fotos de Estudio, Planos y Videos
             </h2>
             <p className={`mt-2 max-w-3xl text-sm md:text-base ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Cada prompt ya incluye en un <strong>único bloque listo para copiar y pegar</strong> la acción visual, el bloqueo de letras (<strong>solo se animan logos simbólicos e ingredientes</strong>), la <strong>música de fondo</strong>, la <strong>misma voz de personaje</strong> y el <strong>diálogo de los beneficios</strong>.
+              Explora los 5 productos de muestra con sus <strong>4 variantes de plano fotográfico</strong> o haz clic en <strong>"Personalizar en Estudio"</strong> para abrir cualquiera en el constructor de imágenes de arriba.
             </p>
           </div>
         </div>
@@ -517,7 +556,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                         {prod.category}
                       </span>
                       <span className="px-2 py-0.5 rounded bg-black/75 text-amber-300 text-[10px] font-mono border border-amber-400/30">
-                        Todo en 1 Prompt
+                        4 Planos de Foto + Video
                       </span>
                     </div>
 
@@ -565,19 +604,11 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleCopy(prod.masterFlowPromptEs, `card-master-${prod.id}`);
+                      handleOpenInStudio(prod.id);
                     }}
                     className="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500 hover:text-slate-950 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center gap-1 transition-all cursor-pointer"
                   >
-                    {copiedId === `card-master-${prod.id}` ? (
-                      <>
-                        <Check className="w-3.5 h-3.5" /> ¡Copiado!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" /> Copiar Video Todo-en-1
-                      </>
-                    )}
+                    <Camera className="w-3.5 h-3.5" /> Editar en Estudio ↑
                   </button>
 
                   <button
@@ -589,7 +620,7 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
                     }}
                     className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold flex items-center gap-1 transition-all cursor-pointer shadow"
                   >
-                    <span>Ver Prompts Todo-en-1</span>
+                    <span>Ver Fotos y Escenas</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -607,11 +638,8 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark }) => {
               }`}
             >
               <Sparkles className="w-5 h-5 text-amber-400" />
-              Prompts Todo-en-Uno de: <span className="text-emerald-400">{selectedProduct.name}</span>
+              Ficha Fotográfica y de Escenas: <span className="text-emerald-400">{selectedProduct.name}</span>
             </h3>
-            <span className="text-xs text-slate-400">
-              Todo (escena, logos sin animar letras, música, voz fija y guion) está dentro del mismo prompt
-            </span>
           </div>
           {renderDetailedProductInspector(selectedProduct, false)}
         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Wand2,
   Copy,
@@ -10,11 +10,15 @@ import {
   RotateCcw,
   Music,
   UserCheck,
+  CheckCircle2,
+  ArrowUp,
 } from 'lucide-react';
 import { VOICE_PROFILES_LIBRARY } from '../data/flowData';
+import { SyncedProductPayload } from './ImagePromptStudio';
 
 interface Props {
   isDark: boolean;
+  syncedProduct?: SyncedProductPayload | null;
 }
 
 interface PresetTemplate {
@@ -114,7 +118,7 @@ const QUICK_PRESETS: PresetTemplate[] = [
   },
 ];
 
-export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
+export const BenefitVideoBuilder: React.FC<Props> = ({ isDark, syncedProduct }) => {
   const [productName, setProductName] = useState(QUICK_PRESETS[0].productName);
   const [headline, setHeadline] = useState(QUICK_PRESETS[0].headline);
   const [benefit1, setBenefit1] = useState(QUICK_PRESETS[0].benefit1);
@@ -130,6 +134,30 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
   const [cameraMotion, setCameraMotion] = useState('Dolly In lento (Acercamiento cinematográfico)');
   const [outputLang, setOutputLang] = useState<'es' | 'en'>('es');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [wasSyncedFromStudio, setWasSyncedFromStudio] = useState<boolean>(false);
+
+  // Sync incoming product from ImagePromptStudio above
+  useEffect(() => {
+    if (syncedProduct) {
+      setProductName(syncedProduct.productName);
+      setHeadline(syncedProduct.headline);
+      setBenefit1(syncedProduct.benefit1);
+      setBenefit2(syncedProduct.benefit2);
+      setBenefit3(syncedProduct.benefit3);
+      setBenefit4(syncedProduct.benefit4);
+      setDosage(syncedProduct.dosage);
+      setPackaging(syncedProduct.packagingPromptEs);
+      setEnvironment(syncedProduct.environmentPromptEs);
+      setFormatRatio(syncedProduct.aspectRatio);
+      if (typeof syncedProduct.voiceIndex === 'number') {
+        setSelectedVoiceIndex(syncedProduct.voiceIndex);
+      }
+      if (typeof syncedProduct.musicIndex === 'number') {
+        setSelectedMusicIndex(syncedProduct.musicIndex);
+      }
+      setWasSyncedFromStudio(true);
+    }
+  }, [syncedProduct]);
 
   const applyPreset = (p: PresetTemplate) => {
     setProductName(p.productName);
@@ -143,6 +171,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
     setEnvironment(p.environment);
     setSelectedVoiceIndex(p.voiceIndex);
     setSelectedMusicIndex(p.musicIndex);
+    setWasSyncedFromStudio(false);
   };
 
   const copyText = (text: string, key: string) => {
@@ -155,10 +184,16 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
   const currentMusic = MUSIC_OPTIONS[selectedMusicIndex] || MUSIC_OPTIONS[0];
   const shortProdName = productName.split('·')[0].trim();
 
-  // 1. All-in-One Gemini Studio Prompt
-  const generatedPosterPromptEs = `Fotografía comercial de estudio todo-en-uno en formato ${formatRatio} de un producto natural llamado "${productName}": en el centro, un ${packaging}. Alrededor del frasco, ${environment} con iluminación de estudio comercial cálida. Flotando simétricamente alrededor del frasco hay 4 medallones circulares de oro cepillado que contienen ÚNICAMENTE iconos/logos simbólicos grabados en 3D representando: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, prohibido incluir letras pequeñas ni textos largos que se deformen. Fotografía hiperrealista, lente macro 85mm f/1.8, 8k.`;
+  // 1. All-in-One Gemini Studio Prompt (uses synced image prompt if available or generates one)
+  const generatedPosterPromptEs =
+    wasSyncedFromStudio && syncedProduct?.imagePromptEs
+      ? syncedProduct.imagePromptEs
+      : `Fotografía comercial de estudio todo-en-uno en formato ${formatRatio} de un producto natural llamado "${productName}": en el centro, ${packaging}. Alrededor del frasco, ${environment} con iluminación de estudio comercial cálida. Flotando simétricamente alrededor del frasco hay 4 medallones circulares de oro cepillado que contienen ÚNICAMENTE iconos/logos simbólicos grabados en 3D representando: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, prohibido incluir letras pequeñas ni textos largos que se deformen. Fotografía hiperrealista, lente macro 85mm f/1.8, 8k.`;
 
-  const generatedPosterPromptEn = `All-in-one commercial studio product photography in ${formatRatio} aspect ratio for a natural product named "${productName}": centered ${packaging}. Surrounding the bottle, ${environment} with warm commercial studio rim lighting. Floating symmetrically around the bottle are 4 circular brushed gold medallions featuring ONLY clean 3D engraved symbolic icons/logos representing: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, strictly no small letters or text that could warp. Hyper-realistic commercial product photography, 85mm macro lens f/1.8, 8k.`;
+  const generatedPosterPromptEn =
+    wasSyncedFromStudio && syncedProduct?.imagePromptEn
+      ? syncedProduct.imagePromptEn
+      : `All-in-one commercial studio product photography in ${formatRatio} aspect ratio for a natural product named "${productName}": centered ${packaging}. Surrounding the bottle, ${environment} with warm commercial studio rim lighting. Floating symmetrically around the bottle are 4 circular brushed gold medallions featuring ONLY clean 3D engraved symbolic icons/logos representing: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, strictly no small letters or text that could warp. Hyper-realistic commercial product photography, 85mm macro lens f/1.8, 8k.`;
 
   // 2. Single Master Flow Video Prompt (Everything inside 1 single prompt)
   const generatedMasterFlowEs = `Video comercial cinematográfico de producto natural: el envase de "${productName}" y sus logos dorados permanecen 100% firmes, estáticos y nítidos en el centro con movimiento de cámara ${cameraMotion}. REGLA ESTRICTA: PROHIBIDO animar letras o generar textos móviles en pantalla; animar únicamente el barrido de luz cálida sobre el logo principal y sobre los 4 medallones con iconos simbólicos (${benefit1}, ${benefit2}, ${benefit3}, ${benefit4}) mientras ${environment} se mueven suavemente en cámara superlenta (120fps). MÚSICA DE FONDO: colocar ${currentMusic.es}. ${currentVoice.descriptionEs}, diciendo: "¿Buscas ${headline.toLowerCase()}? Descubre ${shortProdName}: su fórmula natural te brinda ${benefit1.toLowerCase()}, ${benefit2.toLowerCase()}, ${benefit3.toLowerCase()} y ${benefit4.toLowerCase()}. ${dosage}. ¡Pide el tuyo hoy mismo!"`;
@@ -220,23 +255,23 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/15 text-amber-400 border border-amber-500/30 mb-3">
-              <Wand2 className="w-3.5 h-3.5" /> Constructor de Prompts Todo-en-Uno (Nada por Separado)
+              <Wand2 className="w-3.5 h-3.5" /> Constructor de Videos para Google Flow (4 Escenas + Voz + Música)
             </span>
             <h2
               className={`text-3xl md:text-4xl font-bold font-serif ${
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              Personaliza tu Producto y Obtén el Prompt Completo Todo-en-Uno
+              Anima tu Imagen en Google Flow: Guion, Voz Fija y Música
             </h2>
             <p className={`mt-2 max-w-3xl text-sm md:text-base ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Todo lo que configures a la izquierda se une automáticamente dentro de un <strong>único prompt listo para copiar y pegar</strong> (escena, prohibición de animar letras animando solo logos, música de fondo, misma voz de personaje y diálogo).
+              Recibe el producto que diseñaste arriba en el <strong>Estudio de Imágenes</strong> (o elige una plantilla rápida) y genera el <strong>Prompt Maestro de Video</strong> y las <strong>4 Escenas de 4 segundos</strong>.
             </p>
           </div>
 
           {/* Quick Preset Pills */}
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold text-slate-400 mr-1">Plantillas rápidas:</span>
+            <span className="text-xs font-bold text-slate-400 mr-1">Plantillas de video:</span>
             {QUICK_PRESETS.map((preset) => (
               <button
                 key={preset.label}
@@ -256,6 +291,24 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
           </div>
         </div>
 
+        {/* Synced Banner */}
+        {wasSyncedFromStudio && (
+          <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-xs text-emerald-200">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>
+                <strong>¡Sincronizado con el Estudio de Imágenes!</strong> Estamos usando la configuración fotográfica de <strong>{productName}</strong> para armar tus escenas de video.
+              </span>
+            </div>
+            <a
+              href="#estudio-imagenes"
+              className="text-xs font-bold text-amber-300 hover:text-amber-200 flex items-center gap-1"
+            >
+              <ArrowUp className="w-3.5 h-3.5" /> Volver a editar planos de imagen
+            </a>
+          </div>
+        )}
+
         {/* Builder Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Form Column */}
@@ -268,7 +321,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
           >
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
               <h3 className={`font-bold text-base flex items-center gap-2 ${isDark ? 'text-white' : 'text-stone-900'}`}>
-                <Sliders className="w-4 h-4 text-emerald-400" /> Datos que se Integran al Prompt
+                <Sliders className="w-4 h-4 text-emerald-400" /> Parámetros de Video, Voz y Música
               </h3>
               <button
                 type="button"
@@ -476,6 +529,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                   <option value="Dolly In lento (Acercamiento cinematográfico)">Dolly In lento</option>
                   <option value="Orbit suave 10° (Sin deformar logo)">Orbit suave 10°</option>
                   <option value="Static Macro (Frasco fijo + partículas en 120fps)">Static Macro</option>
+                  <option value="Pedestal Up sutil (Elevación heroica suave)">Pedestal Up Heroico</option>
                 </select>
               </div>
             </div>
@@ -493,7 +547,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
               <div>
                 <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400">
-                  PROMPTS TODO-EN-UNO (ESCENA + SOLO LOGOS + VOZ FIJA + MÚSICA + GUION)
+                  PROMPTS DE VIDEO TODO-EN-UNO (ESCENA + SOLO LOGOS + VOZ FIJA + MÚSICA + GUION)
                 </span>
                 <h3 className={`text-xl font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
                   {productName}
@@ -540,43 +594,11 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
               </div>
             </div>
 
-            {/* 1. All-in-One Gemini Studio Prompt */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4" /> 1. Prompt de Imagen Todo-en-Uno para Gemini
-                </span>
-                <button
-                  type="button"
-                  onClick={() =>
-                    copyText(
-                      outputLang === 'es' ? generatedPosterPromptEs : generatedPosterPromptEn,
-                      'gen-poster'
-                    )
-                  }
-                  className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold flex items-center gap-1 cursor-pointer transition-all"
-                >
-                  {copiedKey === 'gen-poster' ? (
-                    <>
-                      <Check className="w-3.5 h-3.5" /> ¡Copiado!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" /> Copiar Prompt de Imagen
-                    </>
-                  )}
-                </button>
-              </div>
-              <div className="p-4 rounded-xl bg-black/85 border border-emerald-500/40 font-mono text-xs text-slate-100 leading-relaxed select-all">
-                {outputLang === 'es' ? generatedPosterPromptEs : generatedPosterPromptEn}
-              </div>
-            </div>
-
-            {/* 2. Single Unified Master Video Prompt for Flow */}
+            {/* 1. Single Unified Master Video Prompt for Flow */}
             <div className="p-4 rounded-2xl bg-gradient-to-br from-[#16221C] to-[#1A1610] border border-amber-500/60 space-y-2.5">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-extrabold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                  <Film className="w-4 h-4" /> 2. Prompt Maestro de Video Todo-en-Uno para Flow (Todo en 1 Solo Bloque)
+                  <Film className="w-4 h-4" /> 1. Prompt Maestro de Video Todo-en-Uno para Flow (1 Solo Bloque)
                 </span>
                 <button
                   type="button"
@@ -604,10 +626,10 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
               </div>
             </div>
 
-            {/* 3. The 4 Self-Contained Scene Prompts */}
+            {/* 2. The 4 Self-Contained Scene Prompts */}
             <div className="space-y-3">
               <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                <Film className="w-4 h-4" /> 3. Las 4 Escenas Todo-en-Uno (Cada Prompt ya Incluye Escena + Voz + Música + Diálogo)
+                <Film className="w-4 h-4" /> 2. Las 4 Escenas Todo-en-Uno (4s cada una con Voz + Música + Diálogo)
               </span>
 
               <div className="grid grid-cols-1 gap-3">
@@ -638,7 +660,7 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                           </>
                         ) : (
                           <>
-                            <Copy className="w-3 h-3" /> Copiar Escena {sc.num} Todo-en-1
+                            <Copy className="w-3 h-3" /> Copiar Escena {sc.num}
                           </>
                         )}
                       </button>
@@ -648,6 +670,38 @@ export const BenefitVideoBuilder: React.FC<Props> = ({ isDark }) => {
                     </p>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* 3. Matching Image Prompt Reference */}
+            <div className="space-y-2 pt-2 border-t border-slate-800/80">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4" /> Prompt de Imagen Base (First Frame para este Video)
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    copyText(
+                      outputLang === 'es' ? generatedPosterPromptEs : generatedPosterPromptEn,
+                      'gen-poster'
+                    )
+                  }
+                  className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-extrabold flex items-center gap-1 cursor-pointer transition-all"
+                >
+                  {copiedKey === 'gen-poster' ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" /> ¡Copiado!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" /> Copiar Imagen Base
+                    </>
+                  )}
+                </button>
+              </div>
+              <div className="p-3.5 rounded-xl bg-black/85 border border-emerald-500/40 font-mono text-xs text-slate-200 leading-relaxed select-all">
+                {outputLang === 'es' ? generatedPosterPromptEs : generatedPosterPromptEn}
               </div>
             </div>
           </div>
