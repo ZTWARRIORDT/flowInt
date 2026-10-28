@@ -8,7 +8,19 @@ export interface PromptAnatomySegment {
 export interface BenefitItem {
   title: string;
   shortDesc: string;
-  iconName: 'eye' | 'sparkles' | 'target' | 'shield' | 'heart' | 'zap' | 'droplets' | 'leaf' | 'sun' | 'flame' | 'activity' | 'award';
+  iconName:
+    | 'eye'
+    | 'sparkles'
+    | 'target'
+    | 'shield'
+    | 'heart'
+    | 'zap'
+    | 'droplets'
+    | 'leaf'
+    | 'sun'
+    | 'flame'
+    | 'activity'
+    | 'award';
 }
 
 export interface FlowSceneStep {
@@ -16,8 +28,8 @@ export interface FlowSceneStep {
   timeRange: string;
   title: string;
   purpose: string;
-  flowTool: 'Frames to Video (First Frame)' | 'Ingredients to Video' | 'Scene Builder (Extend)' | 'Frames to Video (First → Last Frame)';
   cameraMotion: string;
+  musicAndSfx: string;
   promptEs: string;
   promptEn: string;
   onScreenText: string;
@@ -29,13 +41,15 @@ export interface NaturalProductExample {
   name: string;
   brand: string;
   category: string;
-  categoryId: 'poster-916' | 'suplementos' | 'extractos' | 'cosmetica' | 'apicultura';
-  isUserReference?: boolean;
+  categoryId: 'suplementos' | 'extractos' | 'cosmetica' | 'apicultura';
   badgeText: string;
-  aspectRatio: '9:16 Vertical' | '1:1 Estudio';
+  aspectRatio: '1:1 Estudio' | '9:16 Vertical';
   image: string;
   headline: string;
   summary: string;
+  backgroundMusicStyle: string;
+  backgroundMusicPromptEs: string;
+  backgroundMusicPromptEn: string;
   specs: {
     tipo: string;
     contenido: string;
@@ -51,6 +65,72 @@ export interface NaturalProductExample {
   anatomy: PromptAnatomySegment[];
   flowScenes: FlowSceneStep[];
 }
+
+export interface ScenePromptTemplate {
+  id: string;
+  categoryId: 'gancho' | 'beneficios' | 'ingredientes' | 'cierre';
+  categoryLabel: string;
+  title: string;
+  idealFor: string;
+  cameraMovement: string;
+  musicSuggestion: string;
+  duration: string;
+  benefitHookExample: string;
+  promptEs: string;
+  promptEn: string;
+}
+
+export interface MusicPromptPreset {
+  id: string;
+  title: string;
+  mood: string;
+  bestFor: string;
+  promptEs: string;
+  promptEn: string;
+}
+
+export const MUSIC_PROMPTS_LIBRARY: MusicPromptPreset[] = [
+  {
+    id: 'spa-botanico',
+    title: 'Ambient Spa, Piano Suave y Naturaleza Viva',
+    mood: 'Paz, pureza orgánica, regeneración y confianza',
+    bestFor: 'Colágeno, Sérums Faciales, Aceites Esenciales y Vitaminas',
+    promptEs:
+      'Audio: Colocar música de fondo instrumental relajante de spa con piano suave, cuerdas cálidas y sonidos sutiles de brisa en el bosque y gotas de rocío.',
+    promptEn:
+      'Audio: Warm, soothing spa instrumental background music with soft acoustic piano, gentle strings, and subtle forest breeze and water droplet sound effects.',
+  },
+  {
+    id: 'energia-epica',
+    title: 'Cinemático Inspirador y Vitalidad Natural',
+    mood: 'Fuerza, alivio del dolor, energía y acción',
+    bestFor: 'Cúrcuma + Jengibre, Magnesio, Articulaciones y Superfoods',
+    promptEs:
+      'Audio: Colocar música de fondo cinematográfica e inspiradora con percusión orgánica suave, violonchelo cálido y efecto de sonido envolvente en cámara lenta.',
+    promptEn:
+      'Audio: Uplifting cinematic background music with soft organic percussion, warm cello swells, and deep slow-motion whoosh sound effects.',
+  },
+  {
+    id: 'frescura-detox',
+    title: 'Acústico Refrescante y Cristalino (Detox)',
+    mood: 'Frescura matutina, ligereza digestiva y limpieza',
+    bestFor: 'Clorofila, Té Matcha, Probióticos y Goteros Líquidos',
+    promptEs:
+      'Audio: Colocar música de fondo alegre y fresca con guitarra acústica luminosa, marimba suave y sonido cristalino de salpicadura de agua pura.',
+    promptEn:
+      'Audio: Bright, refreshing acoustic background music with light acoustic guitar, soft marimba notes, and crisp crystal water splash sound effects.',
+  },
+  {
+    id: 'artesanal-acustico',
+    title: 'Folk Acústico Cálido y Tradición Artesanal',
+    mood: 'Hogar, calidez familiar, cosecha pura y protección',
+    bestFor: 'Miel con Propóleo, Polen, Jarabes Naturales e Infusiones',
+    promptEs:
+      'Audio: Colocar música de fondo acústica cálida con guitarra española suave, notas de arpa ligera y sonido relajante de miel fluyendo en una mañana soleada.',
+    promptEn:
+      'Audio: Warm artisanal acoustic background music with gentle fingerpicked guitar, light harp notes, and cozy morning nature ambiance.',
+  },
+];
 
 export const ANATOMY_COLORS: Record<
   PromptAnatomySegment['category'],
@@ -95,288 +175,6 @@ export const ANATOMY_COLORS: Record<
 
 export const PRODUCTS_DATA: NaturalProductExample[] = [
   {
-    id: 'zooone-eye-vitamin',
-    name: 'Zooone® Eye Vitamin & Mineral',
-    brand: 'Zooone® Natural Care',
-    category: 'Salud Visual · Póster Infográfico 9:16',
-    categoryId: 'poster-916',
-    isUserReference: true,
-    badgeText: 'Tu Ejemplo Real #1 · Póster + Video de Beneficios',
-    aspectRatio: '9:16 Vertical',
-    image: '/images/zooone-eye-vitamin.png',
-    headline: 'VISIÓN CLARA Y OJOS PROTEGIDOS',
-    summary:
-      'Póster comercial vertical 9:16 con frasco ámbar de tapa dorada, partículas de luz mágica, 4 medallones dorados de beneficios oculares y ficha técnica inferior. Ideal para transformar en un Reel/Estado de 16 segundos explicando sus 4 beneficios.',
-    specs: {
-      tipo: 'Cápsulas vitaminas para ojos',
-      contenido: '90 Cápsulas',
-      ingredientes: 'Vitaminas y Minerales + Luteína',
-      uso: '2 al día',
-      extra: 'GMP Certified Premium',
-    },
-    benefits: [
-      {
-        title: 'Hidrata y Protege Ojos',
-        shortDesc: 'Combate la sequedad ocular causada por pantallas y aire acondicionado.',
-        iconName: 'droplets',
-      },
-      {
-        title: 'Visión Más Brillante',
-        shortDesc: 'Luteína y zeaxantina que mejoran la nitidez y el contraste visual.',
-        iconName: 'sparkles',
-      },
-      {
-        title: 'Mejora Enfoque',
-        shortDesc: 'Disminuye el cansancio al leer o trabajar largas horas frente al monitor.',
-        iconName: 'target',
-      },
-      {
-        title: 'Salud Ocular Completa',
-        shortDesc: 'Escudo antioxidante integral con certificación de calidad GMP.',
-        iconName: 'shield',
-      },
-    ],
-    geminiPromptEs:
-      'Póster publicitario vertical 9:16 ultra profesional de un suplemento natural llamado "Zooone EYE VITAMIN AND MINERAL SUPPLEMENT". En el centro, un frasco de vidrio ámbar oscuro con tapa dorada metálica y precinto de seguridad, etiqueta verde esmeralda y dorado con sello "GMP Certified" y "90 Cápsulas". Arriba, título grande en tipografía serif dorada metálica brillante: "VISIÓN CLARA Y OJOS PROTEGIDOS". Alrededor del frasco, destellos de polvo de oro mágico sobre fondo verde esmeralda profundo con siluetas luminosas de ojos sanos. Debajo del frasco, 4 placas cuadradas de oro cepillado con iconos grabados y texto claro: 1) "Hidrata y Protege Ojos", 2) "Visión Más Brillante", 3) "Mejora Enfoque", 4) "Salud Ocular Completa". En la base inferior, recuadro elegante oscuro con ficha técnica: Tipo: Cápsulas vitaminas para ojos, Contenido: 90 Cápsulas, Ingredientes: Vitaminas y Minerales + Luteína, Uso: 2 al día. Iluminación cinematográfica comercial, hiperrealista, 8k.',
-    geminiPromptEn:
-      'Ultra-professional 9:16 vertical commercial poster for a natural supplement bottle named "Zooone EYE VITAMIN AND MINERAL SUPPLEMENT". Centered dark amber glass bottle with metallic gold cap and security seal, emerald green and metallic gold label featuring "GMP Certified" badge and "90 Capsules". At the top, large glowing metallic gold serif headline: "VISIÓN CLARA Y OJOS PROTEGIDOS". Surrounding the bottle, swirling golden stardust particles over a deep emerald background with subtle glowing golden eye illustrations. Below the bottle, 4 brushed gold square medallions with engraved icons and text: "Hidrata y Protege Ojos", "Visión Más Brillante", "Mejora Enfoque", "Salud Ocular Completa". At the bottom, a sleek dark emerald specs table with icons. Studio commercial lighting, hyper-realistic, 8k resolution.',
-    cleanHeroPromptEs:
-      'Fotografía comercial de estudio en formato vertical 9:16 del frasco de vidrio ámbar "Zooone Eye Vitamin and Mineral Supplement" con tapa dorada metálica y etiqueta verde esmeralda con dorado, apoyado sobre un pedestal de piedra esmeralda pulida. Sin textos flotantes externos ni recuadros. Alrededor del frasco flotan suavemente partículas de luz dorada y bokeh cálido. Iluminación de contorno dorada (rim light), lente macro 85mm f/2.8, nitidez absoluta en la etiqueta, calidad 8k lista para animar en Google Flow.',
-    cleanHeroPromptEn:
-      'Commercial studio product photography in 9:16 vertical format of the dark amber glass bottle "Zooone Eye Vitamin and Mineral Supplement" with metallic gold cap and emerald-gold label, resting on a polished emerald stone pedestal. No external floating text overlays or badges. Surrounding the bottle, soft floating golden light particles and warm bokeh. Golden rim lighting, 85mm macro lens f/2.8, tack-sharp label typography, 8k resolution ready to animate as First Frame in Google Flow.',
-    anatomy: [
-      {
-        category: 'producto',
-        label: 'Frasco y Etiqueta',
-        textEs: 'Frasco de vidrio ámbar con tapa dorada metálica y etiqueta verde/oro "Zooone Eye Vitamin 90 Cápsulas"',
-        textEn: 'Dark amber glass bottle with metallic gold cap and emerald-gold label "Zooone Eye Vitamin"',
-      },
-      {
-        category: 'beneficios',
-        label: 'Titular y 4 Medallones Dorados',
-        textEs: 'Título superior "VISIÓN CLARA Y OJOS PROTEGIDOS" + 4 placas de oro: Hidrata, Visión Brillante, Enfoque y Salud Ocular',
-        textEn: 'Top gold headline + 4 brushed gold benefit medallions + bottom specs bar',
-      },
-      {
-        category: 'iluminacion',
-        label: 'Iluminación Comercial',
-        textEs: 'Luz de contorno dorada brillante (golden rim light) con reflejos especulares en tapa y vidrio',
-        textEn: 'Glowing golden rim lighting with crisp specular highlights on cap and glass',
-      },
-      {
-        category: 'entorno',
-        label: 'Atmósfera Mágica',
-        textEs: 'Fondo verde esmeralda profundo con ondas de polvo de oro y destellos estelares',
-        textEn: 'Deep emerald background with swirling golden stardust waves and sparkles',
-      },
-      {
-        category: 'camara',
-        label: 'Encuadre y Lente',
-        textEs: 'Formato vertical 9:16 para Reels/Historias, lente macro 85mm, texto ultra nítido 8k',
-        textEn: '9:16 vertical aspect ratio for Reels/Stories, 85mm macro lens, tack-sharp 8k',
-      },
-    ],
-    flowScenes: [
-      {
-        sceneNumber: 1,
-        timeRange: '00:00 – 00:04s',
-        title: 'Escena 1: Gancho Visual (Revelación del Producto)',
-        purpose: 'Captar la atención en los primeros 3 segundos mostrando el frasco impecable y el problema que resuelve.',
-        flowTool: 'Frames to Video (First Frame)',
-        cameraMotion: 'Dolly In lento (Acercamiento suave al centro)',
-        promptEs:
-          'El frasco de Zooone Eye Vitamin permanece perfectamente firme y nítido en el centro. Partículas brillantes de polvo dorado flotan suavemente en cámara lenta alrededor del frasco mientras un haz de luz cálida recorre la tapa dorada metálica. Atmósfera cinematográfica de lujo.',
-        promptEn:
-          'The Zooone Eye Vitamin bottle remains perfectly still and sharp in the center. Glowing golden stardust particles float slowly in slow motion around the bottle while a warm light beam sweeps across the metallic gold cap. Luxury cinematic atmosphere.',
-        onScreenText: '¿Vista cansada o borrosa frente a la pantalla? 👀✨',
-        voiceoverEs: '¿Sientes los ojos secos y cansados al final del día? Tu vista necesita protección real.',
-      },
-      {
-        sceneNumber: 2,
-        timeRange: '00:04 – 00:08s',
-        title: 'Escena 2: Beneficios 1 y 2 (Hidratación + Visión Brillante)',
-        purpose: 'Explicar los dos primeros beneficios clave mientras la cámara realiza una órbita sutil.',
-        flowTool: 'Scene Builder (Extend)',
-        cameraMotion: 'Orbit ligero de izquierda a derecha (15 grados)',
-        promptEs:
-          'Movimiento orbital suave alrededor del frasco ámbar de vitaminas oculares. Ondas de energía dorada y verde esmeralda iluminan el entorno en cámara lenta, transmitiendo frescura, hidratación ocular y claridad visual. La etiqueta se mantiene 100% legible.',
-        promptEn:
-          'Gentle orbital camera movement around the amber eye vitamin bottle. Waves of golden and emerald green light illuminate the background in slow motion, conveying eye hydration and visual clarity. Label remains 100% legible.',
-        onScreenText: '💧 1. Hidrata y Protege · ✨ 2. Visión Más Brillante con Luteína',
-        voiceoverEs: 'Con Zooone y su fórmula con Luteína pura, hidratas tus ojos profundamente y recuperas una visión más clara y brillante.',
-      },
-      {
-        sceneNumber: 3,
-        timeRange: '00:08 – 00:12s',
-        title: 'Escena 3: Beneficios 3 y 4 (Enfoque y Salud Ocular Completa)',
-        purpose: 'Reforzar el beneficio de enfoque mental/visual y mostrar la calidad de las cápsulas naturales.',
-        flowTool: 'Ingredients to Video',
-        cameraMotion: 'Macro Pan suave con enfoque selectivo (Bokeh dorado)',
-        promptEs:
-          'Plano detalle cinematográfico del frasco Zooone acompañado de cápsulas vegetales brillantes sobre una superficie esmeralda con destellos dorados flotando hacia arriba. Iluminación cálida de estudio que resalta la pureza y certificación GMP.',
-        promptEn:
-          'Cinematic close-up of the Zooone bottle next to glossy natural capsules on an emerald surface with golden sparkles floating upward. Warm studio lighting highlighting purity and GMP quality.',
-        onScreenText: '🎯 3. Mejora tu Enfoque · 🛡️ 4. Salud Ocular Completa',
-        voiceoverEs: 'Mejora tu enfoque diario y protege tu retina del desgaste de las pantallas con vitaminas y minerales esenciales.',
-      },
-      {
-        sceneNumber: 4,
-        timeRange: '00:12 – 00:16s',
-        title: 'Escena 4: Cierre con Póster de Beneficios y Dosis',
-        purpose: 'Cerrar el video mostrando la infografía completa con los 4 medallones dorados y cómo tomarlo.',
-        flowTool: 'Frames to Video (First → Last Frame)',
-        cameraMotion: 'Static Hero Lock con resplandor dorado en los 4 sellos',
-        promptEs:
-          'El póster infográfico de Zooone Eye Vitamin con sus 4 medallones dorados ("Hidrata y Protege Ojos", "Visión Más Brillante", "Mejora Enfoque", "Salud Ocular Completa") brilla con un destello elegante que recorre las placas doradas. Partículas suaves en el fondo.',
-        promptEn:
-          'The Zooone Eye Vitamin infographic poster with its 4 golden medallions gleams with a subtle luxury light sweep across the gold badges. Soft floating particles in the background.',
-        onScreenText: 'Solo 2 cápsulas al día · Frasco de 90 Cápsulas · ¡Pídelo hoy!',
-        voiceoverEs: 'Solo dos cápsulas al día para unos ojos protegidos y descansados. ¡Pide tu Zooone hoy mismo!',
-      },
-    ],
-  },
-  {
-    id: 'fos-probioticos-zinc',
-    name: 'FOS Probióticos y Zinc — Greensofg',
-    brand: 'Greensofg · Premium Line',
-    category: 'Salud Digestiva e Inmune · Póster 9:16',
-    categoryId: 'poster-916',
-    isUserReference: true,
-    badgeText: 'Tu Ejemplo Real #2 · Póster + Video de Beneficios',
-    aspectRatio: '9:16 Vertical',
-    image: '/images/fos-probioticos-zinc.png',
-    headline: 'ADIÓS INFLAMACIÓN Y BAJAS DEFENSAS',
-    summary:
-      'Póster vertical 9:16 de alto impacto para redes y WhatsApp Status: frasco ámbar con etiqueta rosa pastel, hojas frescas de menta/eucalipto, 4 medallones circulares dorados en las esquinas y barra inferior de 5 especificaciones.',
-    specs: {
-      tipo: 'Caramelo masticable relleno líquido',
-      contenido: '100 Unidades (50 Porciones)',
-      ingredientes: 'FOS + Probióticos + Zinc',
-      uso: '2 al día',
-      extra: 'Absorción 3x más rápida',
-    },
-    benefits: [
-      {
-        title: 'Intestino Saludable',
-        shortDesc: 'Regula el tránsito intestinal de forma natural sin irritar el estómago.',
-        iconName: 'activity',
-      },
-      {
-        title: 'Defensas Altas',
-        shortDesc: 'Con Zinc activo que fortalece la respuesta inmune todos los días.',
-        iconName: 'shield',
-      },
-      {
-        title: 'Digestión Ligera',
-        shortDesc: 'Combate la hinchazón abdominal, gases y pesadez después de comer.',
-        iconName: 'heart',
-      },
-      {
-        title: 'Flora Intestinal',
-        shortDesc: 'Fructooligosacáridos (FOS) + Probióticos con absorción 3 veces más rápida.',
-        iconName: 'sparkles',
-      },
-    ],
-    geminiPromptEs:
-      'Póster publicitario vertical 9:16 de suplemento natural "FOS PROBIÓTICOS Y ZINC - Greensofg Premium Line". En el centro, un frasco ancho de vidrio ámbar oscuro con gotas de rocío frescas, tapa blanca con banda de seguridad verde y etiqueta rosa vibrante con detalles dorados que dice "FOS PROBIÓTICOS Y ZINC - 100 Unidades". En la parte superior, título en letras doradas con relieve: "ADIÓS INFLAMACIÓN Y BAJAS DEFENSAS". En las 4 esquinas rodeando el frasco, 4 medallones circulares de oro brillante en 3D con iconos grabados: 1) "Intestino Saludable", 2) "Defensas Altas", 3) "Digestión Ligera", 4) "Flora Intestinal". Hojas frescas de menta y eucalipto brotando detrás del frasco sobre un fondo degradado verde menta y rosa pastel con destellos bokeh. En la base inferior, tabla verde oscuro con bordes dorados de 5 columnas (Tipo, Contenido 100 unidades, Ingredientes FOS+Probióticos+Zinc, Uso 2 al día, Absorción 3x más rápida). Hiperrealista, 8k.',
-    geminiPromptEn:
-      '9:16 vertical commercial poster for natural supplement "FOS PROBIÓTICOS Y ZINC - Greensofg Premium Line". Centered wide dark amber bottle covered in fresh water droplets, white security cap with green leaf logo, and vibrant pink label with gold accents reading "FOS PROBIÓTICOS Y ZINC - 100 Unidades". Top headline in 3D metallic gold serif font: "ADIÓS INFLAMACIÓN Y BAJAS DEFENSAS". Surrounding the bottle in the four corners are 4 circular 3D polished gold medallions with icons: "Intestino Saludable", "Defensas Altas", "Digestión Ligera", "Flora Intestinal". Fresh mint and eucalyptus leaves framing the bottle against a dreamy mint-green and soft pink bokeh background with sparkles. Bottom dark green and gold specification bar with 5 columns. Commercial 8k render.',
-    cleanHeroPromptEs:
-      'Fotografía comercial vertical 9:16 del frasco ámbar con gotas de frescura "FOS PROBIÓTICOS Y ZINC" de etiqueta rosa y dorada, rodeado de hojas frescas de menta y eucalipto con iluminación matutina suave sobre un fondo degradado verde menta y rosa pastel con bokeh brillante. Sin textos externos ni medallones flotantes, ideal como primer fotograma limpio para animar en Google Flow.',
-    cleanHeroPromptEn:
-      'Vertical 9:16 commercial product photo of the dewy amber bottle "FOS PROBIÓTICOS Y ZINC" with pink and gold label, surrounded by fresh mint and eucalyptus sprigs in soft morning light over a mint-green and pastel pink bokeh background. No floating text or badges, ideal as a clean First Frame for Google Flow animation.',
-    anatomy: [
-      {
-        category: 'producto',
-        label: 'Frasco con Rocío',
-        textEs: 'Frasco ámbar ancho con microgotas de condensación, etiqueta rosa pastel "FOS PROBIÓTICOS Y ZINC 100 Unidades"',
-        textEn: 'Dew-covered wide amber bottle with pastel pink label "FOS PROBIÓTICOS Y ZINC"',
-      },
-      {
-        category: 'beneficios',
-        label: '4 Medallones Circulares + Tabla',
-        textEs: '4 discos dorados (Intestino Saludable, Defensas Altas, Digestión Ligera, Flora Intestinal) + barra de 5 datos',
-        textEn: '4 circular 3D gold medallions in the corners + 5-column bottom specification bar',
-      },
-      {
-        category: 'iluminacion',
-        label: 'Luz Fresca Brillante',
-        textEs: 'Iluminación suave de estudio con destellos estelares sobre las medallas de oro y gotas de agua',
-        textEn: 'Soft studio lighting with starburst highlights on gold medallions and water droplets',
-      },
-      {
-        category: 'entorno',
-        label: 'Botánica y Degradado',
-        textEs: 'Ramas de eucalipto y hojas de menta flotando sobre fondo bicolor verde menta y rosa suave',
-        textEn: 'Eucalyptus branches and mint leaves floating over a dual-tone mint green and soft pink bokeh background',
-      },
-      {
-        category: 'camara',
-        label: 'Encuadre 9:16',
-        textEs: 'Composición simétrica vertical 9:16 de alta conversión para estados de WhatsApp e Instagram Reels',
-        textEn: 'High-conversion symmetrical 9:16 vertical composition for WhatsApp Status and Instagram Reels',
-      },
-    ],
-    flowScenes: [
-      {
-        sceneNumber: 1,
-        timeRange: '00:00 – 00:04s',
-        title: 'Escena 1: Gancho (Adiós Inflamación y Pesadez)',
-        purpose: 'Conectar de inmediato con quien sufre de inflamación abdominal o defensas bajas.',
-        flowTool: 'Frames to Video (First Frame)',
-        cameraMotion: 'Dolly In suave hacia el frasco con hojas en movimiento',
-        promptEs:
-          'El frasco de FOS Probióticos y Zinc permanece firme en el centro con sus gotas de frescura. Las hojas verdes de menta y eucalipto detrás del frasco se mecen suavemente con una brisa fresca mientras pequeñas partículas luminosas flotan en el fondo rosa y verde menta.',
-        promptEn:
-          'The FOS Probiotics and Zinc bottle stays sharp and steady in the center with fresh water droplets. The green mint and eucalyptus leaves behind the bottle sway gently in a fresh breeze while glowing bokeh particles float in the pink and mint background.',
-        onScreenText: '¿Abdomen inflamado y defensas bajas? 🌿✨',
-        voiceoverEs: 'Dile adiós a la inflamación abdominal y a las bajas defensas de una forma deliciosa y natural.',
-      },
-      {
-        sceneNumber: 2,
-        timeRange: '00:04 – 00:08s',
-        title: 'Escena 2: Beneficios 1 y 2 (Intestino Saludable + Defensas Altas)',
-        purpose: 'Explicar la doble acción del suplemento: probióticos digestivos + zinc inmunológico.',
-        flowTool: 'Scene Builder (Extend)',
-        cameraMotion: 'Pan vertical sutil con destellos en los medallones superiores',
-        promptEs:
-          'Un destello cálido de luz dorada ilumina los medallones superiores de "Intestino Saludable" y "Defensas Altas" mientras burbujas microscópicas de luz pura ascienden suavemente alrededor del envase, simbolizando absorción rápida.',
-        promptEn:
-          'A warm golden light sweep illuminates the top medallions while microscopic pure light bubbles ascend gently around the bottle, symbolizing rapid absorption.',
-        onScreenText: '🛡️ Sube tus Defensas con Zinc + 🌱 Intestino Sano',
-        voiceoverEs: 'Con FOS, Probióticos y Zinc, restauras tu flora intestinal mientras fortaleces tus defensas todos los días.',
-      },
-      {
-        sceneNumber: 3,
-        timeRange: '00:08 – 00:12s',
-        title: 'Escena 3: Beneficios 3 y 4 (Digestión Ligera y Absorción 3x)',
-        purpose: 'Destacar su formato único de caramelo masticable con relleno líquido de rápida absorción.',
-        flowTool: 'Ingredients to Video',
-        cameraMotion: 'Orbit corto 3D con enfoque macro',
-        promptEs:
-          'Giro orbital suave mostrando la frescura de las gotas de agua en el frasco ámbar y hojas de menta fresca flotando en cámara lenta. Sensación de ligereza, bienestar estomacal y frescura natural.',
-        promptEn:
-          'Smooth short orbital motion showcasing the fresh water droplets on the amber bottle and mint leaves floating in slow motion. Feeling of lightness and digestive wellness.',
-        onScreenText: '⚡ Absorción 3x Más Rápida · Digestión Ligera al Instante',
-        voiceoverEs: 'Su fórmula en caramelo masticable con relleno líquido te brinda una absorción tres veces más rápida y una digestión ligera.',
-      },
-      {
-        sceneNumber: 4,
-        timeRange: '00:12 – 00:16s',
-        title: 'Escena 4: Ficha Completa (100 Unidades · 2 al Día)',
-        purpose: 'Mostrar los 4 sellos dorados y la tabla inferior para cerrar la venta por WhatsApp.',
-        flowTool: 'Frames to Video (First → Last Frame)',
-        cameraMotion: 'Plano fijo heroico con brillo dorado continuo',
-        promptEs:
-          'Vista completa del póster FOS Probióticos y Zinc con los 4 medallones dorados brillando suavemente y la ficha técnica inferior nítida. Partículas de luz dorada y verde menta flotando con elegancia.',
-        promptEn:
-          'Full view of the FOS Probiotics and Zinc poster with the 4 golden medallions softly glowing and the bottom specs bar sharp. Golden and mint light particles floating elegantly.',
-        onScreenText: '100 Unidades (50 Porciones) · Solo 2 al día 💬 ¡Pídelo aquí!',
-        voiceoverEs: 'Un frasco trae cien unidades para cincuenta días de bienestar. Toma dos al día. ¡Escríbenos y pide el tuyo ahora!',
-      },
-    ],
-  },
-  {
     id: 'colageno-magnesio',
     name: 'Colágeno + Magnesio Botánico',
     brand: 'Botanical Wellness Lab',
@@ -388,6 +186,11 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     headline: 'ARTICULACIONES FUERTES, PIEL FIRME Y ENERGÍA',
     summary:
       'Fotografía botánica en bosque soleado con frasco ámbar cubierto de rocío, etiqueta verde bosque con relieve dorado y 4 medallones circulares dorados flotantes que resumen sus beneficios.',
+    backgroundMusicStyle: 'Piano Botánico Inspirador + Sonido Suave de Bosque Matutino',
+    backgroundMusicPromptEs:
+      'Música de fondo: melodía instrumental inspiradora de piano suave y cuerdas cálidas a volumen moderado, acompañada de brisa matutina en el bosque y destellos cristalinos al iluminarse cada medallón de beneficio.',
+    backgroundMusicPromptEn:
+      'Background music: uplifting soft piano and warm strings instrumental at balanced volume, layered with gentle morning forest breeze and subtle crystal chimes as each golden benefit medallion gleams.',
     specs: {
       tipo: 'Cápsulas Naturales Hidrolizadas',
       contenido: '120 Cápsulas (60 Porciones)',
@@ -462,13 +265,13 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Amanecer Botánico (Gancho de Vitalidad)',
-        purpose: 'Transmitir pureza natural y captar la atención con los rayos de sol en movimiento.',
-        flowTool: 'Frames to Video (First Frame)',
+        purpose: 'Transmitir pureza natural y captar la atención con los rayos de sol y música envolvente.',
         cameraMotion: 'Dolly In lento hacia la etiqueta dorada',
+        musicAndSfx: 'Piano suave inspirador + brisa matutina del bosque',
         promptEs:
-          'Los rayos de sol matutinos se filtran suavemente entre las hojas del bosque iluminando el frasco de Colágeno + Magnesio. Las hojas de helecho se mueven sutilmente con la brisa y las partículas de polen dorado flotan en cámara lenta. El frasco y sus 4 medallones dorados permanecen nítidos.',
+          'Los rayos de sol matutinos se filtran suavemente entre las hojas del bosque iluminando el frasco de Colágeno + Magnesio. Las hojas de helecho se mueven sutilmente con la brisa y las partículas de polen dorado flotan en cámara lenta. El frasco y sus 4 medallones dorados permanecen nítidos. Audio: colocar música de fondo instrumental relajante de piano suave y cuerdas cálidas con sonido sutil de naturaleza matutina.',
         promptEn:
-          'Morning sunbeams filter gently through the forest leaves illuminating the Collagen + Magnesium bottle. Fern fronds sway subtly in the breeze and golden pollen particles float in slow motion. The bottle and its 4 gold medallions remain sharp.',
+          'Morning sunbeams filter gently through the forest leaves illuminating the Collagen + Magnesium bottle. Fern fronds sway subtly in the breeze and golden pollen particles float in slow motion. The bottle and its 4 gold medallions remain sharp. Audio: warm, uplifting soft piano and strings background music with gentle morning forest ambiance.',
         onScreenText: '4 Beneficios en 1 sola fórmula natural 🌿✨',
         voiceoverEs: '¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía diaria?',
       },
@@ -477,12 +280,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Piel Radiante y Articulaciones Flexibles',
         purpose: 'Resaltar los dos medallones superiores: Piel/Cabello y Articulaciones.',
-        flowTool: 'Scene Builder (Extend)',
         cameraMotion: 'Pan suave de izquierda a derecha con reflejo en letras doradas',
+        musicAndSfx: 'Continúa música de piano + destello sonoro suave (chime) en los medallones',
         promptEs:
-          'Un destello cálido de sol recorre las letras doradas en relieve de "COLÁGENO + MAGNESIO" y hace brillar los medallones de Piel y Cabello y Articulaciones. Gotas de rocío resbalan lentamente por el vidrio ámbar.',
+          'Un destello cálido de sol recorre las letras doradas en relieve de "COLÁGENO + MAGNESIO" y hace brillar los medallones de Piel y Cabello y Articulaciones. Gotas de rocío resbalan lentamente por el vidrio ámbar. Audio: música de fondo instrumental de bienestar continua con un destello sonoro cristalino al brillar los medallones dorados.',
         promptEn:
-          'A warm sunbeam sweeps across the gold foil lettering of "COLÁGENO + MAGNESIO" and makes the Skin & Hair and Joints medallions gleam. Dew drops slide slowly down the amber glass.',
+          'A warm sunbeam sweeps across the gold foil lettering of "COLÁGENO + MAGNESIO" and makes the Skin & Hair and Joints medallions gleam. Dew drops slide slowly down the amber glass. Audio: continuous wellness instrumental background music with a soft crystal chime as the gold medallions shine.',
         onScreenText: '✨ 1. Piel y Cabello Firme · 🦴 2. Articulaciones sin Dolor',
         voiceoverEs: 'El Colágeno Hidrolizado nutre tu piel y cabello desde adentro mientras protege tus rodillas y articulaciones.',
       },
@@ -491,12 +294,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Músculos Recuperados y Energía Vital',
         purpose: 'Explicar la acción del Magnesio en los músculos y el nivel de energía.',
-        flowTool: 'Scene Builder (Extend)',
         cameraMotion: 'Orbit ligero con enfoque en los medallones inferiores',
+        musicAndSfx: 'Cuerdas cálidas ascendentes que transmiten vitalidad y energía',
         promptEs:
-          'Cámara en órbita lenta resaltando los medallones dorados de Músculos y Energía rodeados de hojas de eucalipto húmedas y destellos dorados que ascienden desde la madera.',
+          'Cámara en órbita lenta resaltando los medallones dorados de Músculos y Energía rodeados de hojas de eucalipto húmedas y destellos dorados que ascienden desde la madera. Audio: música de fondo inspiradora con cuerdas cálidas y percusión suave que transmite vitalidad.',
         promptEn:
-          'Slow orbital camera highlighting the Muscles and Energy gold medallions surrounded by wet eucalyptus leaves and golden sparkles rising from the wood.',
+          'Slow orbital camera highlighting the Muscles and Energy gold medallions surrounded by wet eucalyptus leaves and golden sparkles rising from the wood. Audio: inspiring background music with warm strings and light rhythm conveying vitality.',
         onScreenText: '💪 3. Músculos sin Calambres · ⚡ 4. Energía Todo el Día',
         voiceoverEs: 'Y gracias al Magnesio puro, relajas tus músculos, evitas calambres y despiertas con máxima energía.',
       },
@@ -504,13 +307,13 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Cierre Comercial (120 Cápsulas · 60 Días)',
-        purpose: 'Presentar el rendimiento del envase y llamado a la acción.',
-        flowTool: 'Frames to Video (First → Last Frame)',
+        purpose: 'Presentar el rendimiento del envase y llamado a la acción con acorde final.',
         cameraMotion: 'Plano maestro fijo con atmósfera luminosa',
+        musicAndSfx: 'Acorde final cálido y elegante de piano y arpa',
         promptEs:
-          'Plano heroico final del frasco de Colágeno + Magnesio con sus 4 sellos dorados brillando en armonía bajo la luz dorada del bosque.',
+          'Plano heroico final del frasco de Colágeno + Magnesio con sus 4 sellos dorados brillando en armonía bajo la luz dorada del bosque. Audio: cierre musical armónico y elegante con piano acústico y brisa suave.',
         promptEn:
-          'Final hero shot of the Collagen + Magnesium bottle with its 4 golden badges glowing harmoniously under the golden forest light.',
+          'Final hero shot of the Collagen + Magnesium bottle with its 4 golden badges glowing harmoniously under the golden forest light. Audio: harmonious and elegant musical resolution with acoustic piano and gentle breeze.',
         onScreenText: '120 Cápsulas (2 meses de tratamiento) · ¡Pide el tuyo hoy!',
         voiceoverEs: 'Un tratamiento completo de ciento veinte cápsulas para transformar tu bienestar. ¡Pídelo hoy!',
       },
@@ -528,6 +331,11 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     headline: 'DESINFLAMA TUS ARTICULACIONES CON PODER NATURAL',
     summary:
       'Fotografía de impacto comercial con explosión congelada de polvo dorado de cúrcuma detrás del frasco ámbar, rodajas de jengibre fresco y raíces de cúrcuma sobre pizarra negra.',
+    backgroundMusicStyle: 'Cinemático Orgánico con Percusión Suave + Whoosh en Slow Motion',
+    backgroundMusicPromptEs:
+      'Música de fondo: instrumental cinematográfico cálido con percusión orgánica profunda, violonchelo inspirador y efecto de sonido envolvente en cámara superlenta para la explosión de cúrcuma.',
+    backgroundMusicPromptEn:
+      'Background music: warm cinematic instrumental with deep organic percussion, inspiring cello, and a rich slow-motion whoosh sound effect as the golden turmeric powder expands.',
     specs: {
       tipo: 'Cápsulas Vegetales Concentradas',
       contenido: '60 Cápsulas Vegetales',
@@ -603,12 +411,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Explosión en Cámara Superlenta (Hook)',
         purpose: 'Impactar visualmente con la nube de cúrcuma en cámara superlenta mientras el frasco está inmóvil.',
-        flowTool: 'Frames to Video (First Frame)',
         cameraMotion: 'Slow Push-In (Acercamiento dramático en 120fps)',
+        musicAndSfx: 'Música cinematográfica cálida + efecto de expansión en slow-motion',
         promptEs:
-          'En cámara superlenta (super slow motion), la nube de polvo dorado de cúrcuma detrás del frasco se expande suavemente en el aire iluminada por una luz ámbar cálida. El frasco de Cúrcuma + Jengibre y las raíces en la base permanecen perfectamente enfocados y firmes.',
+          'En cámara superlenta (super slow motion), la nube de polvo dorado de cúrcuma detrás del frasco se expande suavemente en el aire iluminada por una luz ámbar cálida. El frasco de Cúrcuma + Jengibre y las raíces en la base permanecen perfectamente enfocados y firmes. Audio: colocar música de fondo cinematográfica e inspiradora con percusión orgánica suave y efecto envolvente de polvo en cámara lenta.',
         promptEn:
-          'In super slow motion, the golden turmeric powder cloud behind the bottle expands softly in mid-air backlit by warm amber light. The Turmeric + Ginger bottle and the roots at the base remain perfectly focused and steady.',
+          'In super slow motion, the golden turmeric powder cloud behind the bottle expands softly in mid-air backlit by warm amber light. The Turmeric + Ginger bottle and the roots at the base remain perfectly focused and steady. Audio: warm cinematic background music with soft organic percussion and a deep slow-motion powder expansion sound effect.',
         onScreenText: '¿Dolor articular o inflamación constante? 🔥🌿',
         voiceoverEs: 'Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti.',
       },
@@ -617,12 +425,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Alivio Articular y Movilidad)',
         purpose: 'Explicar cómo la curcumina desinflama articulaciones y devuelve la movilidad.',
-        flowTool: 'Scene Builder (Extend)',
         cameraMotion: 'Orbit lateral bajo alrededor de la pizarra negra',
+        musicAndSfx: 'Melodía acústica y violonchelo cálido constante',
         promptEs:
-          'Movimiento orbital suave a ras de la piedra pizarra negra, pasando frente a las rodajas frescas de jengibre y la cuchara de madera con cúrcuma mientras finas chispas doradas flotan en el aire.',
+          'Movimiento orbital suave a ras de la piedra pizarra negra, pasando frente a las rodajas frescas de jengibre y la cuchara de madera con cúrcuma mientras finas chispas doradas flotan en el aire. Audio: música de fondo instrumental cálida con cuerdas suaves y ritmo motivador.',
         promptEn:
-          'Low-angle smooth orbital movement across the black slate stone, passing the fresh ginger slices and wooden spoon with turmeric while fine golden sparks float in the air.',
+          'Low-angle smooth orbital movement across the black slate stone, passing the fresh ginger slices and wooden spoon with turmeric while fine golden sparks float in the air. Audio: warm instrumental background music with gentle strings and motivating rhythm.',
         onScreenText: '🦴 1. Desinflama Articulaciones · 🏃 2. Recupera tu Movilidad',
         voiceoverEs: 'Su alta concentración desinflama tus articulaciones de forma natural y alivia la rigidez muscular.',
       },
@@ -631,12 +439,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Antioxidante + Sinergia con Jengibre)',
         purpose: 'Mostrar por qué la combinación de Cúrcuma + Jengibre multiplica el efecto.',
-        flowTool: 'Ingredients to Video',
         cameraMotion: 'Macro Zoom hacia los ingredientes puros',
+        musicAndSfx: 'Música orgánica en crescendo + brillo sutil al iluminar la etiqueta',
         promptEs:
-          'Plano macro cinematográfico de las raíces de cúrcuma naranja intenso y el jengibre fresco junto al frasco Natural Vitae, con iluminación dorada recorriendo los iconos de la etiqueta.',
+          'Plano macro cinematográfico de las raíces de cúrcuma naranja intenso y el jengibre fresco junto al frasco Natural Vitae, con iluminación dorada recorriendo los iconos de la etiqueta. Audio: música de fondo orgánica e inspiradora con destello sonoro suave.',
         promptEn:
-          'Cinematic macro shot of vibrant orange turmeric roots and fresh ginger next to the Natural Vitae bottle, with golden light sweeping across the label icons.',
+          'Cinematic macro shot of vibrant orange turmeric roots and fresh ginger next to the Natural Vitae bottle, with golden light sweeping across the label icons. Audio: inspiring organic background music with a subtle shimmer sound.',
         onScreenText: '🛡️ 3. Poder Antioxidante · 🌱 4. Con Jengibre de Alta Absorción',
         voiceoverEs: 'Combinado con jengibre puro, protege tus células y mejora tu digestión con máxima absorción.',
       },
@@ -645,12 +453,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Cierre (60 Cápsulas Vegetales)',
         purpose: 'Llamado a la acción claro indicando la dosis diaria.',
-        flowTool: 'Frames to Video (First → Last Frame)',
         cameraMotion: 'Estático con partículas doradas flotando suavemente',
+        musicAndSfx: 'Resolución musical cálida y elegante',
         promptEs:
-          'Plano heroico final del frasco Cúrcuma + Jengibre Natural Vitae nítido en el centro mientras las últimas partículas de polvo dorado caen lentamente sobre la pizarra negra.',
+          'Plano heroico final del frasco Cúrcuma + Jengibre Natural Vitae nítido en el centro mientras las últimas partículas de polvo dorado caen lentamente sobre la pizarra negra. Audio: acorde final cálido de música instrumental de bienestar.',
         promptEn:
-          'Final hero shot of the Natural Vitae Turmeric + Ginger bottle sharp in the center as the last golden powder particles settle slowly onto the black slate.',
+          'Final hero shot of the Natural Vitae Turmeric + Ginger bottle sharp in the center as the last golden powder particles settle slowly onto the black slate. Audio: warm resolving chord of wellness instrumental background music.',
         onScreenText: '60 Cápsulas Vegetales · 2 al día · ¡Haz tu pedido hoy!',
         voiceoverEs: 'Sesenta cápsulas cien por ciento vegetales para volver a moverte sin límites. ¡Pide el tuyo hoy!',
       },
@@ -668,6 +476,11 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     headline: 'OXIGENA TU CUERPO Y PURIFICA TU DIGESTIÓN',
     summary:
       'Gotero de vidrio verde esmeralda emergiendo de una corona de agua cristalina en movimiento con hojas frescas de menta, eucalipto y té matcha bajo rayos de sol matutinos.',
+    backgroundMusicStyle: 'Acústico Refrescante Matutino + Sonido Cristalino de Agua',
+    backgroundMusicPromptEs:
+      'Música de fondo: melodía acústica fresca y luminosa con guitarra suave, notas de marimba y sonido cristalino de salpicadura de agua pura en cámara lenta.',
+    backgroundMusicPromptEn:
+      'Background music: bright, refreshing morning acoustic melody with soft guitar, light marimba notes, and crisp slow-motion crystal water splash sound effects.',
     specs: {
       tipo: 'Gotas Líquidas Concentradas',
       contenido: '30 ml (60 Porciones)',
@@ -700,7 +513,7 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     geminiPromptEs:
       'Fotografía comercial refrescante de alta velocidad: un frasco gotero de vidrio verde esmeralda con pipeta de cristal y etiqueta blanca texturizada que dice "CLOROFILA & MATCHA - LIQUID DETOX - 30ml", emergiendo del centro de una corona perfecta de agua verde cristalina (water crown splash) sobre una superficie de agua con ondas concéntricas. Hojas frescas de menta, brotes de té verde matcha y eucalipto flotan en el aire junto con microgotas de agua brillantes. Fondo de jardín botánico desenfocado con rayos de sol dorados desde arriba. Lente macro 100mm, 8k.',
     geminiPromptEn:
-      'Refreshing high-speed commercial photography: an emerald green glass dropper bottle with glass pipette and textured cream label reading "CLOROFILA & MATCHA - LIQUID DETOX - 30ml", emerging from the center of a crystal-clear emerald water crown splash overrippling water. Fresh mint leaves, green matcha tea shoots, and eucalyptus float in mid-air alongside sparkling water droplets. Sunlit blurred botanical garden background with golden sunbeams. 100mm macro lens, 8k.',
+      'Refreshing high-speed commercial photography: an emerald green glass dropper bottle with glass pipette and textured cream label reading "CLOROFILA & MATCHA - LIQUID DETOX - 30ml", emerging from the center of a crystal-clear emerald water crown splash over rippling water. Fresh mint leaves, green matcha tea shoots, and eucalyptus float in mid-air alongside sparkling water droplets. Sunlit blurred botanical garden background with golden sunbeams. 100mm macro lens, 8k.',
     cleanHeroPromptEs:
       'Fotografía comercial del frasco gotero verde esmeralda "CLOROFILA & MATCHA LIQUID DETOX" sobre una superficie de agua esmeralda tranquila con ondas suaves, rodeado de hojas de menta bajo luz solar matutina, listo para animar el splash en Google Flow.',
     cleanHeroPromptEn:
@@ -742,13 +555,13 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Splash Esmeralda en Cámara Lenta (Hook)',
-        purpose: 'Transmitir frescura instantánea con el movimiento líquido alrededor del gotero.',
-        flowTool: 'Frames to Video (First Frame)',
+        purpose: 'Transmitir frescura instantánea con el movimiento líquido y música refrescante.',
         cameraMotion: 'Static Macro con movimiento fluido del agua en 120fps',
+        musicAndSfx: 'Música acústica refrescante + sonido cristalino de salpicadura de agua',
         promptEs:
-          'En cámara superlenta, la corona de agua verde esmeralda alrededor de la base del gotero Clorofila & Matcha ondula y libera pequeñas gotas cristalinas en el aire mientras las hojas de menta flotan suavemente. El frasco y su etiqueta permanecen completamente firmes.',
+          'En cámara superlenta, la corona de agua verde esmeralda alrededor de la base del gotero Clorofila & Matcha ondula y libera pequeñas gotas cristalinas en el aire mientras las hojas de menta flotan suavemente. El frasco y su etiqueta permanecen completamente firmes. Audio: colocar música de fondo acústica fresca y luminosa acompañada del sonido cristalino de agua pura en cámara lenta.',
         promptEn:
-          'In super slow motion, the emerald water crown around the base of the Chlorophyll & Matcha dropper ripples and releases crystal droplets into the air while mint leaves float gently. The bottle and label remain completely steady.',
+          'In super slow motion, the emerald water crown around the base of the Chlorophyll & Matcha dropper ripples and releases crystal droplets into the air while mint leaves float gently. The bottle and label remain completely steady. Audio: bright, refreshing acoustic background music with crisp slow-motion crystal water splash sound effects.',
         onScreenText: '¿Te sientes hinchado y sin energía por las mañanas? 💧🌿',
         voiceoverEs: 'Transforma tus mañanas con el poder purificante de la Clorofila líquida y el Té Matcha.',
       },
@@ -757,12 +570,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Detox Profundo + Oxigenación)',
         purpose: 'Explicar cómo limpia el organismo y oxigena las células.',
-        flowTool: 'Scene Builder (Extend)',
         cameraMotion: 'Dolly In suave hacia el gotero iluminado por el sol',
+        musicAndSfx: 'Melodía matutina suave + ondas de agua relajantes',
         promptEs:
-          'Acercamiento lento hacia el frasco verde esmeralda mientras rayos de sol dorados atraviesan el cristal líquido y las ondas de agua se expanden suavemente en la base.',
+          'Acercamiento lento hacia el frasco verde esmeralda mientras rayos de sol dorados atraviesan el cristal líquido y las ondas de agua se expanden suavemente en la base. Audio: música de fondo instrumental fresca de bienestar con sonido suave de agua.',
         promptEn:
-          'Slow dolly-in toward the emerald glass bottle as golden sunbeams refract through the liquid glass and water ripples expand gently at the base.',
+          'Slow dolly-in toward the emerald glass bottle as golden sunbeams refract through the liquid glass and water ripples expand gently at the base. Audio: fresh wellness instrumental background music with gentle water ripple sounds.',
         onScreenText: '🌱 1. Detox Hepático y Digestivo · ✨ 2. Oxigena tu Piel',
         voiceoverEs: 'Limpia tu organismo de toxinas, desinflama tu digestión y oxigena tus células para una piel radiante.',
       },
@@ -771,12 +584,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Aliento Fresco + Energía Limpia)',
         purpose: 'Destacar el toque de menta orgánica y la energía antioxidante del Matcha.',
-        flowTool: 'Ingredients to Video',
         cameraMotion: 'Orbit ligero rodeando las hojas de menta y té verde',
+        musicAndSfx: 'Guitarra acústica alegre + brisa fresca en hojas de menta',
         promptEs:
-          'Las hojas frescas de menta y brotes de té verde giran suavemente en cámara lenta alrededor del gotero esmeralda con destellos de rocío bajo el sol matutino.',
+          'Las hojas frescas de menta y brotes de té verde giran suavemente en cámara lenta alrededor del gotero esmeralda con destellos de rocío bajo el sol matutino. Audio: música de fondo alegre y revitalizante con brisa suave.',
         promptEn:
-          'Fresh mint leaves and green tea shoots drift gently in slow motion around the emerald dropper with sparkling dew in the morning sun.',
+          'Fresh mint leaves and green tea shoots drift gently in slow motion around the emerald dropper with sparkling dew in the morning sun. Audio: uplifting and revitalizing background music with a soft breeze.',
         onScreenText: '🍃 3. Frescura Interna con Menta · ⚡ 4. Energía Antioxidante',
         voiceoverEs: 'Su toque de menta natural refresca tu aliento desde adentro mientras el Matcha te llena de energía limpia.',
       },
@@ -785,12 +598,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Modo de Uso (20 Gotas en Agua)',
         purpose: 'Explicar lo fácil que es tomarlo cada mañana.',
-        flowTool: 'Frames to Video (First → Last Frame)',
         cameraMotion: 'Plano heroico luminoso',
+        musicAndSfx: 'Cierre musical fresco y luminoso',
         promptEs:
-          'El gotero Clorofila & Matcha brilla en el centro del agua esmeralda con reflejos solares cálidos y atmósfera de bienestar puro.',
+          'El gotero Clorofila & Matcha brilla en el centro del agua esmeralda con reflejos solares cálidos y atmósfera de bienestar puro. Audio: acorde final luminoso de música acústica de bienestar.',
         promptEn:
-          'The Chlorophyll & Matcha dropper gleams at the center of the emerald water with warm solar reflections and pure wellness atmosphere.',
+          'The Chlorophyll & Matcha dropper gleams at the center of the emerald water with warm solar reflections and pure wellness atmosphere. Audio: bright resolving chord of acoustic wellness background music.',
         onScreenText: 'Solo 20 gotas en tu vaso de agua cada mañana · ¡Pídelo hoy!',
         voiceoverEs: 'Solo agrega veinte gotas a tu vaso de agua cada mañana. ¡Pide tu Liquid Detox hoy!',
       },
@@ -808,6 +621,11 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     headline: 'REGENERA, ILUMINA Y REJUVENECE TU PIEL',
     summary:
       'Gotero ámbar con etiqueta botánica ilustrada a mano posado sobre piedra volcánica y musgo húmedo, rodeado de pétalos de rosa silvestre y frutos de rosa mosqueta al atardecer.',
+    backgroundMusicStyle: 'Ambient Spa de Lujo con Arpa, Piano y Brisa de Jardín',
+    backgroundMusicPromptEs:
+      'Música de fondo: melodía elegante de spa y alta cosmética con piano delicado, notas de arpa suave y sonido sutil de brisa al atardecer.',
+    backgroundMusicPromptEn:
+      'Background music: luxury skincare spa melody with delicate piano, soft harp notes, and gentle golden-hour garden breeze.',
     specs: {
       tipo: 'Aceite Regenerador Prensado en Frío',
       contenido: '30 ml / 1 fl oz',
@@ -882,13 +700,13 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Magia Botánica al Atardecer (Hook)',
-        purpose: 'Enamorar visualmente con la estética orgánica y la caída de pétalos en cámara lenta.',
-        flowTool: 'Frames to Video (First Frame)',
+        purpose: 'Enamorar visualmente con la estética orgánica, caída de pétalos y música de spa.',
         cameraMotion: 'Dolly In suave con caída de pétalos en slow motion',
+        musicAndSfx: 'Piano delicado de spa + arpa suave y brisa floral',
         promptEs:
-          'El frasco de Sérum Rosa Mosqueta permanece firme sobre la roca con musgo húmedo mientras suaves pétalos de rosa caen en cámara lenta alrededor y partículas de polen dorado brillan bajo el sol del atardecer.',
+          'El frasco de Sérum Rosa Mosqueta permanece firme sobre la roca con musgo húmedo mientras suaves pétalos de rosa caen en cámara lenta alrededor y partículas de polen dorado brillan bajo el sol del atardecer. Audio: colocar música de fondo relajante y elegante de spa con piano suave y notas de arpa.',
         promptEn:
-          'The Rosehip Serum bottle remains steady on the wet mossy stone while soft pink rose petals fall in slow motion around it and golden pollen particles shimmer in the sunset light.',
+          'The Rosehip Serum bottle remains steady on the wet mossy stone while soft pink rose petals fall in slow motion around it and golden pollen particles shimmer in the sunset light. Audio: soothing, luxury spa background music with delicate piano and harp notes.',
         onScreenText: 'El secreto botánico para una piel luminosa y sin manchas 🌸✨',
         voiceoverEs: 'Descubre el poder regenerador del Sérum de Rosa Mosqueta cien por ciento orgánico.',
       },
@@ -897,12 +715,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Atenúa Manchas + Hidratación)',
         purpose: 'Explicar su acción reparadora sobre manchas, cicatrices y sequedad.',
-        flowTool: 'Scene Builder (Extend)',
         cameraMotion: 'Orbit circular suave de 20 grados alrededor del gotero',
+        musicAndSfx: 'Melodía envolvente de cuerdas suaves y destello cálido',
         promptEs:
-          'La cámara orbita suavemente alrededor del frasco ámbar mientras la luz dorada del atardecer ilumina el aceite en su interior y las hojas de la ilustración dorada en la etiqueta brillan sutilmente.',
+          'La cámara orbita suavemente alrededor del frasco ámbar mientras la luz dorada del atardecer ilumina el aceite en su interior y las hojas de la ilustración dorada en la etiqueta brillan sutilmente. Audio: música de fondo instrumental de alta cosmética con cuerdas cálidas.',
         promptEn:
-          'The camera orbits gently around the amber bottle as golden sunset light illuminates the oil inside and the gold foil botanical illustration on the label gleams subtly.',
+          'The camera orbits gently around the amber bottle as golden sunset light illuminates the oil inside and the gold foil botanical illustration on the label gleams subtly. Audio: luxury skincare instrumental background music with warm strings.',
         onScreenText: '✨ 1. Atenúa Manchas y Marcas · 💧 2. Hidratación Profunda',
         voiceoverEs: 'Rico en ácidos grasos esenciales, atenúa manchas y líneas de expresión mientras hidrata profundamente.',
       },
@@ -911,12 +729,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Efecto Glow y Regeneración Nocturna)',
         purpose: 'Mostrar la pureza de los frutos de rosa mosqueta prensados en frío.',
-        flowTool: 'Ingredients to Video',
         cameraMotion: 'Macro Pan sobre el musgo húmedo y frutos rojos',
+        musicAndSfx: 'Piano íntimo + sonido sutil de gota de rocío',
         promptEs:
-          'Plano macro de los frutos rojos de rosa mosqueta y pétalos húmedos junto al frasco con destellos cálidos en el agua sobre la roca.',
+          'Plano macro de los frutos rojos de rosa mosqueta y pétalos húmedos junto al frasco con destellos cálidos en el agua sobre la roca. Audio: continúa la música de fondo relajante de piano y naturaleza.',
         promptEn:
-          'Macro shot of red rosehip berries and dewy petals next to the bottle with warm light reflections on the wet stone.',
+          'Macro shot of red rosehip berries and dewy petals next to the bottle with warm light reflections on the wet stone. Audio: continuous soothing piano and nature background music.',
         onScreenText: '🌟 3. Luminosidad Natural · 🌙 4. Regeneración Nocturna',
         voiceoverEs: 'Regenera tu piel cada noche y despierta con un rostro suave, firme y luminoso.',
       },
@@ -925,12 +743,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Ritual de Aplicación (3 Gotas cada Noche)',
         purpose: 'Cerrar con el modo de uso y llamado a la acción.',
-        flowTool: 'Frames to Video (First → Last Frame)',
         cameraMotion: 'Estático con bokeh dorado respirando suavemente',
+        musicAndSfx: 'Acorde final sereno de arpa y piano',
         promptEs:
-          'Plano heroico del Sérum de Rosa Mosqueta bañado por la luz dorada del atardecer con partículas flotantes suaves.',
+          'Plano heroico del Sérum de Rosa Mosqueta bañado por la luz dorada del atardecer con partículas flotantes suaves. Audio: resolución musical suave y elegante de spa.',
         promptEn:
-          'Hero shot of the Rosehip Serum bathed in golden sunset light with soft floating particles.',
+          'Hero shot of the Rosehip Serum bathed in golden sunset light with soft floating particles. Audio: soft, elegant spa musical resolution.',
         onScreenText: 'Solo 3 gotas cada noche · 100% Orgánico · ¡Pídelo hoy!',
         voiceoverEs: 'Solo tres gotas cada noche para enamorarte de tu piel. ¡Pide tu Sérum de Rosa Mosqueta hoy!',
       },
@@ -948,6 +766,11 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     headline: 'PROTEGE TU GARGANTA Y SUBE TUS DEFENSAS',
     summary:
       'Tarro de cristal con miel ámbar brillante, tapa de madera con cordel de yute, panal de cera real, trozos de propóleo puro y cuchara mielera dejando caer un hilo dorado continuo.',
+    backgroundMusicStyle: 'Guitarra Acústica Cálida Artesanal + Fluido Suave de Miel',
+    backgroundMusicPromptEs:
+      'Música de fondo: melodía acústica cálida y acogedora con guitarra punteada suave, violín ligero de campo y sonido relajante de miel espesa fluyendo.',
+    backgroundMusicPromptEn:
+      'Background music: warm, cozy artisanal acoustic melody with gentle fingerpicked guitar, light folk strings, and soothing thick honey pour ambiance.',
     specs: {
       tipo: 'Miel Cruda de Abejas con Extracto de Propóleo',
       contenido: 'Tarro de Vidrio 350g',
@@ -1022,13 +845,13 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
         title: 'Escena 1: Hilo de Miel Dorada en Vivo (Hook)',
-        purpose: 'Hipnotizar al espectador con la caída lenta y viscosa de la miel dorada iluminada por el sol.',
-        flowTool: 'Frames to Video (First Frame)',
+        purpose: 'Hipnotizar al espectador con la caída lenta y viscosa de la miel dorada y música acústica cálida.',
         cameraMotion: 'Static Macro con fluido de miel cayendo en cámara lenta',
+        musicAndSfx: 'Guitarra acústica cálida artesanal + textura sonora suave de miel',
         promptEs:
-          'En cámara lenta, el hilo espeso y brillante de miel dorada fluye continuamente desde la cuchara de madera formando pliegues suaves en la base. El tarro de Miel & Propóleo permanece completamente firme y nítido mientras pequeñas partículas doradas brillan en el aire.',
+          'En cámara lenta, el hilo espeso y brillante de miel dorada fluye continuamente desde la cuchara de madera formando pliegues suaves en la base. El tarro de Miel & Propóleo permanece completamente firme y nítido mientras pequeñas partículas doradas brillan en el aire. Audio: colocar música de fondo acústica cálida con guitarra suave y ambiente matutino acogedor.',
         promptEn:
-          'In slow motion, the thick glossy ribbon of golden honey flows continuously from the wooden dipper forming soft coils at the base. The Honey & Propolis jar remains completely steady and sharp while golden particles shimmer in the air.',
+          'In slow motion, the thick glossy ribbon of golden honey flows continuously from the wooden dipper forming soft coils at the base. The Honey & Propolis jar remains completely steady and sharp while golden particles shimmer in the air. Audio: warm, cozy fingerpicked acoustic guitar background music with gentle morning ambiance.',
         onScreenText: '¿Garganta irritada o cambios de clima? 🍯🛡️',
         voiceoverEs: 'Protege tu garganta y las defensas de toda tu familia con nuestra Miel y Propóleo artesanal.',
       },
@@ -1037,12 +860,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:04 – 00:08s',
         title: 'Escena 2: Beneficios 1 y 2 (Alivio de Garganta + Escudo Antibacteriano)',
         purpose: 'Explicar la acción calmante de la miel cruda y el poder antibacteriano del propóleo.',
-        flowTool: 'Scene Builder (Extend)',
         cameraMotion: 'Dolly In suave hacia la etiqueta dorada y el panal',
+        musicAndSfx: 'Melodía acústica familiar con cuerdas suaves',
         promptEs:
-          'Acercamiento lento hacia el tarro de Miel & Propóleo mostrando la pureza del panal de cera fresca y los fragmentos de propóleo con luz matutina cálida reflejándose en las letras doradas.',
+          'Acercamiento lento hacia el tarro de Miel & Propóleo mostrando la pureza del panal de cera fresca y los fragmentos de propóleo con luz matutina cálida reflejándose en las letras doradas. Audio: música de fondo instrumental acústica cálida y reconfortante.',
         promptEn:
-          'Slow push-in toward the Honey & Propolis jar showcasing the fresh honeycomb and raw propolis chunks with warm morning light reflecting off the gold foil lettering.',
+          'Slow push-in toward the Honey & Propolis jar showcasing the fresh honeycomb and raw propolis chunks with warm morning light reflecting off the gold foil lettering. Audio: comforting warm acoustic instrumental background music.',
         onScreenText: '🍯 1. Alivia Garganta y Tos · 🛡️ 2. Antibacteriano Natural',
         voiceoverEs: 'El propóleo puro actúa como un escudo antibacteriano natural mientras la miel cruda suaviza tu garganta al instante.',
       },
@@ -1051,12 +874,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:08 – 00:12s',
         title: 'Escena 3: Beneficios 3 y 4 (Defensas Altas + Energía de Colmena)',
         purpose: 'Destacar el polen, las hojas de eucalipto y la cosecha 100% pura sin azúcar añadida.',
-        flowTool: 'Ingredients to Video',
         cameraMotion: 'Pan horizontal suave sobre los ingredientes de la colmena',
+        musicAndSfx: 'Guitarra y arpa ligera que transmiten pureza natural',
         promptEs:
-          'Paneo suave a ras de la mesa de madera recorriendo las hojas de eucalipto, los gránulos de polen dorado, el panal hexagonal y el hilo de miel brillante.',
+          'Paneo suave a ras de la mesa de madera recorriendo las hojas de eucalipto, los gránulos de polen dorado, el panal hexagonal y el hilo de miel brillante. Audio: música de fondo orgánica y alegre con guitarra acústica y notas suaves de arpa.',
         promptEn:
-          'Smooth tabletop pan across the eucalyptus leaves, golden bee pollen granules, hexagonal honeycomb, and glowing honey ribbon.',
+          'Smooth tabletop pan across the eucalyptus leaves, golden bee pollen granules, hexagonal honeycomb, and glowing honey ribbon. Audio: cheerful organic background music with acoustic guitar and light harp notes.',
         onScreenText: '🌿 3. Sube tus Defensas · ☀️ 4. 100% Pura y Orgánica',
         voiceoverEs: 'Cien por ciento pura, cruda y orgánica, llena de enzimas y antioxidantes que fortalecen tu sistema inmune.',
       },
@@ -1065,12 +888,12 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
         timeRange: '00:12 – 00:16s',
         title: 'Escena 4: Cierre (1 Cucharadita cada Mañana)',
         purpose: 'Invitar a incorporarla en la rutina diaria y cerrar el pedido.',
-        flowTool: 'Frames to Video (First → Last Frame)',
         cameraMotion: 'Plano heroico cálido con caída continua de miel',
+        musicAndSfx: 'Acorde final cálido de guitarra acústica',
         promptEs:
-          'Plano final luminoso del tarro de Miel & Propóleo Artesanal con el hilo dorado de miel brillando a contraluz.',
+          'Plano final luminoso del tarro de Miel & Propóleo Artesanal con el hilo dorado de miel brillando a contraluz. Audio: cierre musical cálido y familiar con guitarra acústica.',
         promptEn:
-          'Luminous final hero shot of the Artisanal Honey & Propolis jar with the golden honey ribbon glowing in backlight.',
+          'Luminous final hero shot of the Artisanal Honey & Propolis jar with the golden honey ribbon glowing in backlight. Audio: warm, family-friendly acoustic guitar musical finale.',
         onScreenText: 'Tarro de 350g · 1 cucharadita cada mañana · ¡Pídelo hoy!',
         voiceoverEs: 'Una cucharadita cada mañana para cuidar a quienes más quieres. ¡Pide tu Miel con Propóleo hoy!',
       },
@@ -1078,294 +901,140 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
   },
 ];
 
-export interface AnnotatedCallout {
-  number: number;
-  title: string;
-  description: string;
-  xPercent: number;
-  yPercent: number;
-}
-
-export interface StepGuideItem {
-  stepNumber: number;
-  badge: string;
-  toolName: 'Google Gemini' | 'Google Flow';
-  title: string;
-  subtitle: string;
-  summary: string;
-  proTip: string;
-  callouts: AnnotatedCallout[];
-}
-
-export const STEP_BY_STEP_GUIDE: StepGuideItem[] = [
+export const SCENE_TEMPLATES_LIBRARY: ScenePromptTemplate[] = [
   {
-    stepNumber: 1,
-    badge: 'PASO 1 DE 6 · EN GOOGLE GEMINI',
-    toolName: 'Google Gemini',
-    title: 'Genera la Imagen Base o Póster de Beneficios en Gemini',
-    subtitle: 'Elige entre Fotografía Limpia de Estudio (para animar el entorno) o Póster Infográfico 9:16 con 4 Medallones Dorados.',
-    summary:
-      'Antes de abrir Google Flow, todo gran video de producto natural nace en Gemini (Imagen 3). Aquí defines la forma exacta del envase, la textura (gotas de rocío, vidrio ámbar, relieve dorado) y los ingredientes o medallones de beneficios.',
-    proTip:
-      'Consejo Pro: Pídele a Gemini primero una "Versión Limpia sin textos flotantes" (para usarla en la Escena 1 de Flow) y luego la "Versión Póster con los 4 Medallones Dorados de Beneficios" (para el cierre en la Escena 4).',
-    callouts: [
-      {
-        number: 1,
-        title: 'Caja de Prompt Estructurado en Gemini',
-        description:
-          'Escribe la fórmula de 5 bloques: [Tipo de Envase y Etiqueta] + [Iluminación de Estudio] + [Ingredientes / 4 Sellos de Beneficios] + [Fondo Botánico] + [Proporción 9:16 o 1:1 y Lente 85mm].',
-        xPercent: 18,
-        yPercent: 78,
-      },
-      {
-        number: 2,
-        title: 'Verificación de Textos en la Etiqueta',
-        description:
-          'Revisa que el nombre del producto (ej. "Zooone Eye Vitamin" o "FOS Probióticos y Zinc") esté bien escrito. Si alguna letra falla, haz clic en "Regenerar" o pide corrección puntual.',
-        xPercent: 48,
-        yPercent: 42,
-      },
-      {
-        number: 3,
-        title: 'Los 4 Medallones Dorados de Beneficios',
-        description:
-          'Para videos de beneficios, indica exactamente los 4 textos cortos (máximo 3 palabras por sello, ej. "Intestino Saludable", "Defensas Altas").',
-        xPercent: 75,
-        yPercent: 62,
-      },
-      {
-        number: 4,
-        title: 'Botón Descargar en Tamaño Completo',
-        description:
-          'Haz clic en el icono de descarga arriba a la derecha de la imagen en Gemini para guardarla en alta resolución (.png o .jpg) antes de ir a Flow.',
-        xPercent: 86,
-        yPercent: 16,
-      },
-    ],
+    id: 'gancho-explosion-polvo',
+    categoryId: 'gancho',
+    categoryLabel: 'Escena de Gancho (0–4s)',
+    title: 'Explosión de Polvo Botánico en 120fps',
+    idealFor: 'Cúrcuma, Jengibre, Matcha, Cacao, Maca, Superfoods en cápsulas',
+    cameraMovement: 'Slow Push-In (Dolly In lento)',
+    musicSuggestion: 'Cinemático con percusión orgánica + whoosh en cámara lenta',
+    duration: '4 segundos',
+    benefitHookExample: '🔥 ¿Dolor articular o inflamación? Activa tu bienestar desde el primer día.',
+    promptEs:
+      'El frasco del producto permanece perfectamente firme y nítido en el centro sobre piedra pizarra negra. En cámara superlenta (120fps super slow motion), una nube de fino polvo botánico dorado detrás del envase se expande suavemente en el aire iluminada a contraluz por un foco cálido ámbar. Audio: colocar música de fondo cinematográfica e inspiradora con percusión orgánica suave y efecto envolvente en cámara lenta.',
+    promptEn:
+      'The product bottle remains perfectly still and sharp in the center on black slate stone. In 120fps super slow motion, a cloud of fine golden botanical powder behind the bottle expands softly in mid-air backlit by warm amber studio lighting. Audio: warm uplifting cinematic background music with soft organic percussion and slow-motion powder expansion SFX.',
   },
   {
-    stepNumber: 2,
-    badge: 'PASO 2 DE 6 · EN GOOGLE FLOW',
-    toolName: 'Google Flow',
-    title: 'Abre Google Flow y Configura el Formato y Modelo Veo',
-    subtitle: 'Ingresa a labs.google/fx/tools/flow, crea un proyecto nuevo y selecciona el formato vertical 9:16 o 16:9.',
-    summary:
-      'Google Flow es el estudio cinematográfico de IA de Google impulsado por el modelo Veo. Su ventaja frente a otros generadores es que te permite controlar fotogramas exactos, ingredientes visuales y movimientos de cámara profesionales.',
-    proTip:
-      'Si tu video es para Estados de WhatsApp, Reels o TikTok (como tus ejemplos de Zooone y Greensofg), selecciona siempre la proporción 9:16 (Vertical) antes de subir tu imagen.',
-    callouts: [
-      {
-        number: 1,
-        title: 'Botón "+ New Project" (Nuevo Proyecto)',
-        description:
-          'En la pantalla principal de Google Flow, haz clic en "+ New Project" para abrir el lienzo de creación y el Scene Builder.',
-        xPercent: 16,
-        yPercent: 18,
-      },
-      {
-        number: 2,
-        title: 'Selector de Modelo (Veo 2 / Veo 3 Quality)',
-        description:
-          'En la esquina del panel de generación, asegúrate de elegir la versión de máxima calidad de Veo para conservar las letras de la etiqueta sin distorsión.',
-        xPercent: 78,
-        yPercent: 20,
-      },
-      {
-        number: 3,
-        title: 'Selector de Aspect Ratio (9:16 Vertical vs 16:9)',
-        description:
-          'Cambia el formato a 9:16 Portrait para anuncios verticales de beneficios o 16:9 Landscape para portadas web y YouTube.',
-        xPercent: 62,
-        yPercent: 20,
-      },
-      {
-        number: 4,
-        title: 'Selector de Modo: "Frames to Video" vs "Ingredients"',
-        description:
-          'Aquí eliges cómo trabajará Flow: anclando tu foto como primer fotograma ("Frames to Video") o mezclando activos ("Ingredients").',
-        xPercent: 28,
-        yPercent: 82,
-      },
-    ],
+    id: 'gancho-splash-esmeralda',
+    categoryId: 'gancho',
+    categoryLabel: 'Escena de Gancho (0–4s)',
+    title: 'Corona de Agua Cristalina y Hojas Flotantes',
+    idealFor: 'Goteros Detox, Clorofila, Extractos Herbales, Hidratación',
+    cameraMovement: 'Static Macro (Cámara fija + agua en slow-motion)',
+    musicSuggestion: 'Guitarra acústica fresca + salpicadura de agua cristalina',
+    duration: '4 segundos',
+    benefitHookExample: '💧 Purifica tu digestión y oxigena tu cuerpo cada mañana.',
+    promptEs:
+      'El frasco gotero permanece completamente inmóvil y enfocado en el centro mientras una corona simétrica de agua cristalina en su base ondula en cámara superlenta, liberando microgotas brillantes y hojas de menta fresca flotando bajo rayos de sol. Audio: colocar música de fondo acústica refrescante con sonido cristalino de salpicadura de agua pura.',
+    promptEn:
+      'The dropper bottle remains completely still and sharp in the center while a symmetrical crystal water crown at its base ripples in super slow motion, releasing sparkling micro-droplets and fresh mint leaves floating under sunbeams. Audio: refreshing acoustic background music with crisp crystal water splash sound effects.',
   },
   {
-    stepNumber: 3,
-    badge: 'PASO 3 DE 6 · EL SECRETO CLAVE EN FLOW',
-    toolName: 'Google Flow',
-    title: 'Usa "Frames to Video" para que el Frasco NO se Deforme',
-    subtitle: 'Sube la imagen de Gemini en la casilla "First Frame" (Primer Fotograma) para blindar la etiqueta del producto.',
-    summary:
-      'El error número 1 al crear videos con IA es pedir un producto desde cero solo con texto (las letras de la etiqueta salen borrosas o cambiantes). Al subir tu imagen de Gemini en "First Frame", Flow usa tu foto exacta como punto de partida.',
-    proTip:
-      'También puedes subir la foto limpia en "First Frame" (Fotograma Inicial) y el póster con los 4 medallones dorados en "Last Frame" (Fotograma Final) para que Flow cree una transición mágica hacia los beneficios.',
-    callouts: [
-      {
-        number: 1,
-        title: 'Pestaña "Frames to Video" (Fotogramas a Video)',
-        description:
-          'Selecciona esta pestaña en la barra inferior izquierda del generador de Google Flow.',
-        xPercent: 18,
-        yPercent: 24,
-      },
-      {
-        number: 2,
-        title: 'Casilla "First Frame" (Fotograma Inicial)',
-        description:
-          'Haz clic en el signo "+" de First Frame y sube la imagen del producto que descargaste de Gemini. Esto congela el diseño real de tu envase.',
-        xPercent: 32,
-        yPercent: 56,
-      },
-      {
-        number: 3,
-        title: 'Casilla Opcional "Last Frame" (Fotograma Final)',
-        description:
-          'En la escena final de tu video, coloca aquí el Póster Infográfico con los 4 beneficios dorados para que el video cierre con toda la información.',
-        xPercent: 66,
-        yPercent: 56,
-      },
-      {
-        number: 4,
-        title: 'Indicador de Fidelidad del Envase',
-        description:
-          'Al estar anclado al First Frame, solo necesitas describir en el prompt qué se mueve alrededor (luz, hojas, polvo, agua) mientras el frasco permanece intacto.',
-        xPercent: 50,
-        yPercent: 28,
-      },
-    ],
+    id: 'gancho-amanecer-bosque',
+    categoryId: 'gancho',
+    categoryLabel: 'Escena de Gancho (0–4s)',
+    title: 'Rayos de Sol Matutinos y Rocío Resbalando',
+    idealFor: 'Colágeno, Magnesio, Multivitamínicos, Adaptógenos',
+    cameraMovement: 'Dolly In suave hacia la etiqueta',
+    musicSuggestion: 'Piano suave de bienestar + brisa matutina del bosque',
+    duration: '4 segundos',
+    benefitHookExample: '🌿 4 beneficios esenciales en una sola fórmula 100% natural.',
+    promptEs:
+      'El frasco de vidrio ámbar permanece firme sobre madera húmeda en un bosque soleado. Una gota de rocío cristalina se desliza lentamente por el vidrio mientras los rayos de sol matutinos (god rays) atraviesan las hojas de helecho y el polen dorado flota en el aire. Audio: colocar música de fondo instrumental relajante de piano suave y cuerdas cálidas con brisa de bosque.',
+    promptEn:
+      'The amber glass bottle stays steady on wet wood in a sunlit forest. A crystal dew drop slides slowly down the glass while morning sunbeams filter through fern leaves and golden pollen floats in the air. Audio: soothing soft piano and warm strings background music with gentle forest breeze.',
   },
   {
-    stepNumber: 4,
-    badge: 'PASO 4 DE 6 · CÁMARA Y PROMPT DE ACCIÓN',
-    toolName: 'Google Flow',
-    title: 'Configura "Camera Motion" y el Prompt de Movimiento',
-    subtitle: 'Elige movimientos suaves (Dolly In u Orbit corto) y describe la acción de los elementos naturales.',
-    summary:
-      'En Google Flow no necesitas volver a describir toda la etiqueta del frasco (porque ya está en la imagen). En la caja de prompt de Flow debes describir: 1) que el frasco permanece firme, y 2) cómo se mueven la luz, el agua, el polvo dorado o las hojas.',
-    proTip:
-      'Evita giros de 360° completos porque la IA tendría que inventar la parte trasera del envase. Usa "Dolly In lento" o "Orbit suave de 15 grados".',
-    callouts: [
-      {
-        number: 1,
-        title: 'Menú "Camera Motion" (Movimiento de Cámara)',
-        description:
-          'Abre el selector de cámara de Flow y elige "Dolly In" (acercamiento cinematográfico), "Orbit" (giro suave) o "Static" (cámara fija mientras se mueve el agua/polvo).',
-        xPercent: 22,
-        yPercent: 30,
-      },
-      {
-        number: 2,
-        title: 'Regla de Oro en el Prompt de Flow',
-        description:
-          'Incluye siempre la frase: "The product bottle remains perfectly still and sharp in the center while..." (El frasco permanece firme y nítido en el centro mientras...).',
-        xPercent: 52,
-        yPercent: 68,
-      },
-      {
-        number: 3,
-        title: 'Descripción de la Física Natural (Slow Motion)',
-        description:
-          'Añade "in super slow motion" para que las gotas de agua, la miel cayendo o el polvo de cúrcuma se muevan con elegancia comercial.',
-        xPercent: 75,
-        yPercent: 68,
-      },
-      {
-        number: 4,
-        title: 'Botón "Generate" (Generar 4 Variaciones)',
-        description:
-          'Flow generará hasta 4 clips de video simultáneos para tu escena. Reprodúcelos y elige el que mantenga la etiqueta más nítida.',
-        xPercent: 88,
-        yPercent: 80,
-      },
-    ],
+    id: 'beneficios-medallones-oro',
+    categoryId: 'beneficios',
+    categoryLabel: 'Escena de Beneficios (4–8s)',
+    title: 'Destello de Luz sobre los 4 Medallones Dorados',
+    idealFor: 'Explicar los 4 beneficios principales con iconos dorados',
+    cameraMovement: 'Orbit suave de 15° (Izquierda a Derecha)',
+    musicSuggestion: 'Instrumental inspirador + destello cristalino (chime) por beneficio',
+    duration: '4 segundos',
+    benefitHookExample: '✨ 1. Piel Firme · 🦴 2. Articulaciones Sanas · 💪 3. Músculos · ⚡ 4. Energía',
+    promptEs:
+      'Movimiento orbital suave de 15 grados alrededor del frasco y sus 4 medallones circulares dorados flotantes. Un barrido de luz cálida recorre el relieve metálico de los medallones haciéndolos brillar con elegancia mientras partículas doradas ascienden en el fondo. Audio: colocar música de fondo inspiradora de bienestar con un sutil destello sonoro cristalino al brillar cada medallón.',
+    promptEn:
+      'Gentle 15-degree orbital camera movement around the bottle and its 4 floating circular gold medallions. A warm light sweep travels across the metallic relief of the medallions making them gleam elegantly while golden particles rise in the background. Audio: inspiring wellness background music with a subtle crystal chime as each medallion shines.',
   },
   {
-    stepNumber: 5,
-    badge: 'PASO 5 DE 6 · INGREDIENTES EN ACCIÓN',
-    toolName: 'Google Flow',
-    title: 'Usa "Ingredients" para Mostrar de Qué Está Hecho y sus Beneficios',
-    subtitle: 'Combina la imagen de tu frasco con fotos de los ingredientes puros (cúrcuma, menta, miel, cápsulas) para la Escena 2 y 3.',
-    summary:
-      'Cuando explicas los beneficios de un producto natural (ej. "Con Luteína pura", "Con Zinc y Probióticos", "Con Cúrcuma y Jengibre"), el modo "Ingredients" de Flow te permite subir hasta 3 referencias visuales para crear una escena de ingredientes vivos.',
-    proTip:
-      'Usa este modo para las escenas intermedias (segundos 4 al 12) mientras la voz en off explica los Beneficios 1, 2, 3 y 4 del producto.',
-    callouts: [
-      {
-        number: 1,
-        title: 'Bandeja "Ingredients" (Ingredientes del Video)',
-        description:
-          'En el panel izquierdo de Flow, sube como Ingrediente #1 tu frasco y como Ingrediente #2 los elementos botánicos (hojas de menta, raíces, cápsulas).',
-        xPercent: 18,
-        yPercent: 48,
-      },
-      {
-        number: 2,
-        title: 'Selección de Activos para la Escena',
-        description:
-          'Marca las casillas de los ingredientes que quieres que aparezcan integrados en el nuevo clip de 4 segundos.',
-        xPercent: 44,
-        yPercent: 48,
-      },
-      {
-        number: 3,
-        title: 'Prompt de Demostración de Beneficio',
-        description:
-          'Pide un plano macro que resalte la frescura de los ingredientes junto al envase iluminado con luz dorada.',
-        xPercent: 68,
-        yPercent: 72,
-      },
-      {
-        number: 4,
-        title: 'Botón "Add to Scene" (Añadir a la Escena)',
-        description:
-          'Cuando tengas el clip perfecto de los ingredientes, haz clic en "Add to Scene" para enviarlo a la línea de tiempo principal.',
-        xPercent: 85,
-        yPercent: 32,
-      },
-    ],
+    id: 'beneficios-gota-pipeta',
+    categoryId: 'beneficios',
+    categoryLabel: 'Escena de Beneficios (4–8s)',
+    title: 'Gota de Oro Líquido Cayendo de la Pipeta',
+    idealFor: 'Sérums Faciales, Aceites Esenciales, Extractos Sublinguales',
+    cameraMovement: 'Macro Close-Up (Enfoque selectivo f/1.4)',
+    musicSuggestion: 'Ambient Spa con piano delicado y notas de arpa',
+    duration: '4 segundos',
+    benefitHookExample: '🌸 Regenera, atenúa manchas e hidrata profundamente mientras duermes.',
+    promptEs:
+      'Plano macro extremo junto al frasco abierto: de la punta de la pipeta de cristal se desprende en cámara superlenta una gota dorada traslúcida y brillante, iluminada por el sol del atardecer con un fondo bokeh cremoso de flores y musgo. Audio: colocar música de fondo elegante de spa con piano delicado y notas de arpa suave.',
+    promptEn:
+      'Extreme macro close-up next to the bottle: from the tip of the glass pipette a translucent glowing golden drop detaches in super slow motion, backlit by golden hour sunlight with a creamy floral and moss bokeh background. Audio: luxury spa background music with delicate piano and soft harp notes.',
   },
   {
-    stepNumber: 6,
-    badge: 'PASO 6 DE 6 · VIDEO EXPLICATIVO DE BENEFICIOS',
-    toolName: 'Google Flow',
-    title: 'Arma el Video de Beneficios en "Scene Builder" y Exporta',
-    subtitle: 'Une las 4 escenas (Gancho → Beneficios 1-2 → Beneficios 3-4 → Cierre con Dosis) en la línea de tiempo de Flow.',
-    summary:
-      'En el "Scene Builder" (Constructor de Escenas) de Google Flow encadenas tus 4 clips de 4 segundos para formar un spot comercial completo de 16 segundos donde se explican claramente todos los beneficios del producto natural.',
-    proTip:
-      'Usa la función "Extend" (Extender) en el Scene Builder si quieres que una escena continúe el movimiento exacto del clip anterior sin cortes bruscos.',
-    callouts: [
-      {
-        number: 1,
-        title: 'Clip 1 (0–4s): Gancho Visual + Promesa',
-        description:
-          'El primer clip en la línea de tiempo muestra la revelación del frasco y plantea la pregunta gancho (ej. "¿Ojos cansados?" o "¿Abdomen inflamado?").',
-        xPercent: 16,
-        yPercent: 58,
-      },
-      {
-        number: 2,
-        title: 'Clips 2 y 3 (4–12s): Explicación de los 4 Beneficios',
-        description:
-          'Los clips centrales muestran el giro orbital y los ingredientes mientras se presentan los 4 beneficios clave del producto (2 segundos por beneficio).',
-        xPercent: 46,
-        yPercent: 58,
-      },
-      {
-        number: 3,
-        title: 'Clip 4 (12–16s): Cierre con Póster Infográfico y Dosis',
-        description:
-          'El último clip muestra los 4 medallones dorados de beneficios y el modo de uso ("2 cápsulas al día · Pídelo hoy").',
-        xPercent: 74,
-        yPercent: 58,
-      },
-      {
-        number: 4,
-        title: 'Botón "Export Video (MP4)"',
-        description:
-          'Arriba a la derecha en el Scene Builder, exporta tu secuencia unificada en MP4 lista para subir a WhatsApp Status, Instagram Reels o TikTok.',
-        xPercent: 88,
-        yPercent: 18,
-      },
-    ],
+    id: 'beneficios-absorcion-celular',
+    categoryId: 'beneficios',
+    categoryLabel: 'Escena de Beneficios (8–12s)',
+    title: 'Burbujas de Luz Dorada (Rápida Absorción y Pureza)',
+    idealFor: 'Probióticos, Omega 3, Vitaminas, Citrato de Magnesio',
+    cameraMovement: 'Pan vertical ascendente lento',
+    musicSuggestion: 'Melodía electrónica orgánica suave (Ambient Wellness)',
+    duration: '4 segundos',
+    benefitHookExample: '🛡️ Absorción 3x más rápida para subir tus defensas y proteger tus células.',
+    promptEs:
+      'El envase permanece nítido en el centro mientras cientos de microburbujas de luz dorada y esmeralda ascienden suavemente a su alrededor en cámara lenta, transmitiendo biodisponibilidad, pureza celular y alivio inmediato. Audio: colocar música de fondo ambiental moderna y cálida con armónicos suaves.',
+    promptEn:
+      'The bottle remains sharp in the center while hundreds of golden and emerald light micro-bubbles ascend gently around it in slow motion, conveying bioavailability, cellular purity, and rapid relief. Audio: warm modern ambient wellness background music with soft harmonics.',
+  },
+  {
+    id: 'ingredientes-miel-cayendo',
+    categoryId: 'ingredientes',
+    categoryLabel: 'Escena de Ingredientes (8–12s)',
+    title: 'Hilo Continuo de Miel y Propóleo en Espiral',
+    idealFor: 'Mieles, Jarabes Naturales, Propóleo, Polen, Jalea Real',
+    cameraMovement: 'Static Macro con fluido viscoso en vivo',
+    musicSuggestion: 'Guitarra acústica cálida artesanal + ambiente matutino',
+    duration: '4 segundos',
+    benefitHookExample: '🍯 Escudo antibacteriano natural que suaviza tu garganta al instante.',
+    promptEs:
+      'Al lado del tarro artesanal firme, una cuchara mielera de madera deja caer un hilo espeso y continuo de miel dorada traslúcida en cámara lenta, formando pliegues brillantes a contraluz junto a trozos de panal fresco y hojas de eucalipto. Audio: colocar música de fondo acústica cálida con guitarra suave y ambiente de mañana soleada.',
+    promptEn:
+      'Beside the steady artisanal jar, a wooden honey dipper pours a thick continuous ribbon of translucent golden honey in slow motion, forming glowing coils in backlight next to fresh honeycomb chunks and eucalyptus leaves. Audio: warm fingerpicked acoustic guitar background music with sunny morning ambiance.',
+  },
+  {
+    id: 'ingredientes-mesa-botanica',
+    categoryId: 'ingredientes',
+    categoryLabel: 'Escena de Ingredientes (8–12s)',
+    title: 'Paneo Macro sobre Raíces, Cápsulas y Hojas Frescas',
+    idealFor: 'Demostrar que el suplemento está hecho con ingredientes 100% reales',
+    cameraMovement: 'Tabletop Pan (Paneo rasante horizontal)',
+    musicSuggestion: 'Cuerdas acústicas cálidas + percusión orgánica sutil',
+    duration: '4 segundos',
+    benefitHookExample: '🌱 Ingredientes 100% puros, orgánicos y sin químicos añadidos.',
+    promptEs:
+      'Paneo rasante cinematográfico sobre una mesa de madera oscura y piedra húmeda que recorre los ingredientes naturales frescos cubiertos de gotas de rocío hasta detenerse en el frasco principal iluminado con luz cálida. Audio: colocar música de fondo instrumental orgánica con guitarra y violonchelo suave.',
+    promptEn:
+      'Cinematic low-angle tabletop pan across dark wood and wet stone, gliding past fresh natural ingredients covered in dew drops before settling on the hero bottle lit by warm studio light. Audio: organic instrumental background music with gentle guitar and cello.',
+  },
+  {
+    id: 'cierre-ficha-dosis',
+    categoryId: 'cierre',
+    categoryLabel: 'Escena de Cierre y Dosis (12–16s)',
+    title: 'Plano Heroico Final con Destello en Etiqueta y Dosis',
+    idealFor: 'Cerrar el video comercial invitando a comprar por WhatsApp o Web',
+    cameraMovement: 'Hero Lock (Plano fijo con barrido de luz en letras doradas)',
+    musicSuggestion: 'Acorde final resolutivo de piano y cuerdas + chime dorado',
+    duration: '4 segundos',
+    benefitHookExample: '📦 Solo 2 cápsulas al día · Tratamiento completo · ¡Pídelo hoy!',
+    promptEs:
+      'Plano maestro final perfectamente centrado del producto natural y sus medallones de beneficios. Un elegante destello de luz recorre las letras doradas de la etiqueta mientras las partículas del fondo se detienen suavemente. Audio: colocar cierre musical armónico e inspirador con piano acústico y cuerdas cálidas.',
+    promptEn:
+      'Perfectly centered final master hero shot of the natural product and its benefit medallions. An elegant light flare sweeps across the gold foil label lettering while background particles gently settle. Audio: harmonious, inspiring musical resolution with acoustic piano and warm strings.',
   },
 ];
