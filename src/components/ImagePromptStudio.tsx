@@ -36,6 +36,7 @@ import {
   PackagingPresentationMode,
   SURFACE_OPTIONS,
   INGREDIENT_EFFECTS,
+  ACCOMPANIMENT_OPTIONS,
   COLOR_MOODS,
   ASPECT_RATIOS,
   STUDIO_QUICK_PRESETS,
@@ -43,7 +44,7 @@ import {
   PhotoTypeOption,
   ProductQuickPreset,
 } from '../data/imageStudioData';
-import { LensVisualModal } from './LensVisualModal';
+import { LensVisualModal, PACKAGINGS_EXPLANATIONS } from './LensVisualModal';
 import {
   fetchCustomItemsFromSupabase,
   saveCustomItemToSupabase,
@@ -87,6 +88,7 @@ const DEFAULT_CUSTOM_MAP: CustomItemsMap = {
   packagings: [],
   surfaces: [],
   ingredients: [],
+  accompaniments: [],
   moods: [],
 };
 
@@ -142,8 +144,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const [medallionStyle, setMedallionStyle] = useState<'gold-3d' | 'crystal-minimal' | 'none'>(
     'gold-3d'
   );
-  const [useReferencePhotoMode, setUseReferencePhotoMode] = useState<boolean>(false);
+  // Default to true as the user requested: mostly real products will be used
+  const [useReferencePhotoMode, setUseReferencePhotoMode] = useState<boolean>(true);
   const [extraCustomNotes, setExtraCustomNotes] = useState<string>('');
+
+  // Selected accompaniments / props
+  const [selectedAccompanimentIds, setSelectedAccompanimentIds] = useState<string[]>([
+    'capsulas-softgel-base',
+  ]);
+  const [newAccompanimentInput, setNewAccompanimentInput] = useState<string>('');
 
   // UI State for Output, Modal & Add-Custom forms
   const [isLensModalOpen, setIsLensModalOpen] = useState<boolean>(false);
@@ -222,6 +231,38 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     });
   };
 
+  const handleQuickAddAccompaniment = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = newAccompanimentInput.trim();
+    if (!clean) return;
+
+    const newId = `custom-acc-${Date.now()}`;
+    const newItem: StudioOptionItem = {
+      id: newId,
+      label: clean,
+      badge: 'Propio',
+      shortDesc: 'Acompañamiento personalizado en escena',
+      promptEs: clean,
+      promptEn: clean,
+      isCustom: true,
+    };
+
+    setCustomItems((prev) => ({
+      ...prev,
+      accompaniments: [...(prev.accompaniments || []), newItem],
+    }));
+
+    setSelectedAccompanimentIds((prev) => [...prev, newId]);
+    setNewAccompanimentInput('');
+
+    saveCustomItemToSupabase('accompaniments', newItem).then((ok) => {
+      if (ok) {
+        setSyncFeedback(`✓ Acompañamiento "${clean}" guardado en Supabase`);
+        setTimeout(() => setSyncFeedback(null), 3000);
+      }
+    });
+  };
+
   // Merged lists (Default + User Custom)
   const allPhotoTypes = [...PHOTO_TYPES, ...customItems.photoTypes];
   const allShots = [...CAMERA_SHOTS, ...customItems.shots];
@@ -230,6 +271,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const allPackagings = [...PACKAGING_OPTIONS, ...customItems.packagings];
   const allSurfaces = [...SURFACE_OPTIONS, ...customItems.surfaces];
   const allIngredients = [...INGREDIENT_EFFECTS, ...customItems.ingredients];
+  const allAccompaniments = [
+    ...ACCOMPANIMENT_OPTIONS,
+    ...((customItems.accompaniments as StudioOptionItem[]) || []),
+  ];
   const allMoods = [...COLOR_MOODS, ...customItems.moods];
 
   const applyPreset = (preset: ProductQuickPreset) => {
@@ -366,6 +411,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     if (category === 'ingredients') {
       setSelectedIngredientIds((prev) => prev.filter((item) => item !== id));
     }
+    if (category === 'accompaniments') {
+      setSelectedAccompanimentIds((prev) => prev.filter((item) => item !== id));
+    }
     deleteCustomItemFromSupabase(id);
   };
 
@@ -406,6 +454,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const activeMood = allMoods.find((x) => x.id === colorMoodId) || allMoods[0];
   const activeRatio = ASPECT_RATIOS.find((x) => x.id === aspectRatio) || ASPECT_RATIOS[0];
   const activeIngredients = allIngredients.filter((x) => selectedIngredientIds.includes(x.id));
+  const activeAccompaniments = allAccompaniments.filter((x) =>
+    selectedAccompanimentIds.includes(x.id)
+  );
 
   const presentationEs = activePackagingPresentation.promptEs ? `, ${activePackagingPresentation.promptEs}` : '';
   const presentationEn = activePackagingPresentation.promptEn ? `, ${activePackagingPresentation.promptEn}` : '';
@@ -419,6 +470,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     activeIngredients.length > 0
       ? activeIngredients.map((i) => i.promptEn).join(', ')
       : 'pure botanical elements and fresh dew droplets';
+
+  const accompanimentsListEs =
+    activeAccompaniments.length > 0
+      ? activeAccompaniments.map((x) => x.promptEs).join(', ')
+      : '';
+  const accompanimentsListEn =
+    activeAccompaniments.length > 0
+      ? activeAccompaniments.map((x) => x.promptEn).join(', ')
+      : '';
 
   // Medallion fragment
   const getMedallionFragmentEs = (style: 'gold-3d' | 'crystal-minimal' | 'none') => {
@@ -444,13 +504,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const extraEs = extraCustomNotes.trim() ? ` Detalle adicional: ${extraCustomNotes.trim()}.` : '';
   const extraEn = extraCustomNotes.trim() ? ` Additional detail: ${extraCustomNotes.trim()}.` : '';
 
+  // Macro mode detection (prevents contradictory wide instructions like floating medallions or whole distant tables)
+  const isMacroMode =
+    lensId === '100mm-macro' || shotId === 'macro-extremo' || photoTypeId === 'macro-textura';
+
   // 1. Framing & Lens harmony (Zero contradictions)
   let photoStyleEs = `${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}.`;
   let photoStyleEn = `${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}.`;
 
-  if (lensId === '100mm-macro') {
-    photoStyleEs = `Fotografía sensorial macro de ultra detalle (extreme tight close-up macro framing a pocos centímetros de distancia) en formato ${activeRatio.id} para el producto natural "${productName}": encuadre microscópico cerrado enfocado en primerísimo plano en la textura del envase, el relieve de los logos y las microgotas de rocío fresco, cortando estéticamente los bordes del frasco para llenar la escena de textura y nitidez 8K con fondo en suave desenfoque bokeh (sin mostrar el frasco entero alejado ni dejar aire excesivo).`;
-    photoStyleEn = `Extreme close-up macro commercial product photography (shot from inches away) in ${activeRatio.id} format for the natural product "${productName}": tightly focused microscopic close-up framing on container textures, embossed logo reliefs, and fresh micro-droplets, aesthetically cropping container edges to fill the frame with pure 8K texture and soft background bokeh (not a distant full-bottle shot with empty room).`;
+  if (isMacroMode) {
+    photoStyleEs = `Fotografía macro sensorial de ultra detalle publicitario (extreme tight macro close-up a escasos centímetros) en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre microscópico cerrado enfocado en primerísimo plano sobre el relieve del logo, la textura táctil del material y las microgotas de rocío fresco condensadas, cortando estéticamente los bordes del envase para llenar por completo la toma con nitidez 8K (sin alejar la cámara ni mostrar el envase entero).`;
+    photoStyleEn = `Advertising sensory ultra-detail macro photography (extreme tight macro close-up shot from inches away) in ${activeRatio.promptEn} for the natural product "${productName}": tightly focused microscopic close-up framing on embossed logo relief, container material texture, and fresh micro-droplets, aesthetically cropping container edges to fill the entire frame with 8K clarity (not pulling back to show the full container).`;
   } else if (lensId === '35mm-f2') {
     photoStyleEs = `Fotografía ambiental comercial capturada con lente gran angular 35mm f/2.0 en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre amplio integrando el producto de forma orgánica en la inmensidad del paisaje natural con gran profundidad de campo y atmósfera botánica pura.`;
     photoStyleEn = `Environmental commercial photography captured with a 35mm f/2.0 wide-angle lens in ${activeRatio.promptEn} for the natural product "${productName}": wide environmental framing organically integrating the product into the expansive natural landscape.`;
@@ -463,18 +527,36 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   }
 
   // 2. Reference Photo Mode vs New Packaging
-  let packagingDescriptionEs = `En el centro destaca ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}.`;
-  let packagingDescriptionEn = `Centered is ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}.`;
+  let packagingDescriptionEs = `En el centro destaca ${activePackaging.promptEs}${presentationEs}${accompanimentsListEs ? `, acompañado armónicamente por ${accompanimentsListEs}` : ''}, ${activeSurface.promptEs}.`;
+  let packagingDescriptionEn = `Centered is ${activePackaging.promptEn}${presentationEn}${accompanimentsListEn ? `, harmoniously accompanied by ${accompanimentsListEn}` : ''}, ${activeSurface.promptEn}.`;
 
   if (useReferencePhotoMode) {
-    packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase de la imagen adjunta: misma silueta geométrica, misma tapa, mismos colores reales y el diseño original de la etiqueta con sus logotipos y textos reales sin rediseñar, deformar ni inventar marcas nuevas. En la escena destaca este envase original${presentationEs}, ${activeSurface.promptEs}.`;
-    packagingDescriptionEn = `[MANDATORY ATTACHED REFERENCE PHOTO]: It is strictly mandatory to preserve with 100% fidelity the exact product container from the attached image: identical silhouette shape, real cap, original label design, colors, and authentic logos without redesigning, warping, or inventing new graphics. Centered in the scene is this authentic product container${presentationEn}, ${activeSurface.promptEn}.`;
+    packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase de la imagen adjunta: misma silueta geométrica, misma tapa, mismos colores reales y el diseño original de la etiqueta con sus logotipos y textos reales sin rediseñar, deformar ni inventar marcas nuevas. En la escena destaca este envase original${presentationEs}${accompanimentsListEs ? `, acompañado armónicamente por ${accompanimentsListEs}` : ''}, ${activeSurface.promptEs}.`;
+    packagingDescriptionEn = `[MANDATORY ATTACHED REFERENCE PHOTO]: It is strictly mandatory to preserve with 100% fidelity the exact product container from the attached image: identical silhouette shape, real cap, original label design, colors, and authentic logos without redesigning, warping, or inventing new graphics. Centered in the scene is this authentic product container${presentationEn}${accompanimentsListEn ? `, harmoniously accompanied by ${accompanimentsListEn}` : ''}, ${activeSurface.promptEn}.`;
   }
 
-  // Main Prompt
-  const mainPromptEs = `${photoStyleEs} ${packagingDescriptionEs} Alrededor del envase se aprecian ${ingredientsListEs}. ${getMedallionFragmentEs(medallionStyle)} Con ${activeLighting.promptEs}, ${activeMood.promptEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
+  // Macro specific descriptions (omits distant tables, full packaging bodies, or distant floating medallions)
+  const macroPackagingEs = useReferencePhotoMode
+    ? `[FOTO DE REFERENCIA ADJUNTA]: Tomando como base visual obligatoria el producto de la imagen adjunta, la toma se concentra al 100% en el detalle microscópico de sus materiales originales, tipografías y logotipo auténtico en relieve sin rediseñar marcas ni alterar colores${accompanimentsListEs ? `, con una muestra en primer plano de ${accompanimentsListEs}` : ''}. Con fondo en suave desenfoque bokeh cremoso con sutiles matices orgánicos de ${activeSurface.label}, sin elementos lejanos que alejen la toma.`
+    : `La toma se concentra con nitidez microscópica en el detalle de ${activePackaging.label}, su logotipo botánico en relieve y microgotas sobre la superficie${accompanimentsListEs ? `, con una muestra en primer plano de ${accompanimentsListEs}` : ''}. Con fondo en suave desenfoque bokeh cremoso con sutiles matices orgánicos de ${activeSurface.label}, sin elementos lejanos que alejen la toma.`;
 
-  const mainPromptEn = `${photoStyleEn} ${packagingDescriptionEn} Surrounding the container are ${ingredientsListEn}. ${getMedallionFragmentEn(medallionStyle)} Featuring ${activeLighting.promptEn}, ${activeMood.promptEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
+  const macroPackagingEn = useReferencePhotoMode
+    ? `[ATTACHED REFERENCE PHOTO]: Using the attached authentic product as mandatory visual base, the framing focuses 100% on microscopic details of its authentic materials, typography, and embossed authentic logo without redesigning brands or altering colors${accompanimentsListEn ? `, with an immediate foreground sample of ${accompanimentsListEn}` : ''}. Smooth creamy bokeh background with subtle organic tones of ${activeSurface.label}, strictly no distant wide elements.`
+    : `The camera focuses with microscopic sharpness on the texture of ${activePackaging.label}, its embossed botanical logo, and surface micro-droplets${accompanimentsListEn ? `, with an immediate foreground sample of ${accompanimentsListEn}` : ''}. Smooth creamy bokeh background with subtle organic tones of ${activeSurface.label}, strictly no distant wide elements.`;
+
+  const macroMedallionsEs =
+    'Composición macro limpia sin medallones externos flotantes para garantizar el acercamiento extremo de la cámara; los beneficios se reflejan en el acabado táctil del producto.';
+  const macroMedallionsEn =
+    'Clean macro composition without external floating medallions to allow extreme camera close-up; product benefits are embodied in its tactile quality.';
+
+  // Main Prompt
+  const mainPromptEs = isMacroMode
+    ? `${photoStyleEs} ${macroPackagingEs} ${macroMedallionsEs} Con ${activeLighting.promptEs}, ${activeMood.promptEs}, capturado con lente macro 100mm f/2.8 con nitidez microscópica en texturas y gotas. Fotografía comercial publicitaria 8k.${extraEs}`
+    : `${photoStyleEs} ${packagingDescriptionEs} Alrededor del envase se aprecian ${ingredientsListEs}. ${getMedallionFragmentEs(medallionStyle)} Con ${activeLighting.promptEs}, ${activeMood.promptEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
+
+  const mainPromptEn = isMacroMode
+    ? `${photoStyleEn} ${macroPackagingEn} ${macroMedallionsEn} Featuring ${activeLighting.promptEn}, ${activeMood.promptEn}, captured with a 100mm f/2.8 macro lens with microscopic sharpness on textures and dew droplets. 8k commercial advertising photography.${extraEn}`
+    : `${photoStyleEn} ${packagingDescriptionEn} Surrounding the container are ${ingredientsListEn}. ${getMedallionFragmentEn(medallionStyle)} Featuring ${activeLighting.promptEn}, ${activeMood.promptEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
 
   // 6-Shot Complete Photo Session
   const bottleRefEs = useReferencePhotoMode
@@ -729,37 +811,52 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                     {allPackagings.slice(0, 6).map((pkg) => {
                       const isSelected = packagingId === pkg.id;
                       return (
-                        <button
-                          key={pkg.id}
-                          type="button"
-                          onClick={() => setPackagingId(pkg.id)}
-                          className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 ${
-                            isSelected
-                              ? 'bg-gradient-to-br from-emerald-500/20 to-amber-500/10 border-emerald-400 ring-2 ring-emerald-400/50 shadow-md font-bold'
-                              : isDark
-                              ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
-                              : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between gap-1">
-                            <span className="p-1 rounded-md bg-white/5 border border-white/10">
-                              {getPackagingIcon(pkg.id)}
-                            </span>
-                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300">
-                              {pkg.badge}
-                            </span>
-                          </div>
-                          <div>
-                            <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-white' : ''}`}>
-                              {pkg.label}
+                        <div key={pkg.id} className="relative group">
+                          <button
+                            type="button"
+                            onClick={() => setPackagingId(pkg.id)}
+                            className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 h-full ${
+                              isSelected
+                                ? 'bg-gradient-to-br from-emerald-500/20 to-amber-500/10 border-emerald-400 ring-2 ring-emerald-400/50 shadow-md font-bold'
+                                : isDark
+                                ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
+                                : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-1 pr-6">
+                              <span className="p-1 rounded-md bg-white/5 border border-white/10">
+                                {getPackagingIcon(pkg.id)}
+                              </span>
+                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 truncate max-w-[85px]">
+                                {pkg.badge}
+                              </span>
                             </div>
-                            {pkg.shortDesc && (
-                              <div className="text-[9.5px] text-slate-400 line-clamp-1 leading-tight mt-0.5">
-                                {pkg.shortDesc}
+                            <div>
+                              <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-white' : ''}`}>
+                                {pkg.label}
                               </div>
-                            )}
-                          </div>
-                        </button>
+                              {pkg.shortDesc && (
+                                <div className="text-[9.5px] text-slate-400 line-clamp-1 leading-tight mt-0.5">
+                                  {pkg.shortDesc}
+                                </div>
+                              )}
+                            </div>
+                          </button>
+                          {/* Dedicated eye button on each format */}
+                          <button
+                            type="button"
+                            title={`Ver foto real de estudio de ${pkg.label}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPackagingId(pkg.id);
+                              setModalTab('packagings');
+                              setIsLensModalOpen(true);
+                            }}
+                            className="absolute top-2 right-2 p-1 rounded-md bg-black/60 hover:bg-amber-500 hover:text-slate-950 text-amber-300 border border-amber-400/40 transition-all cursor-pointer z-10 shadow"
+                          >
+                            <Eye className="w-3 h-3" />
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
@@ -806,7 +903,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                   )}
                 </div>
 
-                {/* Packaging Presentation Mode (Solo / Con Caja / Con Contenido) */}
+                {/* Packaging Presentation Mode */}
                 <div
                   className={`p-3 rounded-xl border ${
                     isDark ? 'border-slate-800 bg-black/25' : 'border-stone-200 bg-stone-50'
@@ -815,7 +912,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                   <div className="flex items-center justify-between">
                     <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
                       <Box className="w-3.5 h-3.5 text-amber-400" />
-                      2. Acompañamiento del Envase en la Foto:
+                      2. Presentación del Envase en la Foto:
                     </label>
                     <span className="text-[10px] text-emerald-400 font-mono font-bold">
                       {activePackagingPresentation.label}
@@ -853,6 +950,93 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                           <span className="text-[9.5px] text-slate-400 leading-tight">
                             {pres.shortDesc}
                           </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Accompaniments & Props Selector */}
+                <div
+                  className={`p-3.5 rounded-xl border ${
+                    isDark ? 'border-slate-800 bg-black/25' : 'border-stone-200 bg-stone-50'
+                  } space-y-2.5`}
+                >
+                  <div className="flex items-center justify-between flex-wrap gap-1">
+                    <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                      3. Acompañamientos Comerciales y Props (Toca para activar):
+                    </label>
+                    <span className="text-[10px] text-amber-400 font-mono font-bold">
+                      {selectedAccompanimentIds.length} activo(s)
+                    </span>
+                  </div>
+
+                  {/* Form to quick-add custom accompaniment */}
+                  <form onSubmit={handleQuickAddAccompaniment} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newAccompanimentInput}
+                      onChange={(e) => setNewAccompanimentInput(e.target.value)}
+                      placeholder="Escribe un acompañamiento propio (ej: flores de caléndula, rama de canela, rodajas de naranja...)"
+                      className={`flex-1 px-3 py-1.5 rounded-lg border text-xs font-medium placeholder:text-slate-500 ${
+                        isDark
+                          ? 'bg-black/50 border-slate-700 text-white focus:border-emerald-400'
+                          : 'bg-white border-stone-300 text-stone-900 focus:border-emerald-600'
+                      }`}
+                    />
+                    <button
+                      type="submit"
+                      className="px-3 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center gap-1 cursor-pointer transition-all shrink-0"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>+ Añadir Prop</span>
+                    </button>
+                  </form>
+
+                  {/* Chips grid */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {allAccompaniments.map((acc) => {
+                      const isSelected = selectedAccompanimentIds.includes(acc.id);
+                      return (
+                        <button
+                          key={acc.id}
+                          type="button"
+                          onClick={() => {
+                            if (isSelected) {
+                              setSelectedAccompanimentIds((prev) =>
+                                prev.filter((id) => id !== acc.id)
+                              );
+                            } else {
+                              setSelectedAccompanimentIds((prev) => [...prev, acc.id]);
+                            }
+                          }}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-medium border flex items-center gap-1.5 transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-emerald-500/25 border-emerald-400 text-emerald-200 font-bold shadow-xs'
+                              : isDark
+                              ? 'bg-black/40 border-slate-800 text-slate-300 hover:border-slate-700'
+                              : 'bg-white border-stone-200 text-stone-700 hover:border-stone-300'
+                          }`}
+                        >
+                          {isSelected ? (
+                            <Check className="w-3 h-3 text-emerald-400" />
+                          ) : (
+                            <Plus className="w-3 h-3 text-slate-500" />
+                          )}
+                          <span>{acc.label}</span>
+                          {acc.isCustom && (
+                            <span
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteCustomItem('accompaniments', acc.id, e);
+                              }}
+                              title="Eliminar este acompañamiento propio"
+                              className="ml-1 hover:text-rose-400 cursor-pointer"
+                            >
+                              ×
+                            </span>
+                          )}
                         </button>
                       );
                     })}
@@ -1030,6 +1214,52 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                       <div className="text-[9px] opacity-75">{ar.sub.split('/')[0]}</div>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Escenario y Entorno de Estudio */}
+              <div className="space-y-2 pt-2.5 border-t border-slate-800/60">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    Escenario y Entorno Comercial:
+                  </label>
+                  <span className="text-[10px] text-amber-400 font-mono font-bold truncate max-w-[200px]">
+                    {activeSurface.label.split('(')[0].trim()}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {allSurfaces.map((surf) => {
+                    const isSelected = surfaceId === surf.id;
+                    return (
+                      <button
+                        key={surf.id}
+                        type="button"
+                        onClick={() => setSurfaceId(surf.id)}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 ${
+                          isSelected
+                            ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/50 shadow font-bold'
+                            : isDark
+                            ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
+                            : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 truncate max-w-[120px]">
+                            {surf.badge || 'Escenario'}
+                          </span>
+                          {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                        </div>
+                        <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-amber-200' : ''}`}>
+                          {surf.label.split('(')[0].trim()}
+                        </div>
+                        <div className="text-[9.5px] text-slate-400 line-clamp-1 leading-tight">
+                          {surf.promptEs.slice(0, 55)}...
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -1223,12 +1453,35 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                     {outputLang === 'es' ? mainPromptEs : mainPromptEn}
                   </div>
 
-                  {/* Plain Language Explanation of what will be generated */}
-                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-200 leading-relaxed">
-                    ✨ <strong>Lo que generará:</strong> Una foto de estudio con{' '}
-                    <strong className="text-white">{productName}</strong> al centro, con{' '}
-                    <strong className="text-white">{activeLens.label.split('(')[0]}</strong>,{' '}
-                    {activePhotoType.shortDesc.toLowerCase()}
+                  {/* Smart Guidance Badges */}
+                  <div className="space-y-2">
+                    {isMacroMode && (
+                      <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-xs text-amber-200 flex items-start gap-2 shadow-xs">
+                        <Eye className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
+                        <div>
+                          <strong className="text-amber-300">Modo Macro Ultra Detalle Activo: </strong>
+                          El prompt enfoca a escasos centímetros sobre la textura, logotipo y microgotas. Se han retirado medallones lejanos y mesas completas para garantizar que la IA nunca aleje el producto.
+                        </div>
+                      </div>
+                    )}
+
+                    {useReferencePhotoMode && (
+                      <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-xs text-emerald-200 flex items-start gap-2 shadow-xs">
+                        <Upload className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
+                        <div>
+                          <strong className="text-emerald-300">Foto de Referencia Activa: </strong>
+                          Recuerda adjuntar la foto de tu envase real en Gemini (icono clip 📎). El prompt ordena preservar exactamente la forma, tapa y diseño original de tu etiqueta.
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Plain Language Explanation of what will be generated */}
+                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-200 leading-relaxed">
+                      ✨ <strong>Lo que generará:</strong> Una foto de estudio con{' '}
+                      <strong className="text-white">{productName}</strong> al centro, con{' '}
+                      <strong className="text-white">{activeLens.label.split('(')[0]}</strong>,{' '}
+                      {activePhotoType.shortDesc.toLowerCase()}
+                    </div>
                   </div>
 
                   <button

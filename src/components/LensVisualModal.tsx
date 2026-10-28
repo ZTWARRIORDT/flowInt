@@ -18,6 +18,9 @@ import {
   SprayCan,
   Layers,
 } from 'lucide-react';
+import {
+  PackagingPresentationMode,
+} from '../data/imageStudioData';
 
 export interface LensInfo {
   id: string;
@@ -50,7 +53,7 @@ export interface PackagingVisualInfo {
   photoAngleLabel: string;
   materialsDescription: string;
   recommendedLensId: string;
-  recommendedPresentation: 'solo' | 'con-caja' | 'con-contenido';
+  recommendedPresentation: PackagingPresentationMode;
 }
 
 export const LENSES_EXPLANATIONS: LensInfo[] = [
@@ -195,39 +198,39 @@ export const PACKAGINGS_EXPLANATIONS: PackagingVisualInfo[] = [
     id: 'spray-atomizador',
     name: 'Frasco Spray / Atomizador Bucal',
     badge: 'Propóleo / Brumas',
-    simpleTitle: 'Nebulizador Fino para Garganta con Caja de Empaque',
+    simpleTitle: 'Nebulizador Fino para Garganta con Boquilla Anatómica',
     plainExplanation:
-      'Frasco de vidrio ámbar con cabezal dosificador spray blanco o negro y tapa protectora. En fotografía comercial posa al frente en ángulo de 3/4 junto a su caja exterior de empaque botánico para transmitir máxima autoridad de marca.',
-    visualEffect: 'Boquilla atomizadora con botón pulsador fino, tubito de succión y caja packaging rígida al lado',
+      'Frasco de vidrio ámbar con cabezal dosificador spray blanco o negro y tapa protectora. En fotografía comercial posa en primer plano frontal sobre la superficie, destacando la boquilla atomizadora y el brillo en la etiqueta.',
+    visualEffect: 'Boquilla atomizadora con botón pulsador fino, tubito de succión y etiqueta botánica limpia',
     idealFor: [
       'Extractos de propóleo y miel para la garganta',
       'Tónicos faciales y brumas hidratantes botánicas',
       'Sprays bucales antisépticos y calmantes',
     ],
     image: '/images/pkg-spray-box.jpg',
-    photoAngleLabel: 'Dúo Frasco Spray Garganta + Caja de Empaque Exterior',
-    materialsDescription: 'Vidrio ámbar pesado + boquilla atomizadora ergonómica y caja de cartón packaging',
+    photoAngleLabel: 'Frasco Spray Garganta en Primer Plano Comercial',
+    materialsDescription: 'Vidrio ámbar pesado + boquilla atomizadora ergonómica con tapa protectora',
     recommendedLensId: '85mm-f18',
-    recommendedPresentation: 'con-caja',
+    recommendedPresentation: 'solo',
   },
   {
     id: 'gotero-vidrio-ambar',
     name: 'Frasco Gotero Ámbar con Pipeta',
     badge: 'Sérums / Lujo',
-    simpleTitle: 'Gotero Botánico con Pipeta Cristal y Caja Rígida de Lujo',
+    simpleTitle: 'Gotero Botánico con Pipeta de Cristal',
     plainExplanation:
-      'El icono de la fitoterapia y cosmética avanzada. Frasco ámbar con pipeta de cristal y bulbo dosificador, acompañado de pie por su caja rígida negra mate con acabados estampados en foil dorado.',
-    visualEffect: 'Refracción de luz cálida a través del vidrio ámbar y destellos metálicos dorados en caja y cuello',
+      'El icono de la fitoterapia y cosmética avanzada. Frasco ámbar con pipeta de cristal y bulbo dosificador, reflejando refracciones cálidas de luz de estudio en el vidrio ámbar.',
+    visualEffect: 'Refracción de luz cálida a través del vidrio ámbar y destellos dorados en bulbo y etiqueta',
     idealFor: [
       'Sérums faciales botánicos (Apitoxina, Rosa Mosqueta, Vitamina C)',
       'Aceites esenciales puros y tinturas madre',
       'Gotas sublinguales de alta concentración medicinal',
     ],
     image: '/images/pkg-dropper-luxury.jpg',
-    photoAngleLabel: 'Frasco Gotero Ámbar con Pipeta Cristal + Caja Rígida Lujo',
-    materialsDescription: 'Vidrio de grado farmacéutico, bulbo dosificador de silicona y foil dorado',
+    photoAngleLabel: 'Frasco Gotero Ámbar con Pipeta Cristal en Estudio',
+    materialsDescription: 'Vidrio de grado farmacéutico, bulbo dosificador de silicona y pipeta de cristal',
     recommendedLensId: '85mm-f18',
-    recommendedPresentation: 'con-caja',
+    recommendedPresentation: 'solo',
   },
   {
     id: 'frasco-suplementero-capsulas',
@@ -297,7 +300,7 @@ interface Props {
   initialTab?: 'lenses' | 'packagings';
   onSelectPackaging?: (
     packagingId: string,
-    presentation?: 'solo' | 'con-caja' | 'con-contenido'
+    presentation?: PackagingPresentationMode
   ) => void;
   selectedPackagingId?: string;
 }

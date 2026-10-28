@@ -8,7 +8,12 @@ export interface StudioOptionItem {
   isCustom?: boolean;
 }
 
-export type PackagingPresentationMode = 'solo' | 'con-caja' | 'con-contenido';
+export type PackagingPresentationMode =
+  | 'solo'
+  | 'con-contenido'
+  | 'con-cuchara'
+  | 'con-gotero-activo'
+  | 'con-fruto-fresco';
 
 export interface PackagingPresentationOption {
   id: PackagingPresentationMode;
@@ -312,20 +317,36 @@ export const PACKAGING_PRESENTATIONS: PackagingPresentationOption[] = [
     promptEn: 'presented cleanly as a standalone hero product with crisp silhouette on the surface',
   },
   {
-    id: 'con-caja',
-    label: 'Dúo con Caja de Empaque',
-    badge: 'Retail Premium',
-    shortDesc: 'El frasco al frente con su caja exterior de empaque de pie a un lado.',
-    promptEs: 'acompañado a su lado en elegante ángulo de 3/4 por su caja exterior de empaque comercial de cartón rígido con diseño botánico a juego, relieves y acabados metalizados premium',
-    promptEn: 'accompanied beside it in an elegant 3/4 angle by its matching outer retail packaging carton box featuring botanical graphics, embossing, and premium foil finishes',
-  },
-  {
     id: 'con-contenido',
     label: 'Con Muestra de Contenido',
     badge: 'Cápsulas / Gomitas',
     shortDesc: 'Muestra de cápsulas doradas, gomitas o extracto esparcida al frente.',
     promptEs: 'con una muestra estética de su contenido esparcida artísticamente en la base frontal: cápsulas softgel doradas traslúcidas que reflejan la luz y perlas de gelatina vegetal',
     promptEn: 'with an artful sample of its contents scattered at the front base: glowing translucent golden softgel capsules reflecting soft studio light',
+  },
+  {
+    id: 'con-cuchara',
+    label: 'Con Cuchara Artesanal de Polvo/Extracto',
+    badge: 'Dosificador',
+    shortDesc: 'Cuchara de madera con extracto puro en polvo reposando al lado.',
+    promptEs: 'con una cuchara dosificadora de madera artesanal rústica con una muestra de extracto botánico en polvo posada al lado del envase',
+    promptEn: 'with a rustic artisanal wooden dosing spoon holding a sample of botanical powder extract resting beside the container',
+  },
+  {
+    id: 'con-gotero-activo',
+    label: 'Con Pipeta y Gota Suspendida',
+    badge: 'Gotas Activas',
+    shortDesc: 'Pipeta de cristal abierta en ángulo con una gota ámbar luminosa.',
+    promptEs: 'con la pipeta de cristal del gotero abierta en ángulo mostrando una gota traslúcida y luminosa suspendida en su punta',
+    promptEn: 'with the glass dropper pipette resting open at an angle showing a luminous translucent droplet suspended at its tip',
+  },
+  {
+    id: 'con-fruto-fresco',
+    label: 'Con Fruto Fresco o Raíz Cortada',
+    badge: 'Origen Botánico',
+    shortDesc: 'Trozos de fruto fresco cortado o raíces húmedas en la base.',
+    promptEs: 'acompañado en la base por rodajas frescas del ingrediente botánico puro y hojas aromáticas con gotas de rocío',
+    promptEn: 'accompanied at the base by fresh slices of the raw botanical ingredient and aromatic leaves with fresh dew droplets',
   },
 ];
 
@@ -430,55 +451,76 @@ export const PACKAGING_OPTIONS: StudioOptionItem[] = [
     promptEs: 'un empaque vertical tipo bolsa Doypack de papel kraft orgánico texturizado con cierre hermético y sello circular estampado en oro metálico',
     promptEn: 'a stand-up textured organic kraft paper Doypack pouch with matte finish and a central metallic gold-foil stamped circular emblem',
   },
-  {
-    id: 'duo-caja-frasco',
-    label: 'Pack Dúo: Frasco + Caja de Presentación',
-    badge: 'Edición Lujo',
-    promptEs: 'un frasco principal de vidrio ámbar acompañado a su lado por su caja de empaque rígida de lujo con estampado botánico en lámina de oro',
-    promptEn: 'a primary amber glass bottle accompanied beside it by its luxury rigid packaging box featuring gold-foil botanical embossing',
-  },
 ];
 
 export const SURFACE_OPTIONS: StudioOptionItem[] = [
   {
+    id: 'travertino-spa',
+    label: 'Pedestal Travertino de Spa (Luz & Sombras de Palmera)',
+    badge: 'Lujo Spa / Vogue',
+    promptEs: 'posado sobre un bloque arquitectónico de piedra travertino beige porosa rodeado de musgo verde suave bajo luz cálida de ventana con sombras orgánicas de hojas de palmera',
+    promptEn: 'resting on an architectural block of porous beige travertine stone surrounded by soft green moss under warm window light with organic palm leaf shadows',
+  },
+  {
+    id: 'piedra-rio-agua',
+    label: 'Piedra Zen sobre Espejo de Agua Cristalina',
+    badge: 'Pureza Agua',
+    promptEs: 'posado sobre una piedra volcánica oscura o de río plana y húmeda emergiendo de un espejo de agua cristalina con ondas suaves y reflejos celestes bajo el sol',
+    promptEn: 'resting on a flat wet river stone emerging from a shallow pool of crystal-clear water with gentle sunlit ripples and pure reflections',
+  },
+  {
+    id: 'estudio-arena-minimal',
+    label: 'Estudio Minimalista Neutro Arena (Catálogo E-Commerce)',
+    badge: 'Sin Distracciones',
+    promptEs: 'posado sobre una superficie mate color arena neutra y suave con fondo de estudio minimalista sin distracciones, realzando la etiqueta del producto con nitidez pura',
+    promptEn: 'resting on a smooth soft-sand neutral matte surface against a minimalist distraction-free studio background highlighting pure product label textures',
+  },
+  {
+    id: 'roble-cocina-lino',
+    label: 'Cocina Botánica de Roble & Lino Matutino',
+    badge: 'Hogareño Cálido',
+    promptEs: 'posado sobre una barra de cocina de roble claro escandinavo con un paño de lino natural beige y luz matutina fresca filtrándose por una gran ventana',
+    promptEn: 'resting on a Scandinavian light oak kitchen counter with natural beige linen fabric and fresh morning sunlight streaming through a large window',
+  },
+  {
     id: 'madera-bosque',
     label: 'Madera Húmeda en Bosque Soleado',
+    badge: 'Rústico Orgánico',
     promptEs: 'posado sobre una mesa de madera rústica húmeda con musgo suave en medio de un bosque verde desenfocado al amanecer',
     promptEn: 'resting on a wet rustic wooden table with soft moss set against a softly blurred sunlit morning forest background',
   },
   {
+    id: 'manantial-musgo',
+    label: 'Manantial de Montaña con Rocas y Musgo Vivo',
+    badge: 'Naturaleza Pura',
+    promptEs: 'posado entre rocas húmedas y musgo verde vibrante junto a un manantial de agua pura de montaña con microgotas de rocío matutino',
+    promptEn: 'resting among wet rocks and vibrant green moss beside a natural pure mountain spring with fresh morning dew drops',
+  },
+  {
     id: 'pizarra-negra',
-    label: 'Piedra Pizarra Negra Húmeda',
-    promptEs: 'posado sobre una bandeja de piedra pizarra negra húmeda con reflejos especulares sobre un fondo de estudio oscuro y elegante',
-    promptEn: 'resting on a wet black slate stone slab with subtle specular reflections against a dark moody studio background',
+    label: 'Pizarra Negra Chiaroscuro (Dark Luxury)',
+    badge: 'Alto Contraste',
+    promptEs: 'posado sobre una bandeja de piedra pizarra negra húmeda con sutiles reflejos especulares sobre fondo oscuro y elegante con luz de contorno dorada',
+    promptEn: 'resting on a wet black slate stone slab with subtle specular reflections against a dark moody studio background with golden rim lighting',
   },
   {
-    id: 'travertino-spa',
-    label: 'Piedra Travertino Beige de Spa',
-    promptEs: 'posado sobre un bloque arquitectónico de piedra travertino beige porosa rodeado de musgo verde suave en un ambiente de spa luminoso',
-    promptEn: 'resting on an architectural block of porous beige travertine stone surrounded by soft green moss in a serene luxury spa setting',
-  },
-  {
-    id: 'piedra-rio-agua',
-    label: 'Piedra de Río sobre Agua Cristalina',
-    promptEs: 'posado sobre una piedra de río plana y húmeda emergiendo de un espejo de agua cristalina con ondas suaves bajo el sol',
-    promptEn: 'resting on a flat wet river stone emerging from a shallow pool of crystal-clear water with gentle sunlit ripples',
-  },
-  {
-    id: 'roble-manana',
-    label: 'Mesa de Roble Artesanal Soleada',
-    promptEs: 'posado sobre una mesa artesanal de madera de roble cálido bañada por la luz dorada del sol de la mañana en el campo',
-    promptEn: 'resting on a warm artisanal oak wood table bathed in golden morning countryside sunlight',
+    id: 'pradera-atardecer',
+    label: 'Pradera Botánica de Flores al Atardecer',
+    badge: 'Hora Dorada',
+    promptEs: 'posado en medio de una pradera botánica de flores silvestres, manzanilla y lavanda bañada por los tonos dorados y ámbar del atardecer',
+    promptEn: 'resting amidst a botanical meadow of wild chamomile and lavender flowers bathed in golden amber sunset tones',
   },
   {
     id: 'marmol-esmeralda',
     label: 'Mármol Verde Esmeralda y Vetas de Oro',
+    badge: 'Alta Gama',
     promptEs: 'posado sobre una superficie pulida de mármol verde esmeralda profundo con finas vetas doradas naturales',
     promptEn: 'resting on a polished deep emerald-green marble surface with fine natural golden veins',
   },
   {
     id: 'arena-zen',
     label: 'Arena Blanca Zen y Cantos Rodados',
+    badge: 'Equilibrio Zen',
     promptEs: 'posado sobre arena blanca fina con ondas zen rastrilladas y piedras botánicas suaves bajo luz cálida',
     promptEn: 'resting on fine white zen garden sand with gentle raked waves and smooth botanical stones under warm light',
   },
@@ -489,8 +531,8 @@ export const INGREDIENT_EFFECTS: StudioOptionItem[] = [
     id: 'gotas-rocio',
     label: 'Gotas de Rocío Fresco en el Envase',
     badge: 'Frescura',
-    promptEs: 'microgotas cristalinas de rocío fresco adheridas al vidrio del envase',
-    promptEn: 'crystal-clear fresh dew droplets clinging to the glass container',
+    promptEs: 'microgotas cristalinas de rocío fresco adheridas a la superficie del envase',
+    promptEn: 'crystal-clear fresh dew droplets clinging to the container surface',
   },
   {
     id: 'helechos-eucalipto',
@@ -568,6 +610,81 @@ export const INGREDIENT_EFFECTS: StudioOptionItem[] = [
     badge: 'Suplemento',
     promptEs: 'un pequeño grupo de cápsulas vegetales y perlas doradas traslúcidas brillando con elegancia junto a la base del frasco',
     promptEn: 'a small cluster of translucent golden softgel capsules gleaming elegantly beside the base of the bottle',
+  },
+];
+
+export const ACCOMPANIMENT_OPTIONS: StudioOptionItem[] = [
+  {
+    id: 'capsulas-softgel-base',
+    label: 'Cápsulas Softgel / Perlas Doradas',
+    badge: 'Contenido',
+    shortDesc: 'Muestra de cápsulas o perlas traslúcidas reflejando la luz en la base.',
+    promptEs: 'una muestra estética de cápsulas softgel doradas traslúcidas y perlas botánicas esparcidas armónicamente en la base frontal',
+    promptEn: 'an artful scattering of glowing translucent golden softgel capsules and botanical pearls resting at the front base',
+  },
+  {
+    id: 'cuchara-madera-polvo',
+    label: 'Cuchara de Madera con Polvo Puro',
+    badge: 'Utensilio',
+    shortDesc: 'Cuchara dosificadora artesanal con extracto botánico puro en polvo.',
+    promptEs: 'una cuchara de madera artesanal rústica con una porción de extracto botánico puro en polvo reposando al lado',
+    promptEn: 'a rustic handcrafted wooden spoon holding a scoop of fine botanical powder extract resting beside the product',
+  },
+  {
+    id: 'pipeta-gota-suspendida',
+    label: 'Pipeta de Cristal con Gota Dorada',
+    badge: 'Sérum / Gotero',
+    shortDesc: 'Pipeta dosificadora de cristal con una gota líquida cayendo o suspendida.',
+    promptEs: 'la pipeta de cristal del gotero abierta en ángulo con una gota ámbar luminosa y traslúcida suspendida en su extremo',
+    promptEn: 'the glass dropper pipette resting at an angle with a luminous glowing amber droplet suspended at its tip',
+  },
+  {
+    id: 'miel-panal-cuchara',
+    label: 'Panal de Abejas e Hilo de Miel',
+    badge: 'Miel / Propóleo',
+    shortDesc: 'Trozo de panal natural con hilo espeso de miel brillante.',
+    promptEs: 'un trozo de panal de cera de abejas natural exudando miel dorada espesa con finas gotas brillantes a contraluz',
+    promptEn: 'a chunk of raw natural honeycomb oozing rich golden honey with glistening backlit nectar droplets',
+  },
+  {
+    id: 'frutos-frescos-coco',
+    label: 'Frutos Frescos y Coco Cortado',
+    badge: 'Frescura',
+    shortDesc: 'Trozos frescos de coco, cítricos o fruto fresco en la base.',
+    promptEs: 'trozos frescos de coco partido con textura blanca pura y rodajas botánicas brillantes dispuestas en la base',
+    promptEn: 'freshly cracked coconut pieces with pure white texture and glistening botanical slices arranged at the base',
+  },
+  {
+    id: 'raices-curcuma-jengibre-props',
+    label: 'Raíces y Rodajas Frescas',
+    badge: 'Raíces',
+    shortDesc: 'Raíces de cúrcuma y jengibre cortadas húmedas.',
+    promptEs: 'raíces botánicas enteras y rodajas frescas húmedas con textura fibrosa natural posadas en la base',
+    promptEn: 'whole natural botanical roots and freshly sliced moist cuts showing organic fibrous textures on the surface',
+  },
+  {
+    id: 'flores-manzanilla-lavanda',
+    label: 'Flores Botánicas Silvestres',
+    badge: 'Flores',
+    shortDesc: 'Flores de manzanilla, caléndula y espigas de lavanda fresca.',
+    promptEs: 'flores frescas de manzanilla silvestre, pétalos dorados de caléndula y ramas aromáticas de lavanda',
+    promptEn: 'fresh wild chamomile blossoms, golden calendula petals, and aromatic lavender sprigs',
+  },
+  {
+    id: 'vaso-agua-cristal',
+    label: 'Vaso de Agua Pura & Gotas',
+    badge: 'Bienestar',
+    shortDesc: 'Vaso de cristal con agua pura y rodaja de limón al fondo.',
+    promptEs: 'un vaso de cristal fino con agua pura transparente y una rodaja fresca de limón con reflejos de luz pura',
+    promptEn: 'a fine glass tumbler filled with crystal-clear pure water and a fresh lemon slice with bright light refractions',
+  },
+  {
+    id: 'cuenco-ceramica-hierbas',
+    label: 'Cuenco de Cerámica con Hierbas',
+    badge: 'Artesanal',
+    shortDesc: 'Pequeño cuenco artesanal de arcilla con hierbas secas.',
+    promptEs: 'un pequeño cuenco de cerámica artesanal mate con una mezcla botánica de hierbas aromáticas deshidratadas',
+    promptEn: 'a small handcrafted matte ceramic bowl containing a botanical blend of dried aromatic herbs',
   },
 ];
 
@@ -673,7 +790,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
   },
   {
     id: 'propoleo-spray',
-    label: 'Spray Propóleo Garganta + Caja',
+    label: 'Spray Propóleo Puro Garganta',
     productName: 'Propóleo Puro Spray Garganta',
     headline: 'ALIVIO INMEDIATO Y DEFENSA NATURAL PARA TU VOZ',
     benefit1: 'Alivio Rápido de Garganta',
@@ -686,7 +803,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     lensId: '85mm-f18',
     lightingId: 'hora-dorada',
     packagingId: 'spray-atomizador',
-    packagingPresentation: 'con-caja',
+    packagingPresentation: 'con-fruto-fresco',
     surfaceId: 'madera-bosque',
     ingredientIds: ['miel-panal', 'helechos-eucalipto', 'gotas-rocio'],
     colorMoodId: 'honey-oak',
@@ -742,7 +859,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
   },
   {
     id: 'serum-botanico',
-    label: 'Sérum Apitoxina Gotero + Caja Lujo',
+    label: 'Sérum Apitoxina Gotero de Lujo',
     productName: 'Sérum Apitoxina & Oro Botánico',
     headline: 'EFECTO TENSOR INMEDIATO Y LUMINOSIDAD PROFUNDA',
     benefit1: 'Efecto Lifting Botánico',
@@ -755,7 +872,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     lensId: '85mm-f18',
     lightingId: 'spa-gobo',
     packagingId: 'gotero-vidrio-ambar',
-    packagingPresentation: 'con-caja',
+    packagingPresentation: 'con-gotero-activo',
     surfaceId: 'travertino-spa',
     ingredientIds: ['petalos-rosa-manzanilla', 'gotas-rocio', 'polen-oro'],
     colorMoodId: 'rose-champagne',

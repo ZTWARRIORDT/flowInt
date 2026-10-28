@@ -28,6 +28,7 @@ export type CustomCategoryKey =
   | 'packagings'
   | 'surfaces'
   | 'ingredients'
+  | 'accompaniments'
   | 'moods';
 
 export interface CustomItemsMap {
@@ -38,6 +39,7 @@ export interface CustomItemsMap {
   packagings: StudioOptionItem[];
   surfaces: StudioOptionItem[];
   ingredients: StudioOptionItem[];
+  accompaniments: StudioOptionItem[];
   moods: StudioOptionItem[];
 }
 
