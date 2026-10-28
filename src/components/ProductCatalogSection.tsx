@@ -44,11 +44,13 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageSt
   };
 
   const categories = [
-    { id: 'all', label: 'Todos los Productos (5)' },
-    { id: 'suplementos', label: 'Cápsulas y Articulaciones (2)' },
-    { id: 'extractos', label: 'Goteros y Detox (1)' },
-    { id: 'cosmetica', label: 'Cosmética Natural (1)' },
-    { id: 'apicultura', label: 'Miel y Defensas (1)' },
+    { id: 'all', label: 'Todas las Referencias (16)' },
+    { id: 'suplementos', label: 'Cápsulas & Suplementos (4)' },
+    { id: 'doypack', label: 'Bolsas Doypack & Gomitas (3)' },
+    { id: 'goteros', label: 'Goteros & Cosmética (2)' },
+    { id: 'sprays', label: 'Sprays & Atomizadores (3)' },
+    { id: 'tarros', label: 'Tarros & Miel (2)' },
+    { id: 'polvos', label: 'Proteínas & Polvos (2)' },
   ];
 
   const filteredProducts =
@@ -224,10 +226,10 @@ export const ProductCatalogSection: React.FC<Props> = ({ isDark, onLoadInImageSt
                 isDark ? 'text-white' : 'text-stone-900'
               }`}
             >
-              5 Fotografías Reales de Estudio Generadas
+              16 Referencias Fotográficas de Estudio y Catálogo
             </h2>
             <p className={`mt-1 text-xs md:text-sm ${isDark ? 'text-slate-300' : 'text-stone-600'}`}>
-              Haz clic en cualquier producto para ver sus 4 variantes de planos o abrirlo en el Estudio de arriba.
+              Explora todos los formatos de empaque (frascos, doypack, goteros, sprays, tarros y polvos). Haz clic en "Editar en el Estudio ↑" para cargar fielmente todos los paneles y selectores en el generador.
             </p>
           </div>
 

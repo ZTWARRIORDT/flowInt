@@ -37,7 +37,7 @@ export interface NaturalProductExample {
   name: string;
   brand: string;
   category: string;
-  categoryId: 'suplementos' | 'extractos' | 'cosmetica' | 'apicultura';
+  categoryId: 'suplementos' | 'doypack' | 'goteros' | 'sprays' | 'tarros' | 'polvos' | string;
   badgeText: string;
   aspectRatio: '1:1 Estudio' | '9:16 Vertical';
   image: string;
@@ -112,106 +112,431 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     brand: 'Botanical Wellness Lab',
     category: 'Articulaciones, Piel y Energía',
     categoryId: 'suplementos',
-    badgeText: 'Prompt Todo-en-Uno · Logos + Voz + Música',
+    badgeText: 'Frasco Ámbar · Fotografía en Bosque',
     aspectRatio: '1:1 Estudio',
     image: '/images/colageno-magnesio.jpg',
     headline: 'ARTICULACIONES FUERTES, PIEL FIRME Y ENERGÍA',
-    summary:
-      'Cada prompt ya tiene todo integrado en un solo bloque: fotografía botánica con 4 logos dorados (sin letras pequeñas que se deformen), animación solo de logos y naturaleza, música de fondo de piano y la misma voz de la Dra. Sofía narrando los beneficios.',
-    voiceProfileName: 'Dra. Sofía (Mujer 32 años · Especialista en Bienestar)',
-    backgroundMusicStyle: 'Piano Botánico Inspirador + Brisa de Bosque',
+    summary: 'Frasco de vidrio ámbar farmacéutico con tapa dorada metálica sobre madera húmeda en bosque soleado, rodeado de softgels doradas y helechos frescos.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[0].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
     benefits: [
       {
-        title: 'Piel y Cabello Radiante',
-        shortDesc: 'Devuelve la elasticidad, firmeza e hidratación a la piel y fortalece las uñas.',
-        iconName: 'sparkles',
+            title: 'Piel y Cabello Radiante',
+            shortDesc: 'Devuelve elasticidad, firmeza e hidratación a la piel.',
+            iconName: 'sparkles'
       },
       {
-        title: 'Articulaciones sin Dolor',
-        shortDesc: 'Regenera el cartílago y mejora la movilidad de rodillas, manos y espalda.',
-        iconName: 'activity',
+            title: 'Articulaciones sin Dolor',
+            shortDesc: 'Regenera el cartílago y mejora la movilidad articular.',
+            iconName: 'activity'
       },
       {
-        title: 'Músculos Fuertes',
-        shortDesc: 'El magnesio previene calambres nocturnos y acelera la recuperación física.',
-        iconName: 'zap',
+            title: 'Músculos Fuertes',
+            shortDesc: 'El magnesio previene calambres y acelera la recuperación.',
+            iconName: 'zap'
       },
       {
-        title: 'Energía todo el Día',
-        shortDesc: 'Reduce el cansancio crónico y mejora la calidad del descanso nocturno.',
-        iconName: 'sun',
-      },
-    ],
-    geminiPromptEs:
-      'Fotografía comercial de producto natural todo-en-uno: en el centro, un frasco de vidrio ámbar oscuro con gotas de rocío fresco y tapa dorada metálica sobre una mesa de madera húmeda en un bosque soleado al amanecer. Etiqueta verde bosque con un logo botánico dorado en relieve sin letras pequeñas. Flotando simétricamente alrededor del frasco hay 4 medallones circulares de oro cepillado que contienen ÚNICAMENTE iconos/logos simbólicos grabados en 3D (1: icono de rostro y cabello radiante, 2: icono de articulación sana, 3: icono de fuerza muscular, 4: icono de sol/energía), prohibido incluir letras pequeñas o textos largos para evitar deformaciones. Rodeado de helechos verdes, hojas de monstera y eucalipto con rayos de sol matutinos, bokeh suave y partículas de polen dorado flotando. Fotografía hiperrealista, lente macro 85mm f/1.8, iluminación comercial cálida, 8k.',
-    geminiPromptEn:
-      'All-in-one commercial natural product photography: centered dark amber glass bottle with fresh water droplets and brushed gold cap resting on a wet wooden table in a sunlit morning forest. Dark forest green embossed label with a clean gold botanical logo emblem and no small text. Floating symmetrically around the bottle are 4 circular brushed gold medallions featuring ONLY clean 3D engraved symbolic icons/logos (1: radiant skin/hair icon, 2: healthy joint icon, 3: muscle strength icon, 4: sun/energy icon), strictly no small letters or text so nothing warps. Surrounded by green ferns, monstera, and eucalyptus leaves with morning sunbeams, creamy bokeh, and golden pollen particles. Hyper-realistic photography, 85mm macro lens f/1.8, warm studio lighting, 8k.',
-    cleanHeroPromptEs:
-      'Fotografía comercial de producto natural en un bosque al amanecer: frasco de vidrio ámbar con gotas de rocío fresco, tapa dorada y etiqueta verde oscuro con logo botánico dorado limpio sobre madera rústica húmeda, rodeado de helechos y hojas de eucalipto. Sin ningún texto flotante ni letras externas, únicamente el logo simbólico en relieve. Rayos de sol dorados atravesando el follaje y partículas de polen en el aire, lente 85mm f/1.8, 8k.',
-    cleanHeroPromptEn:
-      'Sunrise forest commercial product photography: dewy amber glass bottle with gold cap and dark green label featuring a clean gold botanical logo emblem on wet rustic wood, surrounded by ferns and eucalyptus leaves. Strictly no floating text or external letters, only the embossed symbolic logo. Golden sunbeams filtering through foliage and pollen particles in the air, 85mm lens f/1.8, 8k.',
-    masterFlowPromptEs:
-      'Video comercial cinematográfico de producto natural: el frasco de vidrio ámbar de Colágeno + Magnesio permanece 100% firme, estático y nítido en el centro sobre la madera húmeda del bosque. REGLA ESTRICTA: NO animar letras ni generar textos móviles en pantalla; animar únicamente el barrido de luz solar sobre el logo botánico y sobre los 4 medallones de iconos simbólicos dorados, mientras las gotas de rocío resbalan por el vidrio, las hojas de helecho se mecen suavemente y las partículas de polen dorado flotan en cámara superlenta (120fps) con un acercamiento Dolly In muy lento. MÚSICA DE FONDO: colocar melodía instrumental inspiradora de piano suave y cuerdas cálidas a volumen moderado bajo la voz, acompañada de brisa matutina en el bosque y sutiles destellos cristalinos al iluminarse cada logo. ' +
-      VOICE_PROFILES_LIBRARY[0].descriptionEs +
-      ', diciendo: "¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía? El Colágeno Hidrolizado nutre tu piel y protege tus rodillas, mientras el Magnesio puro fortalece tus músculos sin calambres. Toma dos cápsulas cada mañana y transforma tu bienestar."',
-    masterFlowPromptEn:
-      'Cinematic commercial natural product video: the amber glass Collagen + Magnesium bottle remains 100% still, static, and sharp in the center on the wet forest wood. STRICT RULE: Do NOT animate letters or generate moving on-screen text; animate only the warm sunlight sweep across the botanical logo and the 4 gold symbolic icon medallions, while dew drops slide down the glass, fern leaves sway gently, and golden pollen particles float in 120fps super slow motion with a very slow Dolly In camera push. BACKGROUND MUSIC: uplifting soft piano and warm strings instrumental ducked softly under the voice, layered with gentle morning forest breeze and subtle crystal chimes as each logo gleams. ' +
-      VOICE_PROFILES_LIBRARY[0].descriptionEn +
-      ', speaking in Spanish: "¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía? El Colágeno Hidrolizado nutre tu piel y protege tus rodillas, mientras el Magnesio puro fortalece tus músculos sin calambres. Toma dos cápsulas cada mañana y transforma tu bienestar."',
+            title: 'Energía Celular Diaria',
+            shortDesc: 'Reduce el cansancio crónico y mejora el descanso nocturno.',
+            iconName: 'sun'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Colágeno + Magnesio Botánico": en el centro destaca el producto posado sobre madera natural húmeda con musgo verde en bosque soleado. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Colágeno + Magnesio Botánico": centered product resting on madera natural húmeda con musgo verde en bosque soleado. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Colágeno + Magnesio Botánico" posado sobre madera natural húmeda con musgo verde en bosque soleado, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Colágeno + Magnesio Botánico" resting on madera natural húmeda con musgo verde en bosque soleado, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Colágeno + Magnesio Botánico" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "¿Buscas articulaciones fuertes, piel firme y energía? Prueba Colágeno + Magnesio Botánico. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Colágeno + Magnesio Botánico" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "¿Buscas articulaciones fuertes, piel firme y energía? Prueba Colágeno + Magnesio Botánico. Fórmula natural de máxima potencia para tu bienestar."',
     flowScenes: [
       {
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
-        title: 'Escena 1 (Todo-en-Uno): Gancho Visual + Música + Voz Fija',
-        promptEs:
-          'Cámara en acercamiento Dolly In lento hacia el frasco de Colágeno + Magnesio en el bosque soleado. El frasco y sus logos dorados permanecen 100% estáticos y congelados (PROHIBIDO animar letras o generar textos móviles; animar únicamente el brillo sobre el logo botánico, los rayos de sol matutinos, las hojas de helecho meciéndose con la brisa y las partículas de polen dorado en cámara lenta). Música de fondo: colocar melodía instrumental inspiradora de piano suave y cuerdas cálidas a volumen moderado bajo la voz con sonido suave de bosque matutino. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía diaria?"',
-        promptEn:
-          'Slow Dolly In camera push toward the Collagen + Magnesium bottle in the sunlit forest. The bottle and its gold logos remain 100% static and frozen (FORBIDDEN to animate letters or generate moving text; animate only the light gleam on the botanical logo, morning sunbeams, fern fronds swaying in the breeze, and golden pollen particles in slow motion). Background music: uplifting soft piano and warm strings instrumental ducked softly under the voice with gentle morning forest ambiance. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "¿Quieres rejuvenecer tu piel, cuidar tus articulaciones y recuperar tu energía diaria?"',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Colágeno + Magnesio Botánico" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Colágeno + Magnesio Botánico". Container remains static. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
-        title: 'Escena 2 (Todo-en-Uno): Logos de Piel y Articulaciones + Misma Voz + Música',
-        promptEs:
-          'Paneo suave de luz manteniendo el frasco 100% firme en el centro (PROHIBIDO animar o deformar letras; animar únicamente un destello cálido de luz solar que recorre el relieve metálico de los 2 medallones superiores con los logos simbólicos de piel radiante y articulaciones sanas mientras una gota de rocío resbala en cámara lenta por el vidrio ámbar). Música de fondo: continúa la melodía instrumental de piano suave y cuerdas cálidas bajo la voz, añadiendo un sutil destello sonoro cristalino al brillar los logos. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "El Colágeno Hidrolizado nutre tu piel y cabello desde adentro mientras protege tus rodillas y articulaciones."',
-        promptEn:
-          'Smooth lighting sweep keeping the bottle 100% steady in the center (FORBIDDEN to animate or warp letters; animate only a warm sunbeam sweeping across the metallic relief of the top 2 gold medallions with the radiant skin and healthy joint symbolic logos while a dew drop slides in slow motion down the amber glass). Background music: continuous soft piano and warm strings instrumental under the voice, adding a subtle crystal chime as the logos gleam. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "El Colágeno Hidrolizado nutre tu piel y cabello desde adentro mientras protege tus rodillas y articulaciones."',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Piel y Cabello Radiante y Articulaciones sin Dolor. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "Piel y Cabello Radiante y Articulaciones sin Dolor desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Piel y Cabello Radiante. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "Piel y Cabello Radiante y Articulaciones sin Dolor desde las primeras tomas."'
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
-        title: 'Escena 3 (Todo-en-Uno): Logos de Músculos y Energía + Misma Voz + Música',
-        promptEs:
-          'Movimiento orbital muy sutil de 10 grados manteniendo el envase y su etiqueta completamente estáticos (PROHIBIDO animar letras; animar únicamente el reflejo dorado sobre los 2 medallones inferiores con los logos simbólicos de fuerza muscular y energía, junto con las hojas de eucalipto húmedas y destellos dorados ascendiendo en cámara lenta). Música de fondo: continúa la música instrumental de piano suave y cuerdas cálidas envolventes a volumen moderado bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "Y gracias al Magnesio puro, relajas tus músculos, evitas calambres y despiertas con máxima energía."',
-        promptEn:
-          'Very subtle 10-degree orbital motion keeping the bottle and label completely static (FORBIDDEN to animate letters; animate only the golden reflection across the bottom 2 medallions with the muscle strength and energy symbolic logos, along with wet eucalyptus leaves and rising golden sparkles in slow motion). Background music: continuous soft piano and warm enveloping strings instrumental ducked softly under the voice. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "Y gracias al Magnesio puro, relajas tus músculos, evitas calambres y despiertas con máxima energía."',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Músculos Fuertes."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Músculos Fuertes."'
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
-        title: 'Escena 4 (Todo-en-Uno): Cierre Heroico y Dosis + Misma Voz + Música',
-        promptEs:
-          'Plano maestro fijo y luminoso del frasco de Colágeno + Magnesio con sus 4 medallones de logos simbólicos dorados reluciendo en armonía bajo la luz del bosque (PROHIBIDO animar letras o textos; solo brillan los logos metálicos y flotan suavemente las partículas de polen dorado). Música de fondo: acorde final armónico, cálido y resolutivo de piano acústico y cuerdas bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "Solo toma dos cápsulas cada mañana para transformar tu bienestar. ¡Pide el tuyo hoy!"',
-        promptEn:
-          'Luminous static master hero shot of the Collagen + Magnesium bottle with its 4 gold symbolic logo medallions gleaming harmoniously in the forest light (FORBIDDEN to animate letters or text; only the metallic logos shine and golden pollen particles float gently). Background music: warm, harmonious resolving final chord of acoustic piano and strings under the voice. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "Solo toma dos cápsulas cada mañana para transformar tu bienestar. ¡Pide el tuyo hoy!"',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'uro-cranberry-probioticos',
+    name: 'URO Cranberry Probióticos (Bolsa Rosa)',
+    brand: 'URO Natural Health',
+    category: 'Salud Femenina, Digestiva e Íntima',
+    categoryId: 'doypack',
+    badgeText: 'Bolsa Doypack · Arena Zen 9:16',
+    aspectRatio: '9:16 Vertical',
+    image: '/images/uro-poster.jpg',
+    headline: 'SALUD DIGESTIVA Y URINARIA · BIENESTAR FEMENINO',
+    summary: 'Bolsa stand-up pouch rosa suave mate sobre pedestal minimalista de arena zen clara con microgotas de agua fresca y medallones 3D dorados.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[2].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Flora Intestinal Fuerte',
+            shortDesc: 'Millones de cultivos probióticos para aliviar la inflamación.',
+            iconName: 'shield'
       },
-    ],
+      {
+            title: 'Protección Urinaria con Arándano',
+            shortDesc: 'Extracto concentrado de cranberry para defensa íntima.',
+            iconName: 'droplets'
+      },
+      {
+            title: 'Extracto de Orégano Botánico',
+            shortDesc: 'Defensa antimicrobiana natural para el microbioma.',
+            iconName: 'leaf'
+      },
+      {
+            title: 'Prebióticos Activos',
+            shortDesc: 'Nutrición directa para las bacterias saludables.',
+            iconName: 'sparkles'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "URO Cranberry Probióticos (Bolsa Rosa)": en el centro destaca el producto posado sobre pedestal minimalista de arena zen fina color crema con piedras calizas blancas. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "URO Cranberry Probióticos (Bolsa Rosa)": centered product resting on pedestal minimalista de arena zen fina color crema con piedras calizas blancas. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "URO Cranberry Probióticos (Bolsa Rosa)" posado sobre pedestal minimalista de arena zen fina color crema con piedras calizas blancas, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "URO Cranberry Probióticos (Bolsa Rosa)" resting on pedestal minimalista de arena zen fina color crema con piedras calizas blancas, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "URO Cranberry Probióticos (Bolsa Rosa)" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Buscas salud digestiva y urinaria · bienestar femenino? Prueba URO Cranberry Probióticos (Bolsa Rosa). Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "URO Cranberry Probióticos (Bolsa Rosa)" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Buscas salud digestiva y urinaria · bienestar femenino? Prueba URO Cranberry Probióticos (Bolsa Rosa). Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "URO Cranberry Probióticos (Bolsa Rosa)" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "URO Cranberry Probióticos (Bolsa Rosa)". Container remains static. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Flora Intestinal Fuerte y Protección Urinaria con Arándano. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Flora Intestinal Fuerte y Protección Urinaria con Arándano desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Flora Intestinal Fuerte. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Flora Intestinal Fuerte y Protección Urinaria con Arándano desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Extracto de Orégano Botánico."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Extracto de Orégano Botánico."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'glucosamina-condroitina-msm',
+    name: 'Glucosamina + Condroitina + MSM 1500mg',
+    brand: 'Mobility BioHealth',
+    category: 'Movilidad, Cartílago y Flexibilidad',
+    categoryId: 'suplementos',
+    badgeText: 'Póster Clínico · 4 Medallones 3D',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/glucosamina-hero.jpg',
+    headline: 'ARTICULACIONES MÁS FUERTES · MUÉVETE SIN LÍMITES',
+    summary: 'Frasco blanco y azul sobre podio reflectante con halo azul de estudio y 4 medallones metálicos 3D con iconos grabados de rodilla, cartílago y MSM.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[1].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Regeneración de Cartílago',
+            shortDesc: 'La condroitina restaura la amortiguación articular.',
+            iconName: 'shield'
+      },
+      {
+            title: 'Flexibilidad sin Dolor',
+            shortDesc: 'Glucosamina pura para lubricar y eliminar rigidez.',
+            iconName: 'activity'
+      },
+      {
+            title: 'Alivio con Cúrcuma & MSM',
+            shortDesc: 'Sinergia antiinflamatoria de rápida acción articular.',
+            iconName: 'flame'
+      },
+      {
+            title: 'Fuerza Muscular y Ósea',
+            shortDesc: 'Refuerza tendones y previene el desgaste físico diario.',
+            iconName: 'zap'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Glucosamina + Condroitina + MSM 1500mg": en el centro destaca el producto posado sobre podio reflectante con suave halo circular de estudio sobre cuarzo blanco. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Glucosamina + Condroitina + MSM 1500mg": centered product resting on podio reflectante con suave halo circular de estudio sobre cuarzo blanco. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Glucosamina + Condroitina + MSM 1500mg" posado sobre podio reflectante con suave halo circular de estudio sobre cuarzo blanco, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Glucosamina + Condroitina + MSM 1500mg" resting on podio reflectante con suave halo circular de estudio sobre cuarzo blanco, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Glucosamina + Condroitina + MSM 1500mg" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Buscas articulaciones más fuertes · muévete sin límites? Prueba Glucosamina + Condroitina + MSM 1500mg. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Glucosamina + Condroitina + MSM 1500mg" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Buscas articulaciones más fuertes · muévete sin límites? Prueba Glucosamina + Condroitina + MSM 1500mg. Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Glucosamina + Condroitina + MSM 1500mg" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Glucosamina + Condroitina + MSM 1500mg". Container remains static. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Regeneración de Cartílago y Flexibilidad sin Dolor. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Regeneración de Cartílago y Flexibilidad sin Dolor desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Regeneración de Cartílago. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Regeneración de Cartílago y Flexibilidad sin Dolor desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Alivio con Cúrcuma & MSM."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Alivio con Cúrcuma & MSM."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'vitamina-d3-k2-frasco',
+    name: 'Vitamina D3 + K2 Complex (Frasco Ámbar)',
+    brand: 'Botanical Labs D3+K2',
+    category: 'Huesos, Corazón y Defensas Inmunes',
+    categoryId: 'suplementos',
+    badgeText: 'Frasco Ámbar · Softgels en Bosque',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/vitamina-frasco.jpg',
+    headline: 'ABSORCIÓN ÓSEA PERFECTA Y DEFENSAS ALTAS',
+    summary: 'Frasco de vidrio ámbar con tapa dorada y softgels derramadas sobre madera rústica en bosque con rayos de sol matutinos y follaje verde.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[0].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Fijación de Calcio Óseo',
+            shortDesc: 'La K2 dirige el calcio a los huesos evitando la calcificación arterial.',
+            iconName: 'shield'
+      },
+      {
+            title: 'Inmunidad Reforzada',
+            shortDesc: 'La Vitamina D3 activa las defensas y energía vital diaria.',
+            iconName: 'sun'
+      },
+      {
+            title: 'Softgels de Aceite de Coco',
+            shortDesc: 'Fórmula oleosa virgen para máxima absorción biológica.',
+            iconName: 'droplets'
+      },
+      {
+            title: 'Salud Cardiovascular',
+            shortDesc: 'Mantiene las arterias elásticas y apoya el corazón.',
+            iconName: 'heart'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Vitamina D3 + K2 Complex (Frasco Ámbar)": en el centro destaca el producto posado sobre madera rústica húmeda con hojas de eucalipto bajo sol matutino. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Vitamina D3 + K2 Complex (Frasco Ámbar)": centered product resting on madera rústica húmeda con hojas de eucalipto bajo sol matutino. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Vitamina D3 + K2 Complex (Frasco Ámbar)" posado sobre madera rústica húmeda con hojas de eucalipto bajo sol matutino, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Vitamina D3 + K2 Complex (Frasco Ámbar)" resting on madera rústica húmeda con hojas de eucalipto bajo sol matutino, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Vitamina D3 + K2 Complex (Frasco Ámbar)" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "¿Buscas absorción ósea perfecta y defensas altas? Prueba Vitamina D3 + K2 Complex (Frasco Ámbar). Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Vitamina D3 + K2 Complex (Frasco Ámbar)" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "¿Buscas absorción ósea perfecta y defensas altas? Prueba Vitamina D3 + K2 Complex (Frasco Ámbar). Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Vitamina D3 + K2 Complex (Frasco Ámbar)" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Vitamina D3 + K2 Complex (Frasco Ámbar)". Container remains static. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Fijación de Calcio Óseo y Inmunidad Reforzada. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "Fijación de Calcio Óseo y Inmunidad Reforzada desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Fijación de Calcio Óseo. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "Fijación de Calcio Óseo y Inmunidad Reforzada desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Softgels de Aceite de Coco."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Softgels de Aceite de Coco."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'vitamina-d3-k2-pouch',
+    name: 'Vitamina D3 + K2 Complex (Stand-up Pouch)',
+    brand: 'Botanical Labs D3+K2',
+    category: 'Doypack Práctico · Minerales y Vitaminas',
+    categoryId: 'doypack',
+    badgeText: 'Bolsa Blanca Doypack · Roble Claro',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/vitamina-pouch.jpg',
+    headline: 'HUESOS FUERTES, CORAZÓN SANO Y VITALIDAD',
+    summary: 'Bolsa stand-up pouch blanca satinada sobre mesa de roble claro con hojas frescas y medallones 3D dorados para huesos, corazón y energía.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[1].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Huesos y Dientes Fuertes',
+            shortDesc: 'Máxima mineralización con biodisponibilidad superior.',
+            iconName: 'shield'
+      },
+      {
+            title: 'Protección Vascular',
+            shortDesc: 'Mantiene el flujo sanguíneo óptimo y arterias limpias.',
+            iconName: 'heart'
+      },
+      {
+            title: 'Defensas al Máximo',
+            shortDesc: 'Refuerza la respuesta inmune frente a cambios de estación.',
+            iconName: 'sun'
+      },
+      {
+            title: 'Formato Doypack Práctico',
+            shortDesc: 'Cierre hermético que conserva la frescura de los ingredientes.',
+            iconName: 'zap'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Vitamina D3 + K2 Complex (Stand-up Pouch)": en el centro destaca el producto posado sobre encimera limpia de roble claro y mármol blanco en cocina contemporánea. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Vitamina D3 + K2 Complex (Stand-up Pouch)": centered product resting on encimera limpia de roble claro y mármol blanco en cocina contemporánea. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Vitamina D3 + K2 Complex (Stand-up Pouch)" posado sobre encimera limpia de roble claro y mármol blanco en cocina contemporánea, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Vitamina D3 + K2 Complex (Stand-up Pouch)" resting on encimera limpia de roble claro y mármol blanco en cocina contemporánea, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Vitamina D3 + K2 Complex (Stand-up Pouch)" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Buscas huesos fuertes, corazón sano y vitalidad? Prueba Vitamina D3 + K2 Complex (Stand-up Pouch). Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Vitamina D3 + K2 Complex (Stand-up Pouch)" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Buscas huesos fuertes, corazón sano y vitalidad? Prueba Vitamina D3 + K2 Complex (Stand-up Pouch). Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Vitamina D3 + K2 Complex (Stand-up Pouch)" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Vitamina D3 + K2 Complex (Stand-up Pouch)". Container remains static. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Huesos y Dientes Fuertes y Protección Vascular. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Huesos y Dientes Fuertes y Protección Vascular desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Huesos y Dientes Fuertes. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Huesos y Dientes Fuertes y Protección Vascular desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Defensas al Máximo."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Defensas al Máximo."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'uro-macro-textura',
+    name: 'URO Macro 100mm (Ultra Detalle Textura)',
+    brand: 'URO Natural Health',
+    category: 'Macro Textura 100mm, Gotas y Relieve',
+    categoryId: 'doypack',
+    badgeText: 'Macro 100mm f/2.8 · Detalle 8K',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/uro-macro.jpg',
+    headline: 'TEXTURA MICROSCÓPICA, LOGO EN RELIEVE Y ROCÍO',
+    summary: 'Toma macro extrema a escasos centímetros enfocada en el relieve auténtico del logo URO, grano táctil mate y microgotas de condensación fresca.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[2].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Relieve Táctil Auténtico',
+            shortDesc: 'Detalle microscópico del logotipo sin alteración tipográfica.',
+            iconName: 'target'
+      },
+      {
+            title: 'Gotas de Rocío Fresco',
+            shortDesc: 'Microgotas de condensación hiperrealistas en superficie mate.',
+            iconName: 'droplets'
+      },
+      {
+            title: 'Rosa Suave Mate Protegido',
+            shortDesc: 'Color auténtico original sin tintes extraños.',
+            iconName: 'sparkles'
+      },
+      {
+            title: 'Nitidez Óptica 100mm',
+            shortDesc: 'Profundidad de campo f/2.8 con bokeh suave y cremoso.',
+            iconName: 'eye'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "URO Macro 100mm (Ultra Detalle Textura)": en el centro destaca el producto posado sobre primerísimo plano microscópico sobre el envase con desenfoque de arena zen. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "URO Macro 100mm (Ultra Detalle Textura)": centered product resting on primerísimo plano microscópico sobre el envase con desenfoque de arena zen. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "URO Macro 100mm (Ultra Detalle Textura)" posado sobre primerísimo plano microscópico sobre el envase con desenfoque de arena zen, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "URO Macro 100mm (Ultra Detalle Textura)" resting on primerísimo plano microscópico sobre el envase con desenfoque de arena zen, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "URO Macro 100mm (Ultra Detalle Textura)" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Buscas textura microscópica, logo en relieve y rocío? Prueba URO Macro 100mm (Ultra Detalle Textura). Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "URO Macro 100mm (Ultra Detalle Textura)" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Buscas textura microscópica, logo en relieve y rocío? Prueba URO Macro 100mm (Ultra Detalle Textura). Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "URO Macro 100mm (Ultra Detalle Textura)" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "URO Macro 100mm (Ultra Detalle Textura)". Container remains static. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Relieve Táctil Auténtico y Gotas de Rocío Fresco. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Relieve Táctil Auténtico y Gotas de Rocío Fresco desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Relieve Táctil Auténtico. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Relieve Táctil Auténtico y Gotas de Rocío Fresco desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Rosa Suave Mate Protegido."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Rosa Suave Mate Protegido."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
   },
   {
     id: 'curcuma-ashwagandha',
@@ -219,427 +544,719 @@ export const PRODUCTS_DATA: NaturalProductExample[] = [
     brand: 'Natural Vitae',
     category: 'Antiinflamatorio y Articular',
     categoryId: 'suplementos',
-    badgeText: 'Prompt Todo-en-Uno · Explosión 120fps + Voz + Música',
+    badgeText: 'Explosión de Polvo 120fps · Pizarra Negra',
     aspectRatio: '1:1 Estudio',
     image: '/images/curcuma-ashwagandha.jpg',
     headline: 'DESINFLAMA TUS ARTICULACIONES CON PODER NATURAL',
-    summary:
-      'Cada prompt integra en un solo texto la explosión de polvo de cúrcuma en 120fps, el bloqueo total de letras (animando solo el brillo en los logos y el polvo), la música cinematográfica de fondo y la misma voz de Mateo.',
-    voiceProfileName: 'Mateo (Hombre 35 años · Narrador Comercial Cálido)',
-    backgroundMusicStyle: 'Cinemático Orgánico con Percusión Suave y Violonchelo',
+    summary: 'Frasco ámbar con etiqueta mostaza y tapa negra sobre pizarra húmeda con explosión de polvo dorado de cúrcuma iluminada a contraluz.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[1].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
     benefits: [
       {
-        title: 'Desinflama Articulaciones',
-        shortDesc: 'Alivia el dolor e inflamación en rodillas, manos, hombros y espalda.',
-        iconName: 'flame',
+            title: 'Desinflama Articulaciones',
+            shortDesc: 'Alivia el dolor e inflamación en rodillas, manos y espalda.',
+            iconName: 'flame'
       },
       {
-        title: 'Movilidad sin Rigidez',
-        shortDesc: 'Recupera la flexibilidad al despertar y al realizar actividad física.',
-        iconName: 'activity',
+            title: 'Movilidad sin Rigidez',
+            shortDesc: 'Recupera la flexibilidad al despertar y al caminar.',
+            iconName: 'activity'
       },
       {
-        title: 'Antioxidante Celular',
-        shortDesc: 'Neutraliza los radicales libres y protege los tejidos del envejecimiento.',
-        iconName: 'shield',
+            title: 'Antioxidante Celular',
+            shortDesc: 'Neutraliza radicales libres y protege los tejidos.',
+            iconName: 'shield'
       },
       {
-        title: 'Bienestar Digestivo',
-        shortDesc: 'El jengibre puro mejora la digestión y potencia la absorción de la cúrcuma.',
-        iconName: 'leaf',
-      },
-    ],
-    geminiPromptEs:
-      'Fotografía publicitaria de alta velocidad todo-en-uno: en el centro, un frasco de vidrio ámbar con tapa negra y etiqueta color mostaza dorado que muestra únicamente un emblema circular metálico y 4 logos simbólicos limpios en relieve (llama antiinflamatoria, articulación en movimiento, escudo protector y hoja digestiva) sin letras pequeñas que se deformen, sobre una bandeja de piedra pizarra negra húmeda. En la base hay rodajas frescas de jengibre, raíces de cúrcuma naranja intenso y una cuchara de madera con polvo de cúrcuma. Detrás del frasco, una espectacular explosión en el aire de fino polvo dorado de cúrcuma iluminada a contraluz por luz cálida ámbar sobre fondo oscuro dramático. Lente macro 90mm, 8k.',
-    geminiPromptEn:
-      'All-in-one high-speed commercial product photography: centered amber glass supplement bottle with black cap and mustard-gold label featuring ONLY a metallic circular emblem and 4 clean embossed symbolic logos (anti-inflammatory flame, moving joint, protective shield, digestive leaf) with no small text that could warp, on a wet black slate stone tray. Surrounded at the base by fresh sliced ginger, vibrant orange turmeric roots, and a wooden spoon with turmeric powder. Behind the bottle, a dramatic mid-air explosion of fine golden turmeric powder backlit by warm amber studio lighting against a dark moody background. 90mm macro lens, 8k.',
-    cleanHeroPromptEs:
-      'Fotografía comercial en estudio oscuro de un frasco de vidrio ámbar con etiqueta mostaza y logo circular dorado en relieve (sin letras pequeñas ni textos externos) sobre piedra pizarra negra húmeda, rodeado de raíces de cúrcuma fresca y rodajas de jengibre con iluminación cálida ámbar a contraluz, lente macro 90mm, 8k.',
-    cleanHeroPromptEn:
-      'Dark studio commercial photography of an amber glass bottle with mustard-gold label and embossed circular gold logo (no small letters or external text) on wet black slate surrounded by fresh turmeric roots and ginger slices with warm amber backlighting, 90mm macro lens, 8k.',
-    masterFlowPromptEs:
-      'Video comercial de alta velocidad en cámara superlenta (120fps): el frasco ámbar de Cúrcuma + Jengibre permanece 100% inmóvil y estático en el centro sobre la pizarra negra. REGLA ESTRICTA: NO animar letras ni generar textos móviles en pantalla; animar únicamente la nube de polvo dorado de cúrcuma expandiéndose en el aire detrás del envase, las gotas de frescura sobre las raíces de jengibre y el barrido de luz ámbar sobre los logos simbólicos dorados. MÚSICA DE FONDO: colocar música instrumental cinematográfica cálida con percusión orgánica suave, violonchelo inspirador y efecto envolvente slow-motion bajo la voz. ' +
-      VOICE_PROFILES_LIBRARY[1].descriptionEs +
-      ', diciendo: "Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti. Su extracto concentrado desinflama tus articulaciones, devuelve tu movilidad sin rigidez y protege tus células y digestión. Toma dos cápsulas al día y vuelve a moverte con libertad."',
-    masterFlowPromptEn:
-      'High-speed 120fps super slow-motion commercial video: the amber Turmeric + Ginger bottle remains 100% still and static in the center on the black slate. STRICT RULE: Do NOT animate letters or generate moving text on screen; animate only the golden turmeric powder cloud expanding in mid-air behind the bottle, freshness droplets on the ginger roots, and the warm amber light sweep across the gold symbolic logos. BACKGROUND MUSIC: warm cinematic instrumental with soft organic percussion, inspiring cello, and slow-motion whoosh SFX ducked under the voice. ' +
-      VOICE_PROFILES_LIBRARY[1].descriptionEn +
-      ', speaking in Spanish: "Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti. Su extracto concentrado desinflama tus articulaciones, devuelve tu movilidad sin rigidez y protege tus células y digestión. Toma dos cápsulas al día y vuelve a moverte con libertad."',
+            title: 'Bienestar Digestivo',
+            shortDesc: 'El jengibre puro mejora la digestión y absorción de cúrcuma.',
+            iconName: 'leaf'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Cúrcuma + Jengibre Natural Vitae": en el centro destaca el producto posado sobre pizarra negra húmeda con reflejos oscuros y nube de polvo botánico. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Cúrcuma + Jengibre Natural Vitae": centered product resting on pizarra negra húmeda con reflejos oscuros y nube de polvo botánico. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Cúrcuma + Jengibre Natural Vitae" posado sobre pizarra negra húmeda con reflejos oscuros y nube de polvo botánico, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Cúrcuma + Jengibre Natural Vitae" resting on pizarra negra húmeda con reflejos oscuros y nube de polvo botánico, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Cúrcuma + Jengibre Natural Vitae" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Buscas desinflama tus articulaciones con poder natural? Prueba Cúrcuma + Jengibre Natural Vitae. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Cúrcuma + Jengibre Natural Vitae" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Buscas desinflama tus articulaciones con poder natural? Prueba Cúrcuma + Jengibre Natural Vitae. Fórmula natural de máxima potencia para tu bienestar."',
     flowScenes: [
       {
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
-        title: 'Escena 1 (Todo-en-Uno): Explosión de Cúrcuma 120fps + Música + Voz Fija',
-        promptEs:
-          'Acercamiento lento (Slow Push-In) hacia el frasco de Cúrcuma + Jengibre en el centro. El frasco y su logo circular permanecen 100% estáticos y congelados (PROHIBIDO animar letras o generar textos móviles; en cámara superlenta de 120fps se anima únicamente la nube de polvo dorado de cúrcuma expandiéndose detrás del frasco y el brillo cálido sobre el logo dorado). Música de fondo: colocar instrumental cinematográfico cálido con percusión orgánica suave, violonchelo inspirador y efecto whoosh en slow-motion bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEs +
-          ', diciendo: "Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti."',
-        promptEn:
-          'Slow Push-In camera motion toward the centered Turmeric + Ginger bottle. The bottle and its circular logo remain 100% static and frozen (FORBIDDEN to animate letters or generate moving text; in 120fps super slow motion, animate only the golden turmeric powder cloud expanding behind the bottle and the warm light gleam on the gold logo). Background music: warm cinematic instrumental with soft organic percussion, inspiring cello, and slow-motion whoosh SFX under the voice. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEn +
-          ', speaking in Spanish: "Si el dolor articular o la inflamación te detienen, el poder natural de la Cúrcuma y el Jengibre es para ti."',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Cúrcuma + Jengibre Natural Vitae" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Cúrcuma + Jengibre Natural Vitae". Container remains static. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
-        title: 'Escena 2 (Todo-en-Uno): Logos de Alivio y Movilidad + Misma Voz + Música',
-        promptEs:
-          'Órbita muy suave de 10 grados manteniendo el frasco completamente firme (PROHIBIDO animar o deformar letras; animar únicamente un haz de luz ámbar que recorre los logos simbólicos de alivio articular y movilidad mientras finas partículas de polvo dorado flotan lentamente alrededor). Música de fondo: continúa el instrumental cinematográfico cálido con percusión orgánica y un destello sonoro suave bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEs +
-          ', diciendo: "Su alta concentración de curcuminoides desinflama tus articulaciones y devuelve la movilidad sin rigidez."',
-        promptEn:
-          'Very gentle 10-degree orbit keeping the bottle completely steady (FORBIDDEN to animate or warp letters; animate only an amber light beam sweeping across the joint relief and mobility symbolic logos while fine golden powder particles float slowly around). Background music: continuous warm cinematic instrumental with organic percussion and a soft chime under the voice. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEn +
-          ', speaking in Spanish: "Su alta concentración de curcuminoides desinflama tus articulaciones y devuelve la movilidad sin rigidez."',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Desinflama Articulaciones y Movilidad sin Rigidez. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Desinflama Articulaciones y Movilidad sin Rigidez desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Desinflama Articulaciones. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Desinflama Articulaciones y Movilidad sin Rigidez desde las primeras tomas."'
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
-        title: 'Escena 3 (Todo-en-Uno): Raíces Frescas y Logos de Defensa + Misma Voz + Música',
-        promptEs:
-          'Plano cercano de las raíces frescas de cúrcuma, las rodajas húmedas de jengibre y la cuchara de madera junto al frasco 100% estático (PROHIBIDO animar letras; solo brillan los logos simbólicos de escudo antioxidante y hoja digestiva mientras el vapor aromático y chispas doradas ascienden lentamente). Música de fondo: continúa la música cinematográfica cálida de violonchelo y guitarra acústica suave bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEs +
-          ', diciendo: "Combinado con jengibre orgánico puro, actúa como un potente antioxidante celular y mejora tu digestión."',
-        promptEn:
-          'Close-up shot of the fresh turmeric roots, wet ginger slices, and wooden spoon next to the 100% static bottle (FORBIDDEN to animate letters; only the antioxidant shield and digestive leaf symbolic logos gleam while aromatic mist and golden sparks rise slowly). Background music: continuous warm cinematic cello and soft acoustic guitar under the voice. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEn +
-          ', speaking in Spanish: "Combinado con jengibre orgánico puro, actúa como un potente antioxidante celular y mejora tu digestión."',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Antioxidante Celular."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Antioxidante Celular."'
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
-        title: 'Escena 4 (Todo-en-Uno): Cierre Heroico y Dosis + Misma Voz + Música',
-        promptEs:
-          'Plano heroico final del frasco de Cúrcuma + Jengibre firme sobre la piedra pizarra con sus logos dorados reluciendo bajo un contraluz cálido mientras las últimas partículas doradas se posan suavemente (PROHIBIDO animar letras o textos). Música de fondo: acorde final resolutivo, cálido e inspirador bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEs +
-          ', diciendo: "Toma dos cápsulas al día y vuelve a moverte con total libertad. ¡Pide el tuyo ahora!"',
-        promptEn:
-          'Final hero shot of the Turmeric + Ginger bottle steady on the slate stone with its gold logos gleaming under warm backlighting while the last golden particles gently settle (FORBIDDEN to animate letters or text). Background music: warm, inspiring resolving final chord under the voice. ' +
-          VOICE_PROFILES_LIBRARY[1].descriptionEn +
-          ', speaking in Spanish: "Toma dos cápsulas al día y vuelve a moverte con total libertad. ¡Pide el tuyo ahora!"',
-      },
-    ],
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
   },
   {
     id: 'clorofila-matcha',
     name: 'Clorofila Líquida + Menta Detox',
-    brand: 'Pure Green Drops',
-    category: 'Desintoxicación y Digestión',
-    categoryId: 'extractos',
-    badgeText: 'Prompt Todo-en-Uno · Splash Cristalino + Voz + Música',
+    brand: 'Botanical Detox Lab',
+    category: 'Detox, Digestión y Alcalinidad',
+    categoryId: 'goteros',
+    badgeText: 'Gotero Ámbar · Splash en Agua Zen',
     aspectRatio: '1:1 Estudio',
     image: '/images/clorofila-matcha.jpg',
-    headline: 'DESINTOXICA TU CUERPO Y REFRESCA TU DIGESTIÓN',
-    summary:
-      'Cada prompt reúne en un solo bloque el splash de agua esmeralda en cámara lenta, la regla de no animar letras (solo los logos simbólicos y el agua), la música acústica fresca de fondo y la misma voz de Elena.',
-    voiceProfileName: 'Elena (Mujer 27 años · Guía de Vida Saludable y Detox)',
-    backgroundMusicStyle: 'Guitarra Acústica Refrescante + Salpicadura de Agua Pura',
+    headline: 'OXIGENACIÓN CELULAR, ALIENTO FRESCO Y DETOX',
+    summary: 'Frasco gotero de vidrio ámbar sobre roca de río emergiendo de un espejo de agua cristalina con splash congelado a alta velocidad.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[2].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
     benefits: [
       {
-        title: 'Detox Hepático y Renal',
-        shortDesc: 'Ayuda a eliminar toxinas acumuladas y purifica la sangre de forma natural.',
-        iconName: 'droplets',
+            title: 'Oxigenación Celular',
+            shortDesc: 'Estructura molecular similar a la hemoglobina para depurar.',
+            iconName: 'droplets'
       },
       {
-        title: 'Desinflama el Abdomen',
-        shortDesc: 'Combate la pesadez estomacal, los gases y mejora el tránsito intestinal.',
-        iconName: 'leaf',
+            title: 'Aliento Fresco Natural',
+            shortDesc: 'La menta piperita desodoriza desde el tracto digestivo.',
+            iconName: 'leaf'
       },
       {
-        title: 'Frescura y Aliento Limpio',
-        shortDesc: 'Desodorizante interno natural con extracto puro de hojas de menta.',
-        iconName: 'sparkles',
+            title: 'Elimina Toxinas Diarias',
+            shortDesc: 'Apoya la función hepática y el tránsito intestinal ligero.',
+            iconName: 'shield'
       },
       {
-        title: 'Oxigenación y Vitalidad',
-        shortDesc: 'Aumenta la oxigenación celular para mantenerte activo sin cafeína.',
-        iconName: 'zap',
-      },
-    ],
-    geminiPromptEs:
-      'Fotografía comercial de alta velocidad todo-en-uno: en el centro, un frasco gotero de vidrio verde esmeralda con pipeta de cristal y bulbo blanco sobre una piedra de río húmeda. Etiqueta blanca minimalista únicamente con un logo de hoja verde y 4 iconos simbólicos circulares en relieve (gota purificadora, hoja digestiva, destello de frescura y símbolo de oxígeno) sin letras pequeñas que se deformen. Una corona simétrica de agua cristalina y clorofila salpica alrededor del frasco congelada en el aire junto a hojas frescas de menta, té matcha e iluminación solar brillante. Lente macro 85mm, 8k.',
-    geminiPromptEn:
-      'All-in-one high-speed commercial product photography: centered emerald green glass dropper bottle with glass pipette and white bulb on a wet river stone. Minimalist white label featuring ONLY a green leaf logo and 4 embossed circular symbolic icons (purifying drop, digestive leaf, freshness sparkle, oxygen symbol) with no small text that could warp. A symmetrical crown splash of crystal water and chlorophyll erupts around the bottle frozen in mid-air with fresh mint leaves, matcha tea leaves, and bright morning sunlight. 85mm macro lens, 8k.',
-    cleanHeroPromptEs:
-      'Fotografía comercial luminosa del frasco gotero verde esmeralda con logo simbólico de hoja verde (sin letras pequeñas ni textos externos) sobre piedra de río húmeda con splash de agua cristalina y hojas de menta fresca a contraluz, lente macro 85mm, 8k.',
-    cleanHeroPromptEn:
-      'Bright commercial photography of the emerald green dropper bottle with green leaf symbolic logo (no small letters or external text) on wet river stone with crystal water splash and fresh mint leaves backlit by morning sun, 85mm macro lens, 8k.',
-    masterFlowPromptEs:
-      'Video comercial refrescante en cámara superlenta (120fps): el frasco gotero de Clorofila Líquida + Menta permanece 100% fijo y estático en el centro sobre la piedra húmeda. REGLA ESTRICTA: NO animar letras ni generar textos móviles en pantalla; animar únicamente la corona de agua cristalina ondulando en cámara lenta, las hojas de menta flotando con microgotas de rocío, una gota verde esmeralda cayendo de la pipeta y el brillo solar sobre los logos simbólicos. MÚSICA DE FONDO: colocar melodía alegre y fresca de guitarra acústica luminosa y marimba suave bajo la voz, acompañada del sonido cristalino de agua pura. ' +
-      VOICE_PROFILES_LIBRARY[2].descriptionEs +
-      ', diciendo: "¿Sientes pesadez estomacal o falta de energía por las mañanas? La Clorofila Líquida con Menta desintoxica tu cuerpo, desinflama tu abdomen y oxigena tus células aportando frescura total. Solo diluye veinte gotas en un vaso de agua cada mañana y siente la ligereza."',
-    masterFlowPromptEn:
-      'Refreshing 120fps super slow-motion commercial video: the Liquid Chlorophyll + Mint dropper bottle remains 100% fixed and static in the center on the wet stone. STRICT RULE: Do NOT animate letters or generate moving on-screen text; animate only the crystal water crown rippling in slow motion, mint leaves floating with micro-droplets, an emerald green drop falling from the pipette, and sunlight gleaming on the symbolic logos. BACKGROUND MUSIC: bright, refreshing acoustic guitar and soft marimba melody ducked under the voice, layered with crisp crystal water splash SFX. ' +
-      VOICE_PROFILES_LIBRARY[2].descriptionEn +
-      ', speaking in Spanish: "¿Sientes pesadez estomacal o falta de energía por las mañanas? La Clorofila Líquida con Menta desintoxica tu cuerpo, desinflama tu abdomen y oxigena tus células aportando frescura total. Solo diluye veinte gotas en un vaso de agua cada mañana y siente la ligereza."',
+            title: 'Energía Matutina Pura',
+            shortDesc: 'Aumenta la vitalidad sin cafeína ni taquicardia.',
+            iconName: 'zap'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Clorofila Líquida + Menta Detox": en el centro destaca el producto posado sobre piedra plana de río emergiendo de un espejo de agua con reflejos cáusticos. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Clorofila Líquida + Menta Detox": centered product resting on piedra plana de río emergiendo de un espejo de agua con reflejos cáusticos. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Clorofila Líquida + Menta Detox" posado sobre piedra plana de río emergiendo de un espejo de agua con reflejos cáusticos, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Clorofila Líquida + Menta Detox" resting on piedra plana de río emergiendo de un espejo de agua con reflejos cáusticos, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Clorofila Líquida + Menta Detox" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Buscas oxigenación celular, aliento fresco y detox? Prueba Clorofila Líquida + Menta Detox. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Clorofila Líquida + Menta Detox" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Buscas oxigenación celular, aliento fresco y detox? Prueba Clorofila Líquida + Menta Detox. Fórmula natural de máxima potencia para tu bienestar."',
     flowScenes: [
       {
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
-        title: 'Escena 1 (Todo-en-Uno): Splash de Agua en 120fps + Música + Voz Fija',
-        promptEs:
-          'Plano macro fijo con el frasco gotero de Clorofila y su etiqueta 100% inmóviles en el centro (PROHIBIDO animar letras o generar textos móviles; en cámara superlenta de 120fps se anima únicamente la corona de agua cristalina salpicando alrededor de la base, las hojas de menta fresca flotando y el brillo sobre el logo de hoja verde). Música de fondo: colocar melodía alegre y fresca de guitarra acústica luminosa con sonido cristalino de salpicadura de agua pura bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEs +
-          ', diciendo: "¿Sientes pesadez estomacal o falta de energía al empezar el día?"',
-        promptEn:
-          'Static macro shot with the Chlorophyll dropper bottle and its label 100% still in the center (FORBIDDEN to animate letters or generate moving text; in 120fps super slow motion, animate only the crystal water crown splashing around the base, fresh mint leaves floating, and the light gleam on the green leaf logo). Background music: bright, refreshing acoustic guitar melody with crisp crystal water splash SFX under the voice. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEn +
-          ', speaking in Spanish: "¿Sientes pesadez estomacal o falta de energía al empezar el día?"',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Clorofila Líquida + Menta Detox" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Clorofila Líquida + Menta Detox". Container remains static. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
-        title: 'Escena 2 (Todo-en-Uno): Gota Esmeralda y Logos Detox + Misma Voz + Música',
-        promptEs:
-          'Acercamiento suave hacia la pipeta de cristal sobre el frasco 100% estático (PROHIBIDO animar o deformar letras; animar únicamente una gota verde esmeralda traslúcida desprendiéndose de la pipeta en cámara lenta y un destello de luz sobre los logos simbólicos de gota purificadora y hoja digestiva). Música de fondo: continúa la guitarra acústica fresca y marimba suave con el sonido de una gota cristalina bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEs +
-          ', diciendo: "Nuestra Clorofila Líquida desintoxica tu organismo profundamente y desinflama tu abdomen de forma natural."',
-        promptEn:
-          'Smooth push-in toward the glass pipette above the 100% static bottle (FORBIDDEN to animate or warp letters; animate only a translucent emerald green drop detaching from the pipette in slow motion and a light gleam across the purifying drop and digestive leaf symbolic logos). Background music: continuous fresh acoustic guitar and soft marimba with a crystal water drop SFX under the voice. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEn +
-          ', speaking in Spanish: "Nuestra Clorofila Líquida desintoxica tu organismo profundamente y desinflama tu abdomen de forma natural."',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Oxigenación Celular y Aliento Fresco Natural. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Oxigenación Celular y Aliento Fresco Natural desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Oxigenación Celular. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Oxigenación Celular y Aliento Fresco Natural desde las primeras tomas."'
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
-        title: 'Escena 3 (Todo-en-Uno): Hojas de Menta y Logos de Oxígeno + Misma Voz + Música',
-        promptEs:
-          'Órbita ligera de 10 grados manteniendo el gotero firme y sin animar letras (animar únicamente las microgotas de rocío resbalando por las hojas frescas de menta y matcha junto al brillo en los logos simbólicos de frescura y oxigenación celular). Música de fondo: continúa la melodía acústica refrescante y luminosa bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEs +
-          ', diciendo: "Enriquecida con menta orgánica, oxigena tus células, combate el mal aliento y te llena de vitalidad."',
-        promptEn:
-          'Slight 10-degree orbit keeping the dropper bottle steady without animating letters (animate only the micro-droplets sliding down the fresh mint and matcha leaves along with the gleam on the freshness and cellular oxygenation symbolic logos). Background music: continuous bright, refreshing acoustic melody under the voice. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEn +
-          ', speaking in Spanish: "Enriquecida con menta orgánica, oxigena tus células, combate el mal aliento y te llena de vitalidad."',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Elimina Toxinas Diarias."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Elimina Toxinas Diarias."'
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
-        title: 'Escena 4 (Todo-en-Uno): Cierre Refrescante y Dosis + Misma Voz + Música',
-        promptEs:
-          'Plano heroico final luminoso del frasco gotero de Clorofila completamente fijo con sus logos simbólicos reluciendo bajo el sol matutino y suaves ondas de agua en la base (PROHIBIDO animar letras o textos). Música de fondo: acorde final alegre, limpio y refrescante de guitarra acústica bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEs +
-          ', diciendo: "Solo diluye veinte gotas en tu vaso de agua cada mañana. ¡Pide tu Clorofila Detox hoy!"',
-        promptEn:
-          'Luminous final hero shot of the completely static Chlorophyll dropper bottle with its symbolic logos gleaming in morning sunlight and gentle water ripples at the base (FORBIDDEN to animate letters or text). Background music: bright, clean resolving acoustic guitar chord under the voice. ' +
-          VOICE_PROFILES_LIBRARY[2].descriptionEn +
-          ', speaking in Spanish: "Solo diluye veinte gotas en tu vaso de agua cada mañana. ¡Pide tu Clorofila Detox hoy!"',
-      },
-    ],
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
   },
   {
     id: 'serum-botanico',
-    name: 'Sérum Botánico Rosa Mosqueta + Oro',
-    brand: 'Lumina Botanics',
-    category: 'Regeneración Facial y Antiedad',
-    categoryId: 'cosmetica',
-    badgeText: 'Prompt Todo-en-Uno · Cosmética Spa + Voz + Música',
+    name: 'Sérum Rosa Mosqueta & Oro 24K',
+    brand: 'Aura Botánica Skincare',
+    category: 'Cosmética Facial y Regeneración Celular',
+    categoryId: 'goteros',
+    badgeText: 'Gotero de Lujo · Mármol Calacatta',
     aspectRatio: '1:1 Estudio',
     image: '/images/serum-botanico.jpg',
-    headline: 'REJUVENECE, HIDRATA YATENÚA MANCHAS EN TU PIEL',
-    summary:
-      'Cada prompt incluye en un solo bloque la iluminación de hora dorada, los pétalos de rosa cayendo en slow-motion, la regla de no animar letras (solo logos florales en oro), la música de spa con piano y arpa y la misma voz de la Dra. Sofía.',
-    voiceProfileName: 'Dra. Sofía (Mujer 32 años · Especialista en Cuidado Botánico)',
-    backgroundMusicStyle: 'Ambient Spa de Lujo con Piano Delicado y Arpa',
+    headline: 'REJUVENECE, HIDRATA Y DEVUELVE EL BRILLO NATURAL',
+    summary: 'Frasco gotero de vidrio esmerilado translúcido con pipeta de oro sobre mármol Calacatta blanco con gota suspendida a punto de caer.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[2].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
     benefits: [
       {
-        title: 'Atenúa Manchas y Cicatrices',
-        shortDesc: 'Unifica el tono del rostro y regenera la piel dañada por el sol o el acné.',
-        iconName: 'sun',
+            title: 'Efecto Tensor y Firmeza',
+            shortDesc: 'Estimula la producción de colágeno y elastina natural.',
+            iconName: 'sparkles'
       },
       {
-        title: 'Suaviza Líneas de Expresión',
-        shortDesc: 'Estimula el colágeno natural reduciendo arrugas finas en ojos y frente.',
-        iconName: 'sparkles',
+            title: 'Atenúa Manchas y Líneas',
+            shortDesc: 'Rosa mosqueta prensada en frío con ácido retinoico natural.',
+            iconName: 'eye'
       },
       {
-        title: 'Hidratación Profunda 24h',
-        shortDesc: 'Textura sedosa de rápida absorción que no deja sensación grasa.',
-        iconName: 'droplets',
+            title: 'Hidratación con Tacto Seco',
+            shortDesc: 'Nutre profundamente la barrera cutánea sin sensación grasa.',
+            iconName: 'droplets'
       },
       {
-        title: 'Efecto Glow Natural',
-        shortDesc: 'Devuelve la luminosidad inmediata gracias a sus antioxidantes botánicos.',
-        iconName: 'heart',
-      },
-    ],
-    geminiPromptEs:
-      'Fotografía editorial de alta cosmética natural todo-en-uno: en el centro, un frasco gotero de vidrio esmerilado ámbar traslúcido que deja ver un sérum dorado luminoso con cuello metálico en oro rosa, posado sobre piedra travertino beige rodeada de musgo verde suave, pétalos de rosa mosqueta fresca y pequeñas flores de manzanilla. El frasco lleva únicamente un logo floral minimalista estampado en oro y 4 medallones circulares con iconos simbólicos grabados (sol antimanchas, destello antiedad, gota hidratante y corazón luminoso) sin letras pequeñas que se deformen. Luz cálida de atardecer, lente 85mm f/1.4, 8k.',
-    geminiPromptEn:
-      'All-in-one luxury natural skincare editorial photography: centered frosted translucent amber glass dropper bottle glowing with golden botanical serum and rose-gold metallic collar, resting on beige travertine stone surrounded by soft green moss, fresh rosehip petals, and chamomile flowers. The bottle features ONLY a minimalist gold-foil floral logo and 4 circular medallions with engraved symbolic icons (anti-spot sun, anti-aging sparkle, hydration drop, glowing heart) with no small letters that could warp. Warm golden hour sunlight, 85mm f/1.4 lens, 8k.',
-    cleanHeroPromptEs:
-      'Fotografía editorial de cosmética orgánica: frasco gotero de vidrio esmerilado con sérum dorado y logo floral en oro (sin letras pequeñas ni textos externos) sobre piedra travertino rodeado de musgo verde, pétalos de rosa mosqueta y flores de manzanilla bajo luz de atardecer, lente 85mm f/1.4, 8k.',
-    cleanHeroPromptEn:
-      'Organic skincare editorial photography: frosted glass dropper bottle with golden serum and gold floral logo (no small letters or external text) on travertine stone surrounded by green moss, rosehip petals, and chamomile flowers in golden hour light, 85mm f/1.4 lens, 8k.',
-    masterFlowPromptEs:
-      'Video comercial de alta cosmética botánica en cámara lenta: el frasco esmerilado de Sérum Rosa Mosqueta + Oro permanece 100% fijo y estático sobre la piedra travertino. REGLA ESTRICTA: NO animar letras ni generar textos móviles en pantalla; animar únicamente los pétalos de rosa cayendo suavemente en slow-motion, una gota de aceite dorado brillando en la punta de la pipeta y el reflejo de luz cálida sobre el logo floral y los 4 medallones simbólicos en oro rosa. MÚSICA DE FONDO: colocar música instrumental relajante de spa de lujo con piano delicado y notas suaves de arpa a volumen moderado bajo la voz. ' +
-      VOICE_PROFILES_LIBRARY[0].descriptionEs +
-      ', diciendo: "Devuélvele a tu rostro la luminosidad y juventud que merece. Nuestro Sérum de Rosa Mosqueta atenúa manchas, suaviza líneas de expresión e hidrata tu piel profundamente durante veinticuatro horas. Aplica tres gotas cada noche y despierta con una piel radiante."',
-    masterFlowPromptEn:
-      'Luxury botanical skincare slow-motion commercial video: the frosted Rosehip + Gold Serum bottle remains 100% fixed and static on the travertine stone. STRICT RULE: Do NOT animate letters or generate moving on-screen text; animate only the rose petals falling gently in slow motion, a golden oil drop glowing at the pipette tip, and the warm light reflection across the floral logo and the 4 rose-gold symbolic medallions. BACKGROUND MUSIC: soothing luxury spa instrumental with delicate piano and soft harp notes ducked under the voice. ' +
-      VOICE_PROFILES_LIBRARY[0].descriptionEn +
-      ', speaking in Spanish: "Devuélvele a tu rostro la luminosidad y juventud que merece. Nuestro Sérum de Rosa Mosqueta atenúa manchas, suaviza líneas de expresión e hidrata tu piel profundamente durante veinticuatro horas. Aplica tres gotas cada noche y despierta con una piel radiante."',
+            title: 'Luminosidad con Oro 24K',
+            shortDesc: 'Partículas de oro micronizadas para un resplandor inmediato.',
+            iconName: 'sun'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Sérum Rosa Mosqueta & Oro 24K": en el centro destaca el producto posado sobre losa pulida de mármol blanco Calacatta con vetas doradas en tocador de lujo. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Sérum Rosa Mosqueta & Oro 24K": centered product resting on losa pulida de mármol blanco Calacatta con vetas doradas en tocador de lujo. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Sérum Rosa Mosqueta & Oro 24K" posado sobre losa pulida de mármol blanco Calacatta con vetas doradas en tocador de lujo, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Sérum Rosa Mosqueta & Oro 24K" resting on losa pulida de mármol blanco Calacatta con vetas doradas en tocador de lujo, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Sérum Rosa Mosqueta & Oro 24K" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Buscas rejuvenece, hidrata y devuelve el brillo natural? Prueba Sérum Rosa Mosqueta & Oro 24K. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Sérum Rosa Mosqueta & Oro 24K" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Buscas rejuvenece, hidrata y devuelve el brillo natural? Prueba Sérum Rosa Mosqueta & Oro 24K. Fórmula natural de máxima potencia para tu bienestar."',
     flowScenes: [
       {
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
-        title: 'Escena 1 (Todo-en-Uno): Pétalos en Slow-Motion + Música Spa + Voz Fija',
-        promptEs:
-          'Acercamiento Dolly In muy suave hacia el frasco de Sérum Rosa Mosqueta que permanece 100% estático sobre la piedra travertino (PROHIBIDO animar letras o generar textos móviles; animar únicamente dos pétalos de rosa mosqueta cayendo en cámara lenta, las partículas doradas de sol y el brillo sobre el logo floral en oro). Música de fondo: colocar música instrumental elegante de spa con piano delicado y notas suaves de arpa bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "Devuélvele a tu rostro la luminosidad, firmeza y juventud que merece con Rosa Mosqueta pura."',
-        promptEn:
-          'Very gentle Dolly In push toward the Rosehip Serum bottle remaining 100% static on the travertine stone (FORBIDDEN to animate letters or generate moving text; animate only two rosehip petals falling in slow motion, golden dust motes, and the light gleam on the gold floral logo). Background music: luxury spa instrumental with delicate piano and soft harp notes under the voice. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "Devuélvele a tu rostro la luminosidad, firmeza y juventud que merece con Rosa Mosqueta pura."',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Sérum Rosa Mosqueta & Oro 24K" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Sérum Rosa Mosqueta & Oro 24K". Container remains static. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
-        title: 'Escena 2 (Todo-en-Uno): Gota de Oro y Logos Antiedad + Misma Voz + Música',
-        promptEs:
-          'Plano macro cercano de la pipeta de cristal sobre el frasco 100% estático (PROHIBIDO animar o deformar letras; animar únicamente una gota de aceite dorado traslúcido brillando en la punta del gotero y un barrido de luz cálida sobre los logos simbólicos de sol antimanchas y destello antiedad). Música de fondo: continúa el piano delicado de spa y arpa suave con un destello cristalino bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "Su aceite prensado en frío atenúa manchas, regenera la piel y suaviza las líneas de expresión."',
-        promptEn:
-          'Macro close-up of the glass pipette above the 100% static bottle (FORBIDDEN to animate or warp letters; animate only a translucent golden oil drop glowing at the dropper tip and a warm light sweep across the anti-spot sun and anti-aging sparkle symbolic logos). Background music: continuous delicate spa piano and soft harp with a subtle crystal chime under the voice. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "Su aceite prensado en frío atenúa manchas, regenera la piel y suaviza las líneas de expresión."',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Efecto Tensor y Firmeza y Atenúa Manchas y Líneas. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Efecto Tensor y Firmeza y Atenúa Manchas y Líneas desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Efecto Tensor y Firmeza. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Efecto Tensor y Firmeza y Atenúa Manchas y Líneas desde las primeras tomas."'
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
-        title: 'Escena 3 (Todo-en-Uno): Flores Botánicas y Logos de Hidratación + Misma Voz + Música',
-        promptEs:
-          'Órbita suave de 10 grados manteniendo el frasco esmerilado inmóvil y sin animar letras (animar únicamente la brisa suave sobre las flores de manzanilla y el musgo húmedo junto al destello dorado sobre los logos simbólicos de hidratación 24h y efecto glow). Música de fondo: continúa la melodía envolvente de piano y cuerdas cálidas de spa bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "Con vitamina E y extractos botánicos que brindan hidratación profunda por veinticuatro horas sin sensación grasa."',
-        promptEn:
-          'Gentle 10-degree orbit keeping the frosted bottle still without animating letters (animate only the soft breeze across the chamomile flowers and wet moss along with the golden gleam on the 24h hydration and glow symbolic logos). Background music: continuous enveloping spa piano and warm strings under the voice. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "Con vitamina E y extractos botánicos que brindan hidratación profunda por veinticuatro horas sin sensación grasa."',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Hidratación con Tacto Seco."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Hidratación con Tacto Seco."'
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
-        title: 'Escena 4 (Todo-en-Uno): Cierre Nocturno y Aplicación + Misma Voz + Música',
-        promptEs:
-          'Plano heroico final del frasco de Sérum Rosa Mosqueta completamente estático con su logo floral y sus 4 medallones simbólicos brillando bajo un rayo cálido de atardecer (PROHIBIDO animar letras o textos). Música de fondo: acorde final sereno, elegante y luminoso de piano y arpa bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEs +
-          ', diciendo: "Aplica tres gotas cada noche antes de dormir y despierta con una piel radiante. ¡Pide el tuyo hoy!"',
-        promptEn:
-          'Final hero shot of the completely static Rosehip Serum bottle with its floral logo and 4 symbolic medallions gleaming under a warm sunset beam (FORBIDDEN to animate letters or text). Background music: serene, elegant resolving chord of piano and harp under the voice. ' +
-          VOICE_PROFILES_LIBRARY[0].descriptionEn +
-          ', speaking in Spanish: "Aplica tres gotas cada noche antes de dormir y despierta con una piel radiante. ¡Pide el tuyo hoy!"',
-      },
-    ],
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
   },
   {
     id: 'miel-propoleo',
-    name: 'Miel Cruda + Propóleo & Eucalipto',
-    brand: 'Colmena Real Orgánica',
-    category: 'Defensas, Garganta y Energía',
-    categoryId: 'apicultura',
-    badgeText: 'Prompt Todo-en-Uno · Miel en Vivo + Voz + Música',
+    name: 'Miel Cruda de Bosque con Propóleo & Jalea Real',
+    brand: 'Apicultura de Bosque',
+    category: 'Miel Pura, Defensas e Inmunidad',
+    categoryId: 'tarros',
+    badgeText: 'Tarro Hexagonal · Prado al Atardecer',
     aspectRatio: '1:1 Estudio',
     image: '/images/miel-propoleo.jpg',
-    headline: 'SUBE TUS DEFENSAS Y ALIVIA TU GARGANTA AL INSTANTE',
-    summary:
-      'Cada prompt integra en un solo texto el hilo de miel dorada cayendo en cámara lenta, el bloqueo de letras (animando solo el logo de la abeja dorada y la miel), la música acústica artesanal y la misma voz de Don Arturo.',
-    voiceProfileName: 'Don Arturo (Hombre 48 años · Maestro Apicultor y Tradición)',
-    backgroundMusicStyle: 'Guitarra Acústica Cálida Artesanal y Notas de Arpa',
+    headline: 'DEFENSAS INVIOLABLES Y ENERGÍA PURA DE LA COLMENA',
+    summary: 'Tarro de cristal hexagonal artesanal con miel dorada espesa sobre madera de cedro en un prado con espigas al atardecer y cuchara de madera.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[3].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
     benefits: [
       {
-        title: 'Sube las Defensas',
-        shortDesc: 'Rico en bioflavonoides de propóleo que refuerzan el sistema inmunológico.',
-        iconName: 'shield',
+            title: 'Defensa Antibacteriana',
+            shortDesc: 'El propóleo crea una barrera natural contra virus y bacterias.',
+            iconName: 'shield'
       },
       {
-        title: 'Alivia Garganta y Tos',
-        shortDesc: 'Suaviza la irritación de garganta y despeja las vías respiratorias con eucalipto.',
-        iconName: 'heart',
+            title: 'Suaviza la Garganta',
+            shortDesc: 'Alivio instantáneo de irritación, tos y carraspera.',
+            iconName: 'droplets'
       },
       {
-        title: 'Antibacteriano Natural',
-        shortDesc: 'Protege a toda la familia frente a cambios de clima y resfriados.',
-        iconName: 'award',
+            title: 'Energía Celular Completa',
+            shortDesc: 'La jalea real aporta vitaminas del complejo B y vitalidad.',
+            iconName: 'zap'
       },
       {
-        title: 'Energía 100% Pura',
-        shortDesc: 'Miel cruda sin azúcar añadida, llena de enzimas, polen y antioxidantes.',
-        iconName: 'sun',
-      },
-    ],
-    geminiPromptEs:
-      'Fotografía comercial artesanal todo-en-uno: en el centro, un tarro hexagonal de vidrio transparente lleno de miel dorada brillante con un trozo de panal real adentro y tapa cubierta con tela de yute atada con cordel rústico, sobre una mesa de madera de roble al sol de la mañana. Etiqueta de papel kraft crema únicamente con el logo dorado en relieve de una abeja real y 4 medallones con iconos simbólicos (escudo de defensas, hoja de eucalipto respiratoria, panal antibacteriano y sol de energía) sin letras pequeñas que se deformen. Al lado, una cuchara mielera de madera deja caer un hilo espeso de miel dorada a contraluz junto a hojas de eucalipto y gránulos de polen. Lente 85mm f/1.8, 8k.',
-    geminiPromptEn:
-      'All-in-one artisanal commercial photography: centered hexagonal clear glass jar filled with glowing golden honey containing a real honeycomb chunk inside, topped with a burlap fabric cover tied with rustic twine on an oak wood table in morning sunlight. Cream kraft paper label featuring ONLY an embossed gold royal bee logo and 4 medallions with symbolic icons (immunity shield, respiratory eucalyptus leaf, antibacterial honeycomb, energy sun) with no small text that could warp. Beside the jar, a wooden honey dipper pours a thick ribbon of golden honey backlit by warm sun next to eucalyptus leaves and bee pollen granules. 85mm f/1.8 lens, 8k.',
-    cleanHeroPromptEs:
-      'Fotografía comercial artesanal del tarro hexagonal de vidrio con miel dorada, panal real adentro, tapa de yute y etiqueta kraft con logo dorado de abeja (sin letras pequeñas ni textos externos) sobre mesa de roble al sol matutino con miel cayendo de una cuchara de madera y hojas de eucalipto, lente 85mm f/1.8, 8k.',
-    cleanHeroPromptEn:
-      'Artisanal commercial photography of the hexagonal glass jar with golden honey, real honeycomb inside, burlap lid, and kraft label with gold bee logo (no small letters or external text) on a morning sunlit oak table with honey dripping from a wooden dipper and eucalyptus leaves, 85mm f/1.8 lens, 8k.',
-    masterFlowPromptEs:
-      'Video comercial artesanal en cámara lenta: el tarro hexagonal de Miel Cruda + Propóleo y su etiqueta con el logo de la abeja dorada permanecen 100% firmes y estáticos sobre la mesa de madera. REGLA ESTRICTA: NO animar letras ni generar textos móviles en pantalla; animar únicamente el hilo continuo y espeso de miel dorada cayendo en cámara lenta desde la cuchara de madera formando espirales luminosas a contraluz, el polen dorado flotando y el brillo solar sobre el logo de la abeja y los 4 iconos simbólicos. MÚSICA DE FONDO: colocar música acústica cálida con guitarra española suave y notas ligeras de arpa a volumen moderado bajo la voz. ' +
-      VOICE_PROFILES_LIBRARY[3].descriptionEs +
-      ', diciendo: "Protege tus defensas y alivia tu garganta con el tesoro más puro de la colmena. Nuestra Miel Cruda con Propóleo y Eucalipto actúa como un escudo antibacteriano natural que suaviza tu garganta al instante y fortalece tu sistema inmune. Toma una cucharadita cada mañana para cuidar a toda tu familia."',
-    masterFlowPromptEn:
-      'Artisanal slow-motion commercial video: the hexagonal Raw Honey + Propolis jar and its label with the gold bee logo remain 100% steady and static on the wooden table. STRICT RULE: Do NOT animate letters or generate moving on-screen text; animate only the thick continuous ribbon of golden honey pouring in slow motion from the wooden dipper forming glowing coils in backlight, golden pollen floating, and sunlight gleaming on the bee logo and the 4 symbolic icons. BACKGROUND MUSIC: warm artisanal acoustic guitar and light harp notes ducked softly under the voice. ' +
-      VOICE_PROFILES_LIBRARY[3].descriptionEn +
-      ', speaking in Spanish: "Protege tus defensas y alivia tu garganta con el tesoro más puro de la colmena. Nuestra Miel Cruda con Propóleo y Eucalipto actúa como un escudo antibacteriano natural que suaviza tu garganta al instante y fortalece tu sistema inmune. Toma una cucharadita cada mañana para cuidar a toda tu familia."',
+            title: '100% Cruda y Pura',
+            shortDesc: 'Cosechada artesanalmente sin calentar ni pasteurizar.',
+            iconName: 'award'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Miel Cruda de Bosque con Propóleo & Jalea Real": en el centro destaca el producto posado sobre mesa de cedro natural en un prado al atardecer rodeado de espigas y flores silvestres. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Miel Cruda de Bosque con Propóleo & Jalea Real": centered product resting on mesa de cedro natural en un prado al atardecer rodeado de espigas y flores silvestres. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Miel Cruda de Bosque con Propóleo & Jalea Real" posado sobre mesa de cedro natural en un prado al atardecer rodeado de espigas y flores silvestres, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Miel Cruda de Bosque con Propóleo & Jalea Real" resting on mesa de cedro natural en un prado al atardecer rodeado de espigas y flores silvestres, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Miel Cruda de Bosque con Propóleo & Jalea Real" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "¿Buscas defensas inviolables y energía pura de la colmena? Prueba Miel Cruda de Bosque con Propóleo & Jalea Real. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Miel Cruda de Bosque con Propóleo & Jalea Real" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "¿Buscas defensas inviolables y energía pura de la colmena? Prueba Miel Cruda de Bosque con Propóleo & Jalea Real. Fórmula natural de máxima potencia para tu bienestar."',
     flowScenes: [
       {
         sceneNumber: 1,
         timeRange: '00:00 – 00:04s',
-        title: 'Escena 1 (Todo-en-Uno): Miel Cayendo en Cámara Lenta + Música + Voz Fija',
-        promptEs:
-          'Plano macro fijo con el tarro hexagonal de Miel + Propóleo 100% inmóvil y estático en el centro (PROHIBIDO animar letras o generar textos móviles; animar únicamente el hilo espeso de miel dorada cayendo en cámara lenta desde la cuchara mielera de madera a contraluz y el brillo cálido sobre el logo dorado de la abeja). Música de fondo: colocar música acústica cálida con guitarra española suave y ambiente matutino de campo bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEs +
-          ', diciendo: "Protege tus defensas y alivia tu garganta con el tesoro más puro de la colmena."',
-        promptEn:
-          'Static macro shot with the hexagonal Honey + Propolis jar 100% still and static in the center (FORBIDDEN to animate letters or generate moving text; animate only the thick ribbon of golden honey pouring in slow motion from the wooden dipper in backlight and the warm gleam on the gold bee logo). Background music: warm acoustic guitar with gentle morning countryside ambiance under the voice. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEn +
-          ', speaking in Spanish: "Protege tus defensas y alivia tu garganta con el tesoro más puro de la colmena."',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Miel Cruda de Bosque con Propóleo & Jalea Real" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Miel Cruda de Bosque con Propóleo & Jalea Real". Container remains static. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
       },
       {
         sceneNumber: 2,
         timeRange: '00:04 – 00:08s',
-        title: 'Escena 2 (Todo-en-Uno): Logos de Defensas y Garganta + Misma Voz + Música',
-        promptEs:
-          'Acercamiento lento hacia el tarro 100% estático sin animar ni deformar ninguna letra (animar únicamente un rayo de sol matutino haciendo brillar el panal de cera real dentro del frasco y los logos simbólicos de escudo de defensas y hoja de eucalipto). Música de fondo: continúa la guitarra acústica cálida y reconfortante bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEs +
-          ', diciendo: "El propóleo concentrado actúa como un escudo antibacteriano natural mientras la miel con eucalipto suaviza tu garganta al instante."',
-        promptEn:
-          'Slow push-in toward the 100% static jar without animating or warping any letters (animate only a morning sunbeam making the real honeycomb inside the jar and the immunity shield and eucalyptus leaf symbolic logos gleam). Background music: continuous comforting warm acoustic guitar under the voice. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEn +
-          ', speaking in Spanish: "El propóleo concentrado actúa como un escudo antibacteriano natural mientras la miel con eucalipto suaviza tu garganta al instante."',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Defensa Antibacteriana y Suaviza la Garganta. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "Defensa Antibacteriana y Suaviza la Garganta desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Defensa Antibacteriana. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "Defensa Antibacteriana y Suaviza la Garganta desde las primeras tomas."'
       },
       {
         sceneNumber: 3,
         timeRange: '00:08 – 00:12s',
-        title: 'Escena 3 (Todo-en-Uno): Polen, Panal y Logos de Energía + Misma Voz + Música',
-        promptEs:
-          'Paneo suave sobre las hojas frescas de eucalipto, los gránulos de polen dorado y el trozo de panal junto al tarro completamente fijo (PROHIBIDO animar letras; animar únicamente el brillo sobre los logos simbólicos de pureza y energía solar y partículas de polen dorado en el aire). Música de fondo: continúa la guitarra acústica orgánica con notas suaves de arpa bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEs +
-          ', diciendo: "Cien por ciento cruda y orgánica, rica en enzimas, polen y antioxidantes que fortalecen tu sistema inmune."',
-        promptEn:
-          'Smooth pan across the fresh eucalyptus leaves, golden bee pollen granules, and honeycomb chunk next to the completely static jar (FORBIDDEN to animate letters; animate only the gleam on the purity and solar energy symbolic logos and golden pollen particles in the air). Background music: continuous organic acoustic guitar with soft harp notes under the voice. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEn +
-          ', speaking in Spanish: "Cien por ciento cruda y orgánica, rica en enzimas, polen y antioxidantes que fortalecen tu sistema inmune."',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Energía Celular Completa."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Energía Celular Completa."'
       },
       {
         sceneNumber: 4,
         timeRange: '00:12 – 00:16s',
-        title: 'Escena 4 (Todo-en-Uno): Cierre Familiar y Dosis + Misma Voz + Música',
-        promptEs:
-          'Plano heroico final luminoso del tarro de Miel + Propóleo totalmente estático con el hilo dorado de miel brillando a contraluz y el logo de la abeja reluciendo (PROHIBIDO animar letras o textos). Música de fondo: acorde final cálido, armónico y familiar de guitarra acústica bajo la voz. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEs +
-          ', diciendo: "Toma una cucharadita cada mañana para cuidar a quienes más quieres. ¡Pide tu Miel con Propóleo hoy!"',
-        promptEn:
-          'Luminous final hero shot of the completely static Honey + Propolis jar with the golden honey ribbon glowing in backlight and the bee logo gleaming (FORBIDDEN to animate letters or text). Background music: warm, harmonious family-friendly acoustic guitar final chord under the voice. ' +
-          VOICE_PROFILES_LIBRARY[3].descriptionEn +
-          ', speaking in Spanish: "Toma una cucharadita cada mañana para cuidar a quienes más quieres. ¡Pide tu Miel con Propóleo hoy!"',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'propoleo-spray',
+    name: 'Spray Propóleo Puro Garganta + Equinácea',
+    brand: 'Apicultura de Bosque',
+    category: 'Vías Respiratorias y Garganta',
+    categoryId: 'sprays',
+    badgeText: 'Spray Atomizador · Botica Tradicional',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/pkg-spray-box.jpg',
+    headline: 'ALIVIO INMEDIATO Y DEFENSA NATURAL PARA TU VOZ',
+    summary: 'Frasco ámbar con boquilla atomizadora y nube de bruma en suspensión iluminada a contraluz sobre mostrador de roble de botica con lavanda.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[1].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Alivio Rápido de Garganta',
+            shortDesc: 'Calma la irritación y resequedad con atomización directa.',
+            iconName: 'droplets'
       },
-    ],
+      {
+            title: 'Acción Antiséptica Botánica',
+            shortDesc: 'El propóleo puro combate bacterias en la cavidad bucal.',
+            iconName: 'shield'
+      },
+      {
+            title: 'Frescura con Eucalipto y Menta',
+            shortDesc: 'Despeja las vías respiratorias superiores al instante.',
+            iconName: 'leaf'
+      },
+      {
+            title: 'Voz Clara sin Carraspera',
+            shortDesc: 'Ideal para conferencistas, cantantes y uso en cambios de clima.',
+            iconName: 'sparkles'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Spray Propóleo Puro Garganta + Equinácea": en el centro destaca el producto posado sobre mostrador de roble oscuro en botica tradicional con ramilletes de lavanda seca. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Spray Propóleo Puro Garganta + Equinácea": centered product resting on mostrador de roble oscuro en botica tradicional con ramilletes de lavanda seca. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Spray Propóleo Puro Garganta + Equinácea" posado sobre mostrador de roble oscuro en botica tradicional con ramilletes de lavanda seca, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Spray Propóleo Puro Garganta + Equinácea" resting on mostrador de roble oscuro en botica tradicional con ramilletes de lavanda seca, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Spray Propóleo Puro Garganta + Equinácea" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Buscas alivio inmediato y defensa natural para tu voz? Prueba Spray Propóleo Puro Garganta + Equinácea. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Spray Propóleo Puro Garganta + Equinácea" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Buscas alivio inmediato y defensa natural para tu voz? Prueba Spray Propóleo Puro Garganta + Equinácea. Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Spray Propóleo Puro Garganta + Equinácea" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Spray Propóleo Puro Garganta + Equinácea". Container remains static. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Alivio Rápido de Garganta y Acción Antiséptica Botánica. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Alivio Rápido de Garganta y Acción Antiséptica Botánica desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Alivio Rápido de Garganta. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Alivio Rápido de Garganta y Acción Antiséptica Botánica desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Frescura con Eucalipto y Menta."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Frescura con Eucalipto y Menta."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'proteina-vegana-tub',
+    name: 'Proteína Vegana Vainilla 1kg (Tub)',
+    brand: 'Pure Plant Lab',
+    category: 'Nutrición Deportiva y Masa Magra',
+    categoryId: 'polvos',
+    badgeText: 'Bote Cilíndrico 1kg · Cocina Nórdica',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/pkg-supplement-jar.jpg',
+    headline: 'MASA MUSCULAR MAGRA, FÁCIL DIGESTIÓN Y SACIEDAD',
+    summary: 'Bote cilíndrico grande negro mate con etiqueta beige y scoop dosificador con polvo de vainilla sobre encimera de roble claro y mármol blanco.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[1].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: '25g de Proteína por Porción',
+            shortDesc: 'Aislado de guisante y sacha inchi con perfil completo de aminoácidos.',
+            iconName: 'zap'
+      },
+      {
+            title: 'Cero Inflamación y sin Lácteos',
+            shortDesc: 'Digestión ligera y sin pesadez estomacal post-entreno.',
+            iconName: 'shield'
+      },
+      {
+            title: 'BCAA para Recuperación',
+            shortDesc: 'Acelera la reconstrucción de fibras musculares sin dolor.',
+            iconName: 'activity'
+      },
+      {
+            title: 'Sabor Vainilla Natural',
+            shortDesc: 'Endulzada con extracto de hoja de stevia sin azúcares añadidos.',
+            iconName: 'leaf'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Proteína Vegana Vainilla 1kg (Tub)": en el centro destaca el producto posado sobre encimera limpia de roble claro y mármol blanco mate en cocina nórdica. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Proteína Vegana Vainilla 1kg (Tub)": centered product resting on encimera limpia de roble claro y mármol blanco mate en cocina nórdica. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Proteína Vegana Vainilla 1kg (Tub)" posado sobre encimera limpia de roble claro y mármol blanco mate en cocina nórdica, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Proteína Vegana Vainilla 1kg (Tub)" resting on encimera limpia de roble claro y mármol blanco mate en cocina nórdica, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Proteína Vegana Vainilla 1kg (Tub)" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Buscas masa muscular magra, fácil digestión y saciedad? Prueba Proteína Vegana Vainilla 1kg (Tub). Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Proteína Vegana Vainilla 1kg (Tub)" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Buscas masa muscular magra, fácil digestión y saciedad? Prueba Proteína Vegana Vainilla 1kg (Tub). Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Proteína Vegana Vainilla 1kg (Tub)" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Proteína Vegana Vainilla 1kg (Tub)". Container remains static. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando 25g de Proteína por Porción y Cero Inflamación y sin Lácteos. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "25g de Proteína por Porción y Cero Inflamación y sin Lácteos desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting 25g de Proteína por Porción. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "25g de Proteína por Porción y Cero Inflamación y sin Lácteos desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con BCAA para Recuperación."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con BCAA para Recuperación."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[1].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[1].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'matcha-ceremonial-uji',
+    name: 'Té Matcha Ceremonial Grado Uji (Lata Hermética)',
+    brand: 'Kyoto Zen Harvest',
+    category: 'Superfoods, Energía y Enfoque Mental',
+    categoryId: 'polvos',
+    badgeText: 'Bodegón Flat Lay 90° · Bambú Zen',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/lens-50mm-natural.jpg',
+    headline: 'ENERGÍA SOSTENIDA DE 6 HORAS Y ENFOQUE MENTAL',
+    summary: 'Vista cenital 90° de lata metálica verde bosque hermética con polvo verde esmeralda, cuchara de bambú chashaku y batidor chasen sobre listones de bambú.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[2].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'L-Teanina para Enfoque Calmado',
+            shortDesc: 'Concentración profunda sin el nerviosismo del café.',
+            iconName: 'sparkles'
+      },
+      {
+            title: '137x Más Antioxidantes',
+            shortDesc: 'Carga masiva de EGCG para neutralizar el envejecimiento.',
+            iconName: 'shield'
+      },
+      {
+            title: 'Metabolismo Activo',
+            shortDesc: 'Favorece la quema de calorías de forma termogénica.',
+            iconName: 'flame'
+      },
+      {
+            title: 'Grado Ceremonial de Uji',
+            shortDesc: 'Primera cosecha de primavera molida lentamente en piedra.',
+            iconName: 'leaf'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Té Matcha Ceremonial Grado Uji (Lata Hermética)": en el centro destaca el producto posado sobre superficie de listones de bambú claro natural junto a lino crudo y ramas verdes. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Té Matcha Ceremonial Grado Uji (Lata Hermética)": centered product resting on superficie de listones de bambú claro natural junto a lino crudo y ramas verdes. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Té Matcha Ceremonial Grado Uji (Lata Hermética)" posado sobre superficie de listones de bambú claro natural junto a lino crudo y ramas verdes, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Té Matcha Ceremonial Grado Uji (Lata Hermética)" resting on superficie de listones de bambú claro natural junto a lino crudo y ramas verdes, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Té Matcha Ceremonial Grado Uji (Lata Hermética)" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Buscas energía sostenida de 6 horas y enfoque mental? Prueba Té Matcha Ceremonial Grado Uji (Lata Hermética). Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Té Matcha Ceremonial Grado Uji (Lata Hermética)" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Buscas energía sostenida de 6 horas y enfoque mental? Prueba Té Matcha Ceremonial Grado Uji (Lata Hermética). Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Té Matcha Ceremonial Grado Uji (Lata Hermética)" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Té Matcha Ceremonial Grado Uji (Lata Hermética)". Container remains static. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando L-Teanina para Enfoque Calmado y 137x Más Antioxidantes. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "L-Teanina para Enfoque Calmado y 137x Más Antioxidantes desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting L-Teanina para Enfoque Calmado. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "L-Teanina para Enfoque Calmado y 137x Más Antioxidantes desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Metabolismo Activo."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Metabolismo Activo."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'magnesio-spray-transdermico',
+    name: 'Aceite de Magnesio Transdérmico Zechstein (Spray)',
+    brand: 'Mineral Balance Labs',
+    category: 'Relajación Muscular y Sueño Profundo',
+    categoryId: 'sprays',
+    badgeText: 'Botella Spray Esmerilada · Travertino Spa',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/WhatsApp Image 2026-10-28 at 9.09.39 AM(1).jpeg',
+    headline: 'RELAJACIÓN MUSCULAR PROFUNDA Y SUEÑO REPARADOR',
+    summary: 'Botella de vidrio esmerilado con boquilla spray blanca sobre podio arquitectónico de travertino beige con sombras de hojas de palmera proyectadas.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[0].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Absorción Cutánea Directa',
+            shortDesc: 'Llega a los músculos en minutos sin pasar por el estómago.',
+            iconName: 'droplets'
+      },
+      {
+            title: 'Cero Calambres y Tensión',
+            shortDesc: 'Relaja la musculatura tensa de piernas, cuello y hombros.',
+            iconName: 'zap'
+      },
+      {
+            title: 'Induce el Sueño Reparador',
+            shortDesc: 'Calma el sistema nervioso para un descanso profundo y continuo.',
+            iconName: 'sun'
+      },
+      {
+            title: '100% Puro del Mar Zechstein',
+            shortDesc: 'Cloruro de magnesio ancestral extraído a 2000m de profundidad.',
+            iconName: 'shield'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Aceite de Magnesio Transdérmico Zechstein (Spray)": en el centro destaca el producto posado sobre podio arquitectónico de piedra travertino beige con sombras sutiles de hojas. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Aceite de Magnesio Transdérmico Zechstein (Spray)": centered product resting on podio arquitectónico de piedra travertino beige con sombras sutiles de hojas. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Aceite de Magnesio Transdérmico Zechstein (Spray)" posado sobre podio arquitectónico de piedra travertino beige con sombras sutiles de hojas, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Aceite de Magnesio Transdérmico Zechstein (Spray)" resting on podio arquitectónico de piedra travertino beige con sombras sutiles de hojas, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Aceite de Magnesio Transdérmico Zechstein (Spray)" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "¿Buscas relajación muscular profunda y sueño reparador? Prueba Aceite de Magnesio Transdérmico Zechstein (Spray). Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Aceite de Magnesio Transdérmico Zechstein (Spray)" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "¿Buscas relajación muscular profunda y sueño reparador? Prueba Aceite de Magnesio Transdérmico Zechstein (Spray). Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Aceite de Magnesio Transdérmico Zechstein (Spray)" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Aceite de Magnesio Transdérmico Zechstein (Spray)". Container remains static. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Absorción Cutánea Directa y Cero Calambres y Tensión. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "Absorción Cutánea Directa y Cero Calambres y Tensión desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Absorción Cutánea Directa. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "Absorción Cutánea Directa y Cero Calambres y Tensión desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Induce el Sueño Reparador."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Induce el Sueño Reparador."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[0].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[0].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'tonico-facial-rosas',
+    name: 'Tónico Botánico Facial Rosas de Damasco & Hamamelis',
+    brand: 'Aura Botánica Skincare',
+    category: 'Cuidado Facial, Poros y Frescura',
+    categoryId: 'sprays',
+    badgeText: 'Spray de Cristal · Cascada Alpina',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/WhatsApp Image 2026-10-28 at 9.09.39 AM(2).jpeg',
+    headline: 'POROS CERRADOS, HIDRATACIÓN FRESCA Y PH EQUILIBRADO',
+    summary: 'Botella de vidrio transparente con rocío rosado fresco sobre roca basáltica oscura pulida junto a la bruma fresca de una cascada con helechos.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[2].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Cierra Poros y Tonifica',
+            shortDesc: 'El hamamelis astringente afina la textura cutánea suavemente.',
+            iconName: 'target'
+      },
+      {
+            title: 'Equilibra el pH Tras la Limpieza',
+            shortDesc: 'Restaura el manto hidrolipídico natural de la piel.',
+            iconName: 'droplets'
+      },
+      {
+            title: 'Bruma Hidratante Revitalizante',
+            shortDesc: 'Despierta la piel cansada con un rocío floral ultrafino.',
+            iconName: 'sparkles'
+      },
+      {
+            title: 'Destilado en Frío sin Alcohol',
+            shortDesc: 'Apto para pieles ultrasensibles, sin irritación ni sequedad.',
+            iconName: 'leaf'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Tónico Botánico Facial Rosas de Damasco & Hamamelis": en el centro destaca el producto posado sobre roca oscura pulida junto a la bruma fresca de una cascada de montaña. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Tónico Botánico Facial Rosas de Damasco & Hamamelis": centered product resting on roca oscura pulida junto a la bruma fresca de una cascada de montaña. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Tónico Botánico Facial Rosas de Damasco & Hamamelis" posado sobre roca oscura pulida junto a la bruma fresca de una cascada de montaña, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Tónico Botánico Facial Rosas de Damasco & Hamamelis" resting on roca oscura pulida junto a la bruma fresca de una cascada de montaña, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Tónico Botánico Facial Rosas de Damasco & Hamamelis" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Buscas poros cerrados, hidratación fresca y ph equilibrado? Prueba Tónico Botánico Facial Rosas de Damasco & Hamamelis. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Tónico Botánico Facial Rosas de Damasco & Hamamelis" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Buscas poros cerrados, hidratación fresca y ph equilibrado? Prueba Tónico Botánico Facial Rosas de Damasco & Hamamelis. Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Tónico Botánico Facial Rosas de Damasco & Hamamelis" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Tónico Botánico Facial Rosas de Damasco & Hamamelis". Container remains static. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Cierra Poros y Tonifica y Equilibra el pH Tras la Limpieza. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Cierra Poros y Tonifica y Equilibra el pH Tras la Limpieza desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Cierra Poros y Tonifica. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Cierra Poros y Tonifica y Equilibra el pH Tras la Limpieza desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Bruma Hidratante Revitalizante."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Bruma Hidratante Revitalizante."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[2].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[2].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
+  },
+  {
+    id: 'balsamo-calendula-karite',
+    name: 'Bálsamo Botánico Reparador Caléndula & Karité',
+    brand: 'Aura Botánica Skincare',
+    category: 'Reparación de Piel, Labios y Rozaduras',
+    categoryId: 'tarros',
+    badgeText: 'Tarro de Aluminio · Invernadero Botánico',
+    aspectRatio: '1:1 Estudio',
+    image: '/images/lens-100mm-macro.jpg',
+    headline: 'REPARA PIEL AGRIETADA, LABIOS Y ROZADURAS',
+    summary: 'Tarro de aluminio dorado cepillado con textura cremosa mantecosa amarilla sobre mesa de madera rústica en invernadero con macetas de terracota.',
+    voiceProfileName: VOICE_PROFILES_LIBRARY[3].name,
+    backgroundMusicStyle: 'Música acústica y botánica envolvente de estudio',
+    benefits: [
+      {
+            title: 'Regeneración Rápida de Tejidos',
+            shortDesc: 'La caléndula acelera la cicatrización de grietas y rozaduras.',
+            iconName: 'shield'
+      },
+      {
+            title: 'Nutrición con Manteca de Karité',
+            shortDesc: 'Crea una barrera emoliente que bloquea la deshidratación.',
+            iconName: 'droplets'
+      },
+      {
+            title: 'Alivio de Labios y Manos Secas',
+            shortDesc: 'Suavidad inmediata desde la primera aplicación.',
+            iconName: 'sparkles'
+      },
+      {
+            title: 'Cera de Abejas Virgen Pura',
+            shortDesc: 'Protege contra viento, frío y agresiones ambientales.',
+            iconName: 'award'
+      }
+],
+    geminiPromptEs: 'Fotografía publicitaria de estudio comercial de alta conversión para "Bálsamo Botánico Reparador Caléndula & Karité": en el centro destaca el producto posado sobre mesa rústica de invernadero botánico con terracota y luz tamizada de cristal. Composición equilibrada y pulcra con iluminación comercial difusa, microgotas de rocío fresco, lente prime 85mm f/1.8, 8k.',
+    geminiPromptEn: 'Commercial high-converting studio advertising photography for "Bálsamo Botánico Reparador Caléndula & Karité": centered product resting on mesa rústica de invernadero botánico con terracota y luz tamizada de cristal. Balanced composition with diffused studio lighting, fresh condensation droplets, prime 85mm f/1.8 lens, 8k.',
+    cleanHeroPromptEs: 'Fotografía comercial limpia de catálogo premium para "Bálsamo Botánico Reparador Caléndula & Karité" posado sobre mesa rústica de invernadero botánico con terracota y luz tamizada de cristal, sin textos flotantes ni elementos externos, foco absoluto en el producto, lente 85mm f/1.8, 8k.',
+    cleanHeroPromptEn: 'Clean premium catalog commercial photography for "Bálsamo Botánico Reparador Caléndula & Karité" resting on mesa rústica de invernadero botánico con terracota y luz tamizada de cristal, without floating text or external graphics, absolute product focus, 85mm lens f/1.8, 8k.',
+    masterFlowPromptEs: 'Video comercial cinematográfico: el producto "Bálsamo Botánico Reparador Caléndula & Karité" permanece 100% firme y nítido en el centro. REGLA ESTRICTA: NO animar letras ni alterar marcas; animar únicamente el barrido de luz cálida sobre el envase mientras las gotas de rocío resbalan suavemente. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "¿Buscas repara piel agrietada, labios y rozaduras? Prueba Bálsamo Botánico Reparador Caléndula & Karité. Fórmula natural de máxima potencia para tu bienestar."',
+    masterFlowPromptEn: 'Cinematic commercial video: "Bálsamo Botánico Reparador Caléndula & Karité" container remains 100% still in the center. STRICT RULE: Do not animate letters; animate only warm light sweep across packaging while dew drops slide. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "¿Buscas repara piel agrietada, labios y rozaduras? Prueba Bálsamo Botánico Reparador Caléndula & Karité. Fórmula natural de máxima potencia para tu bienestar."',
+    flowScenes: [
+      {
+        sceneNumber: 1,
+        timeRange: '00:00 – 00:04s',
+        title: 'Escena 1: Gancho Visual',
+        promptEs: 'Acercamiento suave hacia "Bálsamo Botánico Reparador Caléndula & Karité" en el centro. El envase permanece estático con reflejo de luz cálida. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"',
+        promptEn: 'Slow camera push toward "Bálsamo Botánico Reparador Caléndula & Karité". Container remains static. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "¿Quieres sentir el verdadero poder de los ingredientes botánicos en tu rutina diaria?"'
+      },
+      {
+        sceneNumber: 2,
+        timeRange: '00:04 – 00:08s',
+        title: 'Escena 2: Beneficios Principales',
+        promptEs: 'Barrido de luz sobre el relieve y textura del envase destacando Regeneración Rápida de Tejidos y Nutrición con Manteca de Karité. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "Regeneración Rápida de Tejidos y Nutrición con Manteca de Karité desde las primeras tomas."',
+        promptEn: 'Light sweep across product container highlighting Regeneración Rápida de Tejidos. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "Regeneración Rápida de Tejidos y Nutrición con Manteca de Karité desde las primeras tomas."'
+      },
+      {
+        sceneNumber: 3,
+        timeRange: '00:08 – 00:12s',
+        title: 'Escena 3: Absorción y Pureza',
+        promptEs: 'Detalle cercano de ingredientes botánicos frescos con partículas luminosas flotando suavemente. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "Fórmula de rápida asimilación con Alivio de Labios y Manos Secas."',
+        promptEn: 'Botanical ingredients close-up. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "Fórmula de rápida asimilación con Alivio de Labios y Manos Secas."'
+      },
+      {
+        sceneNumber: 4,
+        timeRange: '00:12 – 00:16s',
+        title: 'Escena 4: Cierre Heroico',
+        promptEs: 'Plano maestro fijo con el producto iluminado al centro. ' + VOICE_PROFILES_LIBRARY[3].descriptionEs + ', diciendo: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"',
+        promptEn: 'Luminous master shot of the product. ' + VOICE_PROFILES_LIBRARY[3].descriptionEn + ', speaking in Spanish: "El cuidado natural que tu cuerpo merece. ¡Pide el tuyo hoy!"'
+      }
+    ]
   },
 ];
 

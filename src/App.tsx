@@ -17,7 +17,7 @@ import { ProductCatalogSection } from './components/ProductCatalogSection';
 
 export function App() {
   const [isDark, setIsDark] = useState<boolean>(true);
-  const [externalPresetId, setExternalPresetId] = useState<string | null>(null);
+  const [externalPresetPayload, setExternalPresetPayload] = useState<{ id: string; key: number } | null>(null);
 
   return (
     <div
@@ -169,7 +169,7 @@ export function App() {
                 <div className="grid grid-cols-6 gap-2">
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('colageno-magnesio')}
+                    onClick={() => { setExternalPresetPayload({ id: 'colageno-magnesio', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square"
                   >
                     <img
@@ -187,7 +187,7 @@ export function App() {
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('curcuma-ashwagandha')}
+                    onClick={() => { setExternalPresetPayload({ id: 'curcuma-ashwagandha', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-3 group relative rounded-xl overflow-hidden border border-amber-500/40 bg-black aspect-square"
                   >
                     <img
@@ -205,7 +205,7 @@ export function App() {
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('clorofila-matcha')}
+                    onClick={() => { setExternalPresetPayload({ id: 'clorofila-matcha', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
                   >
                     <img
@@ -222,7 +222,7 @@ export function App() {
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('serum-botanico')}
+                    onClick={() => { setExternalPresetPayload({ id: 'serum-botanico', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
                   >
                     <img
@@ -239,7 +239,7 @@ export function App() {
 
                   <a
                     href="#estudio-imagenes"
-                    onClick={() => setExternalPresetId('miel-propoleo')}
+                    onClick={() => { setExternalPresetPayload({ id: 'miel-propoleo', key: Date.now() }); document.getElementById('estudio-imagenes')?.scrollIntoView({ behavior: 'smooth' }); }}
                     className="col-span-2 group relative rounded-xl overflow-hidden border border-emerald-500/40 bg-black aspect-square"
                   >
                     <img
@@ -263,13 +263,13 @@ export function App() {
       {/* ESTUDIO PRINCIPAL: CONFIGURADOR VISUAL EN 3 PASOS + MODAL DE LENTES */}
       <ImagePromptStudio
         isDark={isDark}
-        externalPresetId={externalPresetId}
+        externalPresetPayload={externalPresetPayload}
       />
 
       {/* GALERÍA DE INSPIRACIÓN: 5 PRODUCTOS DE ESTUDIO */}
       <ProductCatalogSection
         isDark={isDark}
-        onLoadInImageStudio={(prodId) => setExternalPresetId(prodId)}
+        onLoadInImageStudio={(prodId) => setExternalPresetPayload({ id: prodId, key: Date.now() })}
       />
 
       {/* FOOTER */}

@@ -52,10 +52,10 @@ import {
 
 interface Props {
   isDark: boolean;
-  externalPresetId?: string | null;
+  externalPresetPayload?: { id: string; key: number } | null;
 }
 
-export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId }) => {
+export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPayload }) => {
   // Product Identity State
   const [productName, setProductName] = useState(STUDIO_QUICK_PRESETS[0].productName);
   const [headline, setHeadline] = useState(STUDIO_QUICK_PRESETS[0].headline);
@@ -176,18 +176,32 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     } else {
       setEnvironmentId('estudio-neutro');
     }
+    if (preset.infographicStyle) {
+      setInfographicStyle(preset.infographicStyle);
+    } else if (
+      preset.photoTypeId === 'hero-estudio' ||
+      preset.photoTypeId === 'macro-textura' ||
+      preset.photoTypeId === 'flat-lay-cenital'
+    ) {
+      setInfographicStyle('none');
+    } else {
+      setInfographicStyle('gold-3d');
+    }
     setAspectRatio(preset.aspectRatio);
+    setUseReferencePhotoMode(true);
+    setSyncFeedback(`✓ Preset fiel cargado: "${preset.productName}"`);
+    setTimeout(() => setSyncFeedback(null), 3500);
   };
 
-  // Sync when external preset is clicked from Catalog
+  // Sync when external preset is clicked from Catalog or Hero
   useEffect(() => {
-    if (externalPresetId) {
-      const found = STUDIO_QUICK_PRESETS.find((p) => p.id === externalPresetId);
+    if (externalPresetPayload) {
+      const found = STUDIO_QUICK_PRESETS.find((p) => p.id === externalPresetPayload.id);
       if (found) {
         applyPreset(found);
       }
     }
-  }, [externalPresetId]);
+  }, [externalPresetPayload]);
 
   const handleSelectPhotoType = (pt: PhotoTypeOption) => {
     setPhotoTypeId(pt.id);
