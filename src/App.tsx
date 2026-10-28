@@ -41,7 +41,7 @@ export function App() {
             </div>
             <div>
               <span className="font-serif font-bold text-lg tracking-tight block leading-none">
-                Flow<span className="text-emerald-400">Natural</span> Studio
+                Natural<span className="text-emerald-400">Studio</span>
               </span>
               <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 block font-bold">
                 Fotografía Comercial IA para Productos Naturales
@@ -281,10 +281,10 @@ export function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black text-xs">
-              F
+              N
             </div>
             <span className="font-bold text-xs text-white">
-              FlowNatural Studio · Generador Visual de Prompts para Gemini / Imagen 3
+              NaturalStudio · Generador Visual de Prompts para Gemini / Imagen 3
             </span>
           </div>
           <div className="flex items-center gap-4 text-xs">
