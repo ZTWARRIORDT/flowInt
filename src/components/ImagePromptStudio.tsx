@@ -132,6 +132,32 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   const [activeAddCategory, setActiveAddCategory] = useState<CustomCategoryKey | null>(null);
   const [newCustomLabel, setNewCustomLabel] = useState<string>('');
   const [newCustomPrompt, setNewCustomPrompt] = useState<string>('');
+  const [newIngredientInput, setNewIngredientInput] = useState<string>('');
+
+  const handleQuickAddIngredient = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = newIngredientInput.trim();
+    if (!clean) return;
+
+    const newId = `custom-ing-${Date.now()}`;
+    const newItem: StudioOptionItem = {
+      id: newId,
+      label: clean,
+      badge: 'Propio',
+      shortDesc: clean,
+      promptEs: clean,
+      promptEn: clean,
+      isCustom: true,
+    };
+
+    setCustomItems((prev) => ({
+      ...prev,
+      ingredients: [...prev.ingredients, newItem],
+    }));
+
+    setSelectedIngredientIds((prev) => [...prev, newId]);
+    setNewIngredientInput('');
+  };
 
   // Merged lists (Default + User Custom)
   const allPhotoTypes = [...PHOTO_TYPES, ...customItems.photoTypes];
@@ -668,32 +694,93 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                 </div>
               </div>
 
-              {/* Quick Ingredients / Nature */}
-              <div className="space-y-1.5 pt-2 border-t border-slate-800/50">
-                <label className="text-[11px] font-bold text-emerald-400 block">
-                  Ingredientes naturales para rodear el frasco (opcional):
-                </label>
-                <div className="flex flex-wrap gap-1.5">
-                  {allIngredients.slice(0, 7).map((ing) => {
-                    const isSelected = selectedIngredientIds.includes(ing.id);
-                    return (
-                      <button
-                        key={ing.id}
-                        type="button"
-                        onClick={() => toggleIngredient(ing.id)}
-                        className={`px-2.5 py-1 rounded-lg border text-[11px] font-semibold transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400'
-                            : isDark
-                            ? 'bg-black/30 border-slate-800 text-slate-300'
-                            : 'bg-stone-50 border-stone-200 text-stone-700'
-                        }`}
-                      >
-                        {isSelected && '✓ '}
-                        {ing.label.split(' en ')[0].split(' y ')[0]}
-                      </button>
-                    );
-                  })}
+              {/* Dedicated Ingredients & Nature Section with Custom Input */}
+              <div className="space-y-3 pt-3 border-t border-slate-800/60">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Leaf className="w-3.5 h-3.5 text-emerald-400" />
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-400">
+                      Ingredientes Naturales alrededor del Frasco
+                    </span>
+                  </div>
+                  {selectedIngredientIds.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedIngredientIds([])}
+                      className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                    >
+                      Deseleccionar todos ({selectedIngredientIds.length})
+                    </button>
+                  )}
+                </div>
+
+                {/* Form to write and add custom ingredients */}
+                <form
+                  onSubmit={handleQuickAddIngredient}
+                  className="flex flex-col sm:flex-row gap-2"
+                >
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={newIngredientInput}
+                      onChange={(e) => setNewIngredientInput(e.target.value)}
+                      placeholder="Escribe un ingrediente (ej: semillas de chía, miel líquida, manzanilla...)"
+                      className={`w-full px-3.5 py-2 rounded-xl border text-xs font-medium placeholder:text-slate-500 ${
+                        isDark
+                          ? 'bg-black/50 border-slate-700 text-white focus:border-emerald-400'
+                          : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-emerald-600'
+                      }`}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow transition-all shrink-0"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Agregar Ingrediente</span>
+                  </button>
+                </form>
+
+                {/* Active & Suggested Ingredient Chips */}
+                <div className="space-y-1.5">
+                  <span className="text-[10px] text-slate-400 block font-semibold">
+                    Toca para agregar o quitar de la foto:
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {allIngredients.map((ing) => {
+                      const isSelected = selectedIngredientIds.includes(ing.id);
+                      return (
+                        <div
+                          key={ing.id}
+                          onClick={() => toggleIngredient(ing.id)}
+                          className={`px-2.5 py-1 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                            isSelected
+                              ? 'bg-gradient-to-r from-emerald-500/25 to-teal-500/20 text-emerald-300 border-emerald-400 shadow-xs'
+                              : isDark
+                              ? 'bg-black/40 border-slate-800 text-slate-300 hover:border-slate-700'
+                              : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-slate-300'
+                          }`}
+                        >
+                          {isSelected ? (
+                            <span className="text-emerald-400 font-bold">✓</span>
+                          ) : (
+                            <span className="text-slate-500">+</span>
+                          )}
+                          <span>{ing.label}</span>
+                          {ing.isCustom && (
+                            <button
+                              type="button"
+                              onClick={(e) => handleDeleteCustomItem('ingredients', ing.id, e)}
+                              className="text-rose-400 hover:text-rose-200 ml-1 font-bold cursor-pointer"
+                              title="Eliminar este ingrediente"
+                            >
+                              ×
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

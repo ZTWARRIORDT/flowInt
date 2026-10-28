@@ -10,6 +10,8 @@ import {
   Maximize2,
   HelpCircle,
   ArrowRight,
+  Camera,
+  Layers,
 } from 'lucide-react';
 
 export interface LensInfo {
@@ -25,6 +27,10 @@ export interface LensInfo {
   depthOfFieldLevel: number; // 1 to 5 (5 = maximum blur / bokeh)
   sharpnessFocus: string;
   icon: 'portrait' | 'macro' | 'natural' | 'speed' | 'wide';
+  image: string;
+  fallbackImage: string;
+  photoAngleLabel: string;
+  bokehDescription: string;
 }
 
 export const LENSES_EXPLANATIONS: LensInfo[] = [
@@ -34,9 +40,9 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     focalLength: '85mm',
     aperture: 'f/1.8',
     tag: 'El Favorito para Tiendas',
-    simpleTitle: 'Efecto Retrato con Fondo Suave (Bokeh)',
+    simpleTitle: 'Efecto Retrato con Fondo Borroso (Bokeh)',
     plainExplanation:
-      'Hace que tu producto resalte de inmediato porque difumina suavemente el fondo como en las fotos de revistas de lujo. Tu frasco queda nítido y perfecto, mientras el fondo se vuelve sedoso y no distrae.',
+      'Hace que tu producto resalte de inmediato porque difumina suavemente el fondo como en las fotos de revistas de lujo. Tu frasco queda 100% nítido en el centro, mientras las hojas y luces del fondo se vuelven suaves y sedosas.',
     visualEffect: 'Producto nítido al 100% + Fondo con desenfoque suave y círculos de luz (Bokeh)',
     idealFor: [
       'Tiendas online, e-commerce y Amazon',
@@ -46,6 +52,10 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     depthOfFieldLevel: 5,
     sharpnessFocus: 'Foco clavado en el envase, fondo muy borroso',
     icon: 'portrait',
+    image: '/images/lens-85mm-bokeh.jpg',
+    fallbackImage: '/images/colageno-magnesio.jpg',
+    photoAngleLabel: 'Plano Medio Frontal · 85mm f/1.8 (Fondo Borroso)',
+    bokehDescription: 'Desenfoque de fondo máximo (Bokeh cremoso)',
   },
   {
     id: '100mm-macro',
@@ -55,7 +65,7 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     tag: 'Ultra Detalle Sensorial',
     simpleTitle: 'Primer Plano para Gotas, Textura y Relieves',
     plainExplanation:
-      'Acerca la cámara tanto que puedes ver cada gota de rocío en el cristal, la textura del sérum o el brillo del logo dorado con nitidez microscópica. Transmite pureza y calidad artesanal.',
+      'Acerca la cámara tanto que puedes ver cada gota de rocío en el cristal, la textura del sérum o el brillo del logo dorado con nitidez microscópica. Transmite máxima pureza y calidad artesanal.',
     visualEffect: 'Detalle microscópico: texturas de ingredientes, gotas cristalinas y acabados en relieve',
     idealFor: [
       'Cosmética facial, sérums y aceites botánicos',
@@ -65,6 +75,10 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     depthOfFieldLevel: 4,
     sharpnessFocus: 'Foco extremo en un punto específico (gotas o logo)',
     icon: 'macro',
+    image: '/images/lens-100mm-macro.jpg',
+    fallbackImage: '/images/serum-botanico.jpg',
+    photoAngleLabel: 'Plano Macro Extremo · 100mm Macro (Gotas y Relieve)',
+    bokehDescription: 'Foco microscópico milimétrico',
   },
   {
     id: '50mm-f14',
@@ -74,7 +88,7 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     tag: 'Visión Natural',
     simpleTitle: 'Perspectiva Real del Ojo Humano',
     plainExplanation:
-      'Muestra la escena exactamente igual a como la verían tus ojos al mirar una mesa. No deforma las proporciones y hace que la foto se sienta muy acogedora, limpia y orgánica.',
+      'Muestra la escena exactamente igual a como la verían tus ojos al mirar una mesa. No deforma las proporciones y hace que la foto se sienta muy acogedora, limpia, orgánica y realista.',
     visualEffect: 'Perspectiva natural y equilibrada, sin distorsión de tamaño ni de bordes',
     idealFor: [
       'Bodegones con ingredientes en una mesa de cocina o spa',
@@ -84,6 +98,10 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     depthOfFieldLevel: 3,
     sharpnessFocus: 'Enfoque natural y armonioso de todo el plano medio',
     icon: 'natural',
+    image: '/images/lens-50mm-natural.jpg',
+    fallbackImage: '/images/miel-propoleo.jpg',
+    photoAngleLabel: 'Plano Natural de Mesa · 50mm Editorial (Ojo Humano)',
+    bokehDescription: 'Profundidad natural equilibrada',
   },
   {
     id: '90mm-highspeed',
@@ -103,6 +121,10 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     depthOfFieldLevel: 2,
     sharpnessFocus: 'Mayor zona de nitidez para atrapar gotas en el aire',
     icon: 'speed',
+    image: '/images/lens-90mm-highspeed.jpg',
+    fallbackImage: '/images/curcuma-ashwagandha.jpg',
+    photoAngleLabel: 'Alta Velocidad 1/4000s · 90mm (Splash y Polvo en el Aire)',
+    bokehDescription: 'Nitidez extendida en partículas suspendidas',
   },
   {
     id: '35mm-f2',
@@ -122,6 +144,10 @@ export const LENSES_EXPLANATIONS: LensInfo[] = [
     depthOfFieldLevel: 1,
     sharpnessFocus: 'Gran profundidad: el producto y el paisaje se aprecian con claridad',
     icon: 'wide',
+    image: '/images/lens-35mm-wide.jpg',
+    fallbackImage: '/images/clorofila-matcha.jpg',
+    photoAngleLabel: 'Plano General Amplio · 35mm (Bosque y Entorno Natural)',
+    bokehDescription: 'Fondo visible y nítido para mostrar el paisaje',
   },
 ];
 
@@ -141,6 +167,7 @@ export const LensVisualModal: React.FC<Props> = ({
   isDark,
 }) => {
   const [activeLensId, setActiveLensId] = useState<string>(selectedLensId || '85mm-f18');
+  const [imgSrcMap, setImgSrcMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (selectedLensId) {
@@ -164,8 +191,16 @@ export const LensVisualModal: React.FC<Props> = ({
   const currentLens =
     LENSES_EXPLANATIONS.find((l) => l.id === activeLensId) || LENSES_EXPLANATIONS[0];
 
+  const handleImageError = (lensId: string, fallback: string) => {
+    setImgSrcMap((prev) => ({ ...prev, [lensId]: fallback }));
+  };
+
+  const getLensImageUrl = (lens: LensInfo) => {
+    return imgSrcMap[lens.id] || lens.image;
+  };
+
   const renderIcon = (type: LensInfo['icon']) => {
-    const cls = 'w-5 h-5 text-amber-400';
+    const cls = 'w-4 h-4 text-amber-400';
     switch (type) {
       case 'portrait':
         return <Sparkles className={cls} />;
@@ -183,11 +218,11 @@ export const LensVisualModal: React.FC<Props> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto"
+      className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className={`max-w-4xl w-full rounded-3xl border overflow-hidden shadow-2xl transition-all ${
+        className={`max-w-5xl w-full rounded-3xl border overflow-hidden shadow-2xl transition-all ${
           isDark
             ? 'bg-[#0E1612] border-emerald-500/50 text-slate-100'
             : 'bg-white border-stone-200 text-stone-900'
@@ -196,22 +231,22 @@ export const LensVisualModal: React.FC<Props> = ({
       >
         {/* Modal Header */}
         <div
-          className={`px-6 py-5 border-b flex items-center justify-between gap-4 ${
+          className={`px-6 py-4 border-b flex items-center justify-between gap-4 ${
             isDark
               ? 'bg-gradient-to-r from-emerald-950 via-[#121E19] to-amber-950/40 border-emerald-900/60'
               : 'bg-emerald-50/70 border-emerald-200'
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black shadow-md">
-              <Aperture className="w-5 h-5" />
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black shadow-md shrink-0">
+              <Camera className="w-5 h-5" />
             </div>
             <div>
-              <span className="text-[11px] font-mono uppercase tracking-wider text-amber-400 block font-bold">
-                GUÍA VISUAL FÁCIL PARA NO EXPERTOS
+              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 block font-bold">
+                COMPARATIVA VISUAL CON EL MISMO PRODUCTO
               </span>
-              <h3 className="text-xl font-bold font-serif">
-                ¿Qué hace cada Lente de Cámara en tu Foto?
+              <h3 className="text-lg sm:text-xl font-bold font-serif">
+                Mira cómo cambia la foto del bote según el Lente y Ángulo
               </h3>
             </div>
           </div>
@@ -231,17 +266,18 @@ export const LensVisualModal: React.FC<Props> = ({
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 space-y-6">
-          {/* Lenses Horizontal Tabs */}
+        <div className="p-5 sm:p-6 space-y-6">
+          {/* Lenses Navigation Pills with Mini-Thumbnail Preview */}
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             {LENSES_EXPLANATIONS.map((lens) => {
               const isSelected = activeLensId === lens.id;
+              const thumbUrl = getLensImageUrl(lens);
               return (
                 <button
                   key={lens.id}
                   type="button"
                   onClick={() => setActiveLensId(lens.id)}
-                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                  className={`p-2 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
                     isSelected
                       ? 'bg-gradient-to-br from-emerald-500/25 to-amber-500/15 border-amber-400 ring-2 ring-amber-400/50 shadow-md'
                       : isDark
@@ -249,161 +285,166 @@ export const LensVisualModal: React.FC<Props> = ({
                       : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-emerald-500/40'
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-black">{lens.focalLength}</span>
-                    {renderIcon(lens.icon)}
+                  <div className="w-10 h-10 rounded-xl overflow-hidden bg-black shrink-0 border border-slate-700/80">
+                    <img
+                      src={thumbUrl}
+                      alt={lens.name}
+                      onError={() => handleImageError(lens.id, lens.fallbackImage)}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div
-                    className={`text-[11px] font-bold line-clamp-1 ${
-                      isSelected ? 'text-amber-300' : isDark ? 'text-white' : 'text-stone-900'
-                    }`}
-                  >
-                    {lens.tag}
+                  <div className="overflow-hidden">
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs font-black">{lens.focalLength}</span>
+                    </div>
+                    <div
+                      className={`text-[10px] font-bold truncate ${
+                        isSelected ? 'text-amber-300' : isDark ? 'text-slate-300' : 'text-stone-800'
+                      }`}
+                    >
+                      {lens.tag.split(' ')[0]} {lens.tag.split(' ')[1] || ''}
+                    </div>
                   </div>
                 </button>
               );
             })}
           </div>
 
-          {/* Active Lens Detailed Card */}
-          <div
-            className={`p-6 rounded-3xl border space-y-5 ${
-              isDark
-                ? 'bg-gradient-to-br from-[#121E19] to-[#0A100D] border-emerald-800/60'
-                : 'bg-stone-50/80 border-stone-200 shadow-inner'
-            }`}
-          >
-            {/* Title & Tag */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <span className="px-3 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950 inline-block mb-1">
-                  {currentLens.tag} · {currentLens.name}
-                </span>
-                <h4 className="text-2xl font-bold font-serif text-white">
-                  {currentLens.simpleTitle}
-                </h4>
-              </div>
+          {/* Big Visual Split: Left Example Photo of the Bottle vs Right Plain Explanation */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+            {/* LEFT: THE REAL PHOTOGRAPHIC EXAMPLE OF THE BOTTLE WITH THIS LENS */}
+            <div className="md:col-span-5 flex flex-col justify-between rounded-3xl overflow-hidden border-2 border-amber-500/40 bg-black shadow-2xl relative group">
+              <div className="relative aspect-square w-full overflow-hidden bg-black flex items-center justify-center">
+                <img
+                  src={getLensImageUrl(currentLens)}
+                  alt={`Ejemplo con ${currentLens.name}`}
+                  onError={() => handleImageError(currentLens.id, currentLens.fallbackImage)}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
-              {/* Bokeh / Depth of Field Meter */}
-              <div
-                className={`p-3 rounded-2xl border ${
-                  isDark ? 'bg-black/60 border-slate-800' : 'bg-white border-stone-200'
-                }`}
-              >
-                <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1">
-                  Nivel de Fondo Borroso (Bokeh):
-                </div>
-                <div className="flex items-center gap-1.5">
-                  {[1, 2, 3, 4, 5].map((lvl) => (
-                    <div
-                      key={lvl}
-                      className={`h-2.5 w-6 rounded-full transition-all ${
-                        lvl <= currentLens.depthOfFieldLevel
-                          ? 'bg-gradient-to-r from-emerald-400 to-amber-400'
-                          : isDark
-                          ? 'bg-slate-800'
-                          : 'bg-stone-200'
-                      }`}
-                    />
-                  ))}
-                  <span className="text-xs font-bold text-amber-300 ml-1">
-                    {currentLens.depthOfFieldLevel === 5
-                      ? 'Máximo (Cremoso)'
-                      : currentLens.depthOfFieldLevel >= 3
-                      ? 'Medio'
-                      : 'Mínimo (Todo se ve)'}
+                {/* Top Lens Badge */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950 shadow-md flex items-center gap-1">
+                    <Aperture className="w-3.5 h-3.5" /> {currentLens.focalLength} {currentLens.aperture}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-md bg-black/75 text-emerald-300 text-[10px] font-mono border border-emerald-400/30">
+                    Ejemplo real
                   </span>
                 </div>
+
+                {/* Bottom Overlay Label */}
+                <div className="absolute bottom-3 left-3 right-3 p-3 rounded-2xl bg-black/85 backdrop-blur-md border border-amber-500/30">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-amber-300 font-bold">
+                    {currentLens.photoAngleLabel}
+                  </div>
+                  <div className="text-xs text-slate-200 mt-0.5">
+                    {currentLens.visualEffect}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Plain-Language Explanation */}
+            {/* RIGHT: EXPLANATION IN PLAIN HUMAN LANGUAGE + BOKEH METER */}
             <div
-              className={`p-4 rounded-2xl border text-sm md:text-base leading-relaxed ${
+              className={`md:col-span-7 p-6 rounded-3xl border flex flex-col justify-between gap-5 ${
                 isDark
-                  ? 'bg-black/50 border-emerald-500/30 text-emerald-100'
-                  : 'bg-white border-emerald-200 text-emerald-950'
+                  ? 'bg-gradient-to-br from-[#121E19] to-[#0A100D] border-emerald-800/60 shadow-xl'
+                  : 'bg-stone-50/90 border-stone-200'
               }`}
             >
-              <p>
-                💡 <strong>En palabras sencillas:</strong> {currentLens.plainExplanation}
-              </p>
-            </div>
+              <div className="space-y-4">
+                {/* Header of the Active Lens */}
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 inline-block mb-1">
+                      {currentLens.tag}
+                    </span>
+                    <h4 className="text-2xl font-bold font-serif text-white">
+                      {currentLens.simpleTitle}
+                    </h4>
+                  </div>
 
-            {/* Visual Effect & Ideal Uses Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Left: What does the photo look like? */}
-              <div
-                className={`p-4 rounded-2xl border space-y-2 ${
-                  isDark ? 'bg-black/40 border-slate-800' : 'bg-white border-stone-200'
-                }`}
-              >
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5" /> ¿Cómo se verá la foto?
-                </span>
-                <p className={`text-xs md:text-sm ${isDark ? 'text-slate-200' : 'text-stone-700'}`}>
-                  {currentLens.visualEffect}
-                </p>
-                <div className="pt-2 text-[11px] text-slate-400 font-mono">
-                  Enfoque: {currentLens.sharpnessFocus}
+                  {/* Bokeh / Background Blur Meter */}
+                  <div
+                    className={`p-2.5 rounded-2xl border ${
+                      isDark ? 'bg-black/60 border-slate-800' : 'bg-white border-stone-200'
+                    }`}
+                  >
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1">
+                      Fondo desenfocado (Bokeh):
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((lvl) => (
+                        <div
+                          key={lvl}
+                          className={`h-2.5 w-5 rounded-full transition-all ${
+                            lvl <= currentLens.depthOfFieldLevel
+                              ? 'bg-gradient-to-r from-emerald-400 to-amber-400'
+                              : isDark
+                              ? 'bg-slate-800'
+                              : 'bg-stone-200'
+                          }`}
+                        />
+                      ))}
+                      <span className="text-xs font-bold text-amber-300 ml-1.5">
+                        {currentLens.depthOfFieldLevel === 5
+                          ? 'Máximo'
+                          : currentLens.depthOfFieldLevel >= 3
+                          ? 'Medio'
+                          : 'Nítido'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Plain-Language Explanation */}
+                <div
+                  className={`p-4 rounded-2xl border text-sm leading-relaxed ${
+                    isDark
+                      ? 'bg-black/50 border-emerald-500/30 text-emerald-100'
+                      : 'bg-white border-emerald-200 text-emerald-950'
+                  }`}
+                >
+                  <p>
+                    💡 <strong>En palabras sencillas:</strong> {currentLens.plainExplanation}
+                  </p>
+                </div>
+
+                {/* Where to use it */}
+                <div
+                  className={`p-4 rounded-2xl border space-y-2 ${
+                    isDark ? 'bg-black/40 border-slate-800' : 'bg-white border-stone-200'
+                  }`}
+                >
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5" /> ¿Para qué tipo de foto te conviene?
+                  </span>
+                  <ul className="space-y-1.5 text-xs sm:text-sm">
+                    {currentLens.idealFor.map((use, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-emerald-400 font-bold">✓</span>
+                        <span className={isDark ? 'text-slate-200' : 'text-stone-700'}>{use}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
 
-              {/* Right: When should you use it? */}
-              <div
-                className={`p-4 rounded-2xl border space-y-2 ${
-                  isDark ? 'bg-black/40 border-slate-800' : 'bg-white border-stone-200'
-                }`}
+              {/* Action Button inside right pane */}
+              <button
+                type="button"
+                onClick={() => {
+                  onSelectLens(currentLens.id);
+                  onClose();
+                }}
+                className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg"
               >
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
-                  <Check className="w-3.5 h-3.5" /> ¿Cuándo te conviene elegirlo?
-                </span>
-                <ul className="space-y-1.5 text-xs md:text-sm">
-                  {currentLens.idealFor.map((use, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <span className="text-emerald-400 font-bold">✓</span>
-                      <span className={isDark ? 'text-slate-200' : 'text-stone-700'}>{use}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                <Check className="w-4 h-4 stroke-[3]" />
+                <span>Aplicar {currentLens.name} a mi Foto</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
-          </div>
-        </div>
-
-        {/* Modal Footer CTA */}
-        <div
-          className={`px-6 py-4 border-t flex flex-wrap items-center justify-between gap-3 ${
-            isDark ? 'bg-[#080E0B] border-emerald-950' : 'bg-stone-100 border-stone-200'
-          }`}
-        >
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <HelpCircle className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>Al elegir este lente, Gemini ajustará la óptica para darte este resultado exacto.</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer ${
-                isDark ? 'text-slate-300 hover:text-white' : 'text-stone-600 hover:text-stone-900'
-              }`}
-            >
-              Cerrar
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                onSelectLens(currentLens.id);
-                onClose();
-              }}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-extrabold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg"
-            >
-              <Check className="w-4 h-4 stroke-[3]" />
-              <span>Usar este Lente ({currentLens.name})</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
         </div>
       </div>
