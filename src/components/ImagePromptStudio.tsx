@@ -218,6 +218,26 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     setMedallionStyle(pt.includeMedallionsByDefault ? 'gold-3d' : 'none');
   };
 
+  const handleSelectLens = (id: string) => {
+    setLensId(id);
+    if (id === '100mm-macro') {
+      setShotId('macro-extremo');
+      setPhotoTypeId('macro-textura');
+    } else if (id === '90mm-highspeed') {
+      setShotId('contrapicado-heroico');
+      setPhotoTypeId('splash-velocidad');
+    } else if (id === '35mm-f2') {
+      setShotId('rasante-mesa');
+      setPhotoTypeId('naturaleza-epica');
+    } else if (id === '85mm-f18') {
+      if (shotId === 'macro-extremo') setShotId('eye-level');
+      if (photoTypeId === 'macro-textura') setPhotoTypeId('poster-medallones');
+    } else if (id === '50mm-f14') {
+      if (shotId === 'macro-extremo') setShotId('picado-45');
+      if (photoTypeId === 'macro-textura') setPhotoTypeId('flat-lay-cenital');
+    }
+  };
+
   const toggleIngredient = (id: string) => {
     setSelectedIngredientIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -361,71 +381,104 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     return `Floating symmetrically around the container are 4 circular brushed gold medallions featuring ONLY 3D engraved symbolic icons/logos representing: 1) ${benefit1}, 2) ${benefit2}, 3) ${benefit3}, 4) ${benefit4}, strictly no small letters or text so nothing warps.`;
   };
 
-  const refInstructionEs = useReferencePhotoMode
-    ? 'Tomando como referencia exacta el envase de la imagen subida (mantener idéntica la forma del frasco, colores y diseño original de la etiqueta sin alterar ni deformar sus logos): '
-    : '';
-
-  const refInstructionEn = useReferencePhotoMode
-    ? 'Using the uploaded product image as the exact reference (preserve the identical bottle shape, colors, and original label design without altering or warping its logos): '
-    : '';
-
   const extraEs = extraCustomNotes.trim() ? ` Detalle adicional: ${extraCustomNotes.trim()}.` : '';
   const extraEn = extraCustomNotes.trim() ? ` Additional detail: ${extraCustomNotes.trim()}.` : '';
 
-  // Main Prompt
-  const mainPromptEs = `${refInstructionEs}${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}. En el centro destaca ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}. Alrededor del envase se aprecian ${ingredientsListEs}. ${getMedallionFragmentEs(medallionStyle)} Con ${activeLighting.promptEs}, ${activeMood.promptEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
+  // 1. Framing & Lens harmony (Zero contradictions)
+  let photoStyleEs = `${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}.`;
+  let photoStyleEn = `${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}.`;
 
-  const mainPromptEn = `${refInstructionEn}${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}. Centered is ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}. Surrounding the container are ${ingredientsListEn}. ${getMedallionFragmentEn(medallionStyle)} Featuring ${activeLighting.promptEn}, ${activeMood.promptEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
+  if (lensId === '100mm-macro') {
+    photoStyleEs = `Fotografía sensorial macro de ultra detalle (extreme tight close-up macro framing a pocos centímetros de distancia) en formato ${activeRatio.id} para el producto natural "${productName}": encuadre microscópico cerrado enfocado en primerísimo plano en la textura del envase, el relieve de los logos y las microgotas de rocío fresco, cortando estéticamente los bordes del frasco para llenar la escena de textura y nitidez 8K con fondo en suave desenfoque bokeh (sin mostrar el frasco entero alejado ni dejar aire excesivo).`;
+    photoStyleEn = `Extreme close-up macro commercial product photography (shot from inches away) in ${activeRatio.id} format for the natural product "${productName}": tightly focused microscopic close-up framing on container textures, embossed logo reliefs, and fresh micro-droplets, aesthetically cropping container edges to fill the frame with pure 8K texture and soft background bokeh (not a distant full-bottle shot with empty room).`;
+  } else if (lensId === '35mm-f2') {
+    photoStyleEs = `Fotografía ambiental comercial capturada con lente gran angular 35mm f/2.0 en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre amplio integrando el producto de forma orgánica en la inmensidad del paisaje natural con gran profundidad de campo y atmósfera botánica pura.`;
+    photoStyleEn = `Environmental commercial photography captured with a 35mm f/2.0 wide-angle lens in ${activeRatio.promptEn} for the natural product "${productName}": wide environmental framing organically integrating the product into the expansive natural landscape.`;
+  } else if (lensId === '90mm-highspeed') {
+    photoStyleEs = `Fotografía publicitaria de alta velocidad (1/4000s freeze-motion) capturada con óptica de estudio 90mm f/4 en ${activeRatio.promptEs} para el producto natural "${productName}": acción dinámica congelando en el aire cada partícula botánica, salpicadura y gota con nitidez absoluta.`;
+    photoStyleEn = `High-speed 1/4000s freeze-motion commercial advertising photography captured with a 90mm f/4 studio lens in ${activeRatio.promptEn} for the natural product "${productName}": dynamic mid-air action freezing every botanical particle, splash, and droplet in crystal-clear focus.`;
+  } else if (lensId === '85mm-f18') {
+    photoStyleEs = `${activePhotoType.promptEs} con lente prime 85mm f/1.8 (bokeh cremoso de estudio) en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}.`;
+    photoStyleEn = `${activePhotoType.promptEn} with an 85mm f/1.8 prime lens (creamy studio bokeh) in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}.`;
+  }
+
+  // 2. Reference Photo Mode vs New Packaging
+  let packagingDescriptionEs = `En el centro destaca ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}.`;
+  let packagingDescriptionEn = `Centered is ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}.`;
+
+  if (useReferencePhotoMode) {
+    packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase de la imagen adjunta: misma silueta geométrica, misma tapa, mismos colores reales y el diseño original de la etiqueta con sus logotipos y textos reales sin rediseñar, deformar ni inventar marcas nuevas. En la escena destaca este envase original${presentationEs}, ${activeSurface.promptEs}.`;
+    packagingDescriptionEn = `[MANDATORY ATTACHED REFERENCE PHOTO]: It is strictly mandatory to preserve with 100% fidelity the exact product container from the attached image: identical silhouette shape, real cap, original label design, colors, and authentic logos without redesigning, warping, or inventing new graphics. Centered in the scene is this authentic product container${presentationEn}, ${activeSurface.promptEn}.`;
+  }
+
+  // Main Prompt
+  const mainPromptEs = `${photoStyleEs} ${packagingDescriptionEs} Alrededor del envase se aprecian ${ingredientsListEs}. ${getMedallionFragmentEs(medallionStyle)} Con ${activeLighting.promptEs}, ${activeMood.promptEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.${extraEs}`;
+
+  const mainPromptEn = `${photoStyleEn} ${packagingDescriptionEn} Surrounding the container are ${ingredientsListEn}. ${getMedallionFragmentEn(medallionStyle)} Featuring ${activeLighting.promptEn}, ${activeMood.promptEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.${extraEn}`;
 
   // 6-Shot Complete Photo Session
+  const bottleRefEs = useReferencePhotoMode
+    ? 'el envase original de la foto de referencia adjunta (manteniendo idéntica su forma, tapa y diseño original de etiqueta sin alterar)'
+    : activePackaging.promptEs;
+  const bottleRefEn = useReferencePhotoMode
+    ? 'the original product container from the attached reference photo (preserving identical shape, cap, and authentic label graphics)'
+    : activePackaging.promptEn;
+
+  const sessionRefPrefixEs = useReferencePhotoMode
+    ? 'Tomando como referencia obligatoria la foto del frasco adjunta (mantener idénticos colores, diseño y tipografías reales): '
+    : '';
+  const sessionRefPrefixEn = useReferencePhotoMode
+    ? 'Using the attached product photo as mandatory reference (preserve identical authentic colors, design, and typography): '
+    : '';
+
   const session6Pack = [
     {
       id: 'shot-1-poster',
       badge: 'Foto 1 · Póster de Beneficios',
       title: 'Póster Comercial Simétrico con 4 Medallones 3D',
       shotLabel: 'Eye-Level 0° · 85mm Bokeh',
-      promptEs: `${refInstructionEs}Fotografía comercial publicitaria tipo póster en ${activeRatio.promptEs} de "${productName}", en plano frontal eye-level perfectamente simétrico. En el centro, ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}, rodeado de ${ingredientsListEs}. ${getMedallionFragmentEs('gold-3d')} Con ${activeLighting.promptEs} y ${activeMood.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Commercial advertising poster photography in ${activeRatio.promptEn} of "${productName}", straight-on symmetrical eye-level shot. Centered is ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}, surrounded by ${ingredientsListEn}. ${getMedallionFragmentEn('gold-3d')} With ${activeLighting.promptEn} and ${activeMood.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
+      promptEs: `${sessionRefPrefixEs}Fotografía comercial publicitaria tipo póster en ${activeRatio.promptEs} de "${productName}", en plano frontal eye-level perfectamente simétrico. En el centro, ${bottleRefEs}${presentationEs}, ${activeSurface.promptEs}, rodeado de ${ingredientsListEs}. ${getMedallionFragmentEs('gold-3d')} Con ${activeLighting.promptEs} y ${activeMood.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
+      promptEn: `${sessionRefPrefixEn}Commercial advertising poster photography in ${activeRatio.promptEn} of "${productName}", straight-on symmetrical eye-level shot. Centered is ${bottleRefEn}${presentationEn}, ${activeSurface.promptEn}, surrounded by ${ingredientsListEn}. ${getMedallionFragmentEn('gold-3d')} With ${activeLighting.promptEn} and ${activeMood.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-2-hero',
       badge: 'Foto 2 · Catálogo Limpio',
       title: 'Hero Shot Imponente (Sin Medallones)',
       shotLabel: 'Contrapicado 15° · 85mm',
-      promptEs: `${refInstructionEs}Fotografía Hero Shot comercial limpia en ${activeRatio.promptEs} de "${productName}", en plano contrapicado heroico a 15 grados que engrandece la presencia del envase. Presenta ${activePackaging.promptEs}${presentationEs}, ${activeSurface.promptEs}, acompañado de ${ingredientsListEs}. Sin ningún texto flotante ni medallones externos. Con ${activeLighting.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Clean commercial Hero Shot photography in ${activeRatio.promptEn} of "${productName}", shot from a 15-degree low-angle heroic perspective. Featuring ${activePackaging.promptEn}${presentationEn}, ${activeSurface.promptEn}, accompanied by ${ingredientsListEn}. Strictly no floating text or external medallions. With ${activeLighting.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
+      promptEs: `${sessionRefPrefixEs}Fotografía Hero Shot comercial limpia en ${activeRatio.promptEs} de "${productName}", en plano contrapicado heroico a 15 grados que engrandece la presencia del envase. Presenta ${bottleRefEs}${presentationEs}, ${activeSurface.promptEs}, acompañado de ${ingredientsListEs}. Sin ningún texto flotante ni medallones externos. Con ${activeLighting.promptEs}, lente 85mm f/1.8, 8k.${extraEs}`,
+      promptEn: `${sessionRefPrefixEn}Clean commercial Hero Shot photography in ${activeRatio.promptEn} of "${productName}", shot from a 15-degree low-angle heroic perspective. Featuring ${bottleRefEn}${presentationEn}, ${activeSurface.promptEn}, accompanied by ${ingredientsListEn}. Strictly no floating text or external medallions. With ${activeLighting.promptEn}, 85mm f/1.8 lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-3-flatlay',
       badge: 'Foto 3 · Vista Cenital 90°',
       title: 'Flat Lay de Ingredientes desde Arriba',
       shotLabel: 'Cenital Top-Down · 50mm',
-      promptEs: `${refInstructionEs}Fotografía Flat Lay cenital en ángulo perpendicular de 90 grados desde arriba en ${activeRatio.promptEs} de "${productName}": ${activePackaging.promptEs}${presentationEs} reposando en el centro de la composición ${activeSurface.promptEs}, rodeado en círculo armónico por sus ingredientes naturales puros (${ingredientsListEs}). Iluminación suave de ventana con sombras orgánicas, ${activeMood.promptEs}, lente 50mm f/1.4 editorial, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Overhead 90-degree perpendicular top-down Flat Lay photography in ${activeRatio.promptEn} of "${productName}": ${activePackaging.promptEn}${presentationEn} resting at the center ${activeSurface.promptEn}, artfully encircled by its raw natural ingredients (${ingredientsListEn}). Soft window daylight with organic shadows, ${activeMood.promptEn}, 50mm f/1.4 editorial lens, 8k.${extraEn}`,
+      promptEs: `${sessionRefPrefixEs}Fotografía Flat Lay cenital en ángulo perpendicular de 90 grados desde arriba en ${activeRatio.promptEs} de "${productName}": ${bottleRefEs}${presentationEs} reposando en el centro de la composición ${activeSurface.promptEs}, rodeado en círculo armónico por sus ingredientes naturales puros (${ingredientsListEs}). Iluminación suave de ventana con sombras orgánicas, ${activeMood.promptEs}, lente 50mm f/1.4 editorial, 8k.${extraEs}`,
+      promptEn: `${sessionRefPrefixEn}Overhead 90-degree perpendicular top-down Flat Lay photography in ${activeRatio.promptEn} of "${productName}": ${bottleRefEn}${presentationEn} resting at the center ${activeSurface.promptEn}, artfully encircled by its raw natural ingredients (${ingredientsListEn}). Soft window daylight with organic shadows, ${activeMood.promptEn}, 50mm f/1.4 editorial lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-4-macro',
       badge: 'Foto 4 · Primer Plano Sensorial',
       title: 'Macro de Gotas, Textura y Relieve Dorado',
       shotLabel: 'Macro Extremo · 100mm f/2.8',
-      promptEs: `${refInstructionEs}Fotografía en primerísimo plano macro extremo (extreme close-up) en ${activeRatio.promptEs} de "${productName}": enfoque microscópico ultra nítido sobre el relieve dorado y las microgotas de rocío fresco en ${activePackaging.promptEs}, con ${ingredientsListEs} en primer plano. Iluminación a contraluz cálida, lente macro 100mm f/2.8, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Extreme macro close-up photography in ${activeRatio.promptEn} of "${productName}": razor-sharp microscopic focus on the metallic gold relief and fresh micro-droplets on ${activePackaging.promptEn}, with ${ingredientsListEn} in the immediate foreground. Warm backlit studio lighting, 100mm f/2.8 macro lens, 8k.${extraEn}`,
+      promptEs: `${sessionRefPrefixEs}Fotografía en primerísimo plano macro extremo (extreme tight close-up a pocos centímetros) en formato ${activeRatio.id} de "${productName}": encuadre cerrado cortando los bordes del frasco con enfoque microscópico ultra nítido sobre el relieve del logo y las microgotas de rocío fresco en ${bottleRefEs}, con ${ingredientsListEs} en primer plano. Iluminación a contraluz cálida, lente macro 100mm f/2.8, 8k.${extraEs}`,
+      promptEn: `${sessionRefPrefixEn}Extreme macro close-up photography (shot from inches away) in ${activeRatio.id} format of "${productName}": tightly cropped frame cutting bottle edges with razor-sharp microscopic focus on embossed logo relief and fresh micro-droplets on ${bottleRefEn}, with ${ingredientsListEn} in immediate foreground. Warm backlit studio lighting, 100mm f/2.8 macro lens, 8k.${extraEn}`,
     },
     {
       id: 'shot-5-splash',
       badge: 'Foto 5 · Splash / Acción Rápida',
       title: 'Salpicadura o Polvo Congelado en el Aire',
       shotLabel: 'High-Speed · 90mm f/4',
-      promptEs: `${refInstructionEs}Fotografía publicitaria de alta velocidad (1/4000s freeze motion) en ${activeRatio.promptEs} de "${productName}": en el centro, ${activePackaging.promptEs}${presentationEs} permanece firme mientras a su alrededor estalla en el aire una onda dinámica de ${ingredientsListEs} iluminada a contraluz con destellos dorados. Lente de estudio 90mm f/4, nitidez absoluta en cada partícula en suspensión, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}High-speed 1/4000s freeze-motion advertising photography in ${activeRatio.promptEn} of "${productName}": centered ${activePackaging.promptEn}${presentationEn} stands steady while a dynamic mid-air burst of ${ingredientsListEn} erupts around it backlit with golden sparkles. 90mm f/4 studio lens, crystal-clear focus on every suspended particle, 8k.${extraEn}`,
+      promptEs: `${sessionRefPrefixEs}Fotografía publicitaria de alta velocidad (1/4000s freeze motion) en ${activeRatio.promptEs} de "${productName}": en el centro, ${bottleRefEs}${presentationEs} permanece firme mientras a su alrededor estalla en el aire una onda dinámica de ${ingredientsListEs} iluminada a contraluz con destellos dorados. Lente de estudio 90mm f/4, nitidez absoluta en cada partícula en suspensión, 8k.${extraEs}`,
+      promptEn: `${sessionRefPrefixEn}High-speed 1/4000s freeze-motion advertising photography in ${activeRatio.promptEn} of "${productName}": centered ${bottleRefEn}${presentationEn} stands steady while a dynamic mid-air burst of ${ingredientsListEn} erupts around it backlit with golden sparkles. 90mm f/4 studio lens, crystal-clear focus on every suspended particle, 8k.${extraEn}`,
     },
     {
       id: 'shot-6-lifestyle',
       badge: 'Foto 6 · En Uso Real',
       title: 'Escena de Bienestar Cotidiano en una Mesa',
       shotLabel: 'Picado 45° · 50mm',
-      promptEs: `${refInstructionEs}Fotografía editorial Lifestyle de bienestar en ${activeRatio.promptEs} para "${productName}", en plano diagonal de 45 grados: ${activePackaging.promptEs}${presentationEs} ${activeSurface.promptEs} junto a ${ingredientsListEs}, mientras unas manos cuidadas preparan el producto bajo el sol matutino. Atmósfera cálida, hogareña y confiable, lente 50mm f/1.4, 8k.${extraEs}`,
-      promptEn: `${refInstructionEn}Wellness editorial Lifestyle photography in ${activeRatio.promptEn} for "${productName}", 45-degree angle: ${activePackaging.promptEn}${presentationEn} ${activeSurface.promptEn} alongside ${ingredientsListEn}, while sunlit elegant hands interact with the product. Warm, trustworthy morning atmosphere, 50mm f/1.4 lens, 8k.${extraEn}`,
+      promptEs: `${sessionRefPrefixEs}Fotografía editorial Lifestyle de bienestar en ${activeRatio.promptEs} para "${productName}", en plano diagonal de 45 grados: ${bottleRefEs}${presentationEs} ${activeSurface.promptEs} junto a ${ingredientsListEs}, mientras unas manos cuidadas preparan el producto bajo el sol matutino. Atmósfera cálida, hogareña y confiable, lente 50mm f/1.4, 8k.${extraEs}`,
+      promptEn: `${sessionRefPrefixEn}Wellness editorial Lifestyle photography in ${activeRatio.promptEn} for "${productName}", 45-degree angle: ${bottleRefEn}${presentationEn} ${activeSurface.promptEn} alongside ${ingredientsListEn}, while sunlit elegant hands interact with the product. Warm, trustworthy morning atmosphere, 50mm f/1.4 lens, 8k.${extraEn}`,
     },
   ];
 
@@ -510,6 +563,18 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                   {useReferencePhotoMode ? '✓ Respetar mi frasco real' : '¿Subirás foto de tu frasco real?'}
                 </button>
               </div>
+
+              {useReferencePhotoMode && (
+                <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-500/40 text-xs text-amber-200 flex items-start gap-2.5">
+                  <Upload className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-amber-300">Modo Frasco Real Activo:</p>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      El prompt se ha configurado para respetar al 100% tu foto real sin inventar etiquetas ni colores falsos. Recuerda adjuntar la foto en Gemini usando el botón del clip 📎.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
@@ -808,7 +873,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                       <button
                         key={lens.id}
                         type="button"
-                        onClick={() => setLensId(lens.id)}
+                        onClick={() => handleSelectLens(lens.id)}
                         className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer flex items-center gap-1 ${
                           isSelected
                             ? 'bg-amber-500 text-slate-950 border-amber-400 shadow font-extrabold'
@@ -823,6 +888,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                     );
                   })}
                 </div>
+
+                {lensId === '100mm-macro' && (
+                  <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-[11px] text-emerald-300 flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>
+                      <strong>Modo Macro 100mm sincronizado:</strong> Encuadre cerrado microscópico a corta distancia (enfoca gotas y textura de cerca; la IA no alejará la cámara).
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Formato / Proporción */}
@@ -985,6 +1059,16 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                 </div>
               </div>
 
+              {/* Reference Photo Reminder Banner */}
+              {useReferencePhotoMode && (
+                <div className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-emerald-500/15 border border-amber-400/40 text-xs text-amber-200 flex items-center gap-2 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"></span>
+                  <span className="text-[11px] font-semibold">
+                    Recuerda adjuntar la foto de tu frasco con el botón <strong>📎 en Gemini</strong> al enviar este prompt.
+                  </span>
+                </div>
+              )}
+
               {/* Recipe Quick Badges */}
               <div className="flex flex-wrap gap-1 text-[10px]">
                 <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
@@ -1115,7 +1199,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
         isOpen={isLensModalOpen}
         onClose={() => setIsLensModalOpen(false)}
         selectedLensId={lensId}
-        onSelectLens={(newLensId) => setLensId(newLensId)}
+        onSelectLens={(newLensId) => handleSelectLens(newLensId)}
         isDark={isDark}
       />
     </section>
