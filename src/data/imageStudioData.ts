@@ -53,6 +53,7 @@ export interface ProductQuickPreset {
   aspectRatio: '1:1' | '9:16' | '4:5' | '16:9';
   voiceIndex: number;
   musicIndex: number;
+  realProductColor?: string;
 }
 
 export const PHOTO_TYPES: PhotoTypeOption[] = [
@@ -816,6 +817,30 @@ export const ASPECT_RATIOS: {
 
 export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
   {
+    id: 'uro-cranberry-probioticos',
+    label: 'Bolsa Rosa URO Cranberry Probióticos',
+    productName: 'URO Cranberry + Orégano Probióticos + Prebióticos',
+    headline: 'SALUD DIGESTIVA Y URINARIA · BIENESTAR FEMENINO DIARIO',
+    benefit1: 'Salud Digestiva y Flora Intestinal Fuerte',
+    benefit2: 'Protección Urinaria con Arándano Rojo',
+    benefit3: 'Extracto de Orégano Antibacteriano Natural',
+    benefit4: 'Prebióticos para Microbiota Equilibrada',
+    dosage: 'Mastica dos gomitas al día',
+    photoTypeId: 'macro-textura',
+    shotId: 'macro-extremo',
+    lensId: '100mm-macro',
+    lightingId: 'softbox-cenital',
+    packagingId: 'doypack-standup-pouch',
+    packagingPresentation: 'solo',
+    surfaceId: 'arena-zen',
+    ingredientIds: ['gotas-rocio'],
+    colorMoodId: 'original-fiel',
+    aspectRatio: '9:16',
+    voiceIndex: 2,
+    musicIndex: 2,
+    realProductColor: 'Rosa suave mate con tipografía blanca y fucsia',
+  },
+  {
     id: 'glucosamina-condroitina-msm',
     label: 'Glucosamina + Condroitina + MSM',
     productName: 'Glucosamin Chondroitin MSM 1500mg',
@@ -837,6 +862,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     aspectRatio: '9:16',
     voiceIndex: 1,
     musicIndex: 0,
+    realProductColor: 'Frasco blanco puro mate con tapa azul marino y detalles plateados',
   },
   {
     id: 'colageno-magnesio',
@@ -860,6 +886,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     aspectRatio: '1:1',
     voiceIndex: 0,
     musicIndex: 0,
+    realProductColor: 'Frasco ámbar oscuro farmacéutico con tapa negra estriada y etiqueta dorada',
   },
   {
     id: 'propoleo-spray',
@@ -883,6 +910,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     aspectRatio: '1:1',
     voiceIndex: 1,
     musicIndex: 1,
+    realProductColor: 'Frasco ámbar de vidrio con atomizador spray negro y etiqueta dorada',
   },
   {
     id: 'doypack-probioticos',
@@ -906,6 +934,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     aspectRatio: '1:1',
     voiceIndex: 2,
     musicIndex: 2,
+    realProductColor: 'Bolsa stand-up pouch doypack rosa pastel mate con tipografía blanca',
   },
   {
     id: 'blue-line-colageno',
@@ -929,6 +958,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     aspectRatio: '1:1',
     voiceIndex: 0,
     musicIndex: 0,
+    realProductColor: 'Botella azul cobalto brillante con tapa dorada metálica',
   },
   {
     id: 'serum-botanico',
@@ -952,6 +982,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     aspectRatio: '1:1',
     voiceIndex: 0,
     musicIndex: 0,
+    realProductColor: 'Frasco gotero de vidrio ámbar con pipeta dorada y bulbo blanco',
   },
   {
     id: 'curcuma-ashwagandha',
@@ -1040,9 +1071,28 @@ export interface SupplementKnowledgeItem {
   recommendedIngredients: string[];
   recommendedColorMood: string;
   shortClinicalDesc: string;
+  realProductColor?: string;
 }
 
 export const SUPPLEMENT_KNOWLEDGE_BASE: SupplementKnowledgeItem[] = [
+  {
+    id: 'kb-uro-cranberry',
+    name: 'URO Cranberry + Orégano Probióticos (Bolsa Rosa)',
+    category: 'Salud Femenina & Digestiva',
+    keywords: ['uro', 'cranberry', 'oregano', 'probioticos', 'prebioticos', 'rosa', 'urinaria', 'gomitas', 'vital world'],
+    headline: 'SALUD DIGESTIVA Y URINARIA · BIENESTAR FEMENINO DIARIO',
+    benefit1: 'Salud Digestiva y Flora Intestinal Fuerte',
+    benefit2: 'Protección Urinaria con Arándano Rojo',
+    benefit3: 'Extracto de Orégano Antibacteriano Natural',
+    benefit4: 'Prebióticos para Microbiota Equilibrada',
+    recommendedPackagingId: 'doypack-standup-pouch',
+    recommendedPresentation: 'solo',
+    recommendedAccompaniments: [],
+    recommendedIngredients: ['gotas-rocio'],
+    recommendedColorMood: 'original-fiel',
+    realProductColor: 'Rosa suave mate con tipografía blanca y fucsia',
+    shortClinicalDesc: 'Empaque bolsa Doypack rosa mate de alta conversión con probióticos y arándano para salud digestiva y urinaria.',
+  },
   {
     id: 'kb-glucosamina',
     name: 'Glucosamina + Condroitina MSM',
