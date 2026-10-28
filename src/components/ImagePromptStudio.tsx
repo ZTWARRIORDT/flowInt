@@ -258,7 +258,11 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   };
 
   // Resolve active items
-  const activePhotoType = PHOTO_TYPES.find((x) => x.id === photoTypeId) || PHOTO_TYPES[0];
+  const activePhotoType =
+    PHOTO_TYPES.find((x) => x.id === photoTypeId) ||
+    (photoTypeId === 'poster-infografico-flow' || photoTypeId === 'poster-medallones'
+      ? PHOTO_TYPES[0]
+      : PHOTO_TYPES[0]);
   const activeShot = CAMERA_SHOTS.find((x) => x.id === shotId) || CAMERA_SHOTS[0];
   const activeLens = CAMERA_LENSES.find((x) => x.id === lensId) || CAMERA_LENSES[0];
   const activePackaging = PACKAGING_OPTIONS.find((x) => x.id === packagingId) || PACKAGING_OPTIONS[0];
@@ -345,7 +349,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
 
   // Poster Flow headline space directive
   const isPosterFlow =
-    photoTypeId === 'poster-infografico-flow' || photoTypeId === 'poster-medallones';
+    photoTypeId === 'poster-infografico' ||
+    photoTypeId === 'poster-infografico-flow' ||
+    photoTypeId === 'poster-medallones';
 
   const headlineDirectiveEs =
     isPosterFlow && headline.trim()
@@ -919,8 +925,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                 <label className="text-[11px] font-bold text-slate-300 block">
                   1. ¿Qué Estilo de Fotografía Necesitas?
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {PHOTO_TYPES.slice(0, 6).map((pt) => {
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5">
+                  {PHOTO_TYPES.map((pt) => {
                     const isSelected = photoTypeId === pt.id;
                     return (
                       <div
@@ -963,9 +969,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
 
               {/* 2. Formato de Imagen / Relación de Aspecto */}
               <div className="space-y-1.5 pt-2 border-t border-slate-800/50">
-                <label className="text-[11px] font-bold text-slate-300 block">
-                  2. Formato de Imagen (Relación de Aspecto):
-                </label>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <label className="text-[11px] font-bold text-slate-300 block">
+                    2. Formato de Imagen (Relación de Aspecto):
+                  </label>
+                  <span className="text-[10px] text-slate-400 font-normal">
+                    (Adapta el encuadre en el prompt; elígela también en los botones de Flow o Midjourney)
+                  </span>
+                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {ASPECT_RATIOS.map((ar) => (
                     <button
@@ -1032,10 +1043,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                           </span>
                           {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
                         </div>
-                        <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-amber-200' : ''}`}>
+                        <div className={`text-xs font-bold leading-snug ${isSelected ? 'text-amber-200' : ''}`}>
                           {styleOpt.label}
                         </div>
-                        <div className="text-[9.5px] text-slate-400 line-clamp-2 leading-tight">
+                        <div className="text-[10px] text-slate-400 leading-relaxed mt-1">
                           {styleOpt.shortDesc}
                         </div>
                       </button>
@@ -1097,10 +1108,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
                           {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
                         </div>
                         <div>
-                          <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-white' : ''}`}>
+                          <div className={`text-xs font-bold leading-snug ${isSelected ? 'text-white' : ''}`}>
                             {env.label}
                           </div>
-                          <p className="text-[10px] text-slate-400 line-clamp-2 leading-tight mt-1">
+                          <p className="text-[10px] text-slate-400 leading-relaxed mt-1">
                             {env.shortDesc}
                           </p>
                         </div>
