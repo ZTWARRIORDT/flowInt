@@ -29,7 +29,6 @@ import {
   Search,
   ShieldCheck,
   Info,
-  Palette,
 } from 'lucide-react';
 import {
   PHOTO_TYPES,
@@ -153,9 +152,6 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
   );
   // Default to true as the user requested: mostly real products will be used
   const [useReferencePhotoMode, setUseReferencePhotoMode] = useState<boolean>(true);
-  const [realProductColor, setRealProductColor] = useState<string>(
-    STUDIO_QUICK_PRESETS[0].realProductColor || 'Rosa suave mate con tipografía blanca y fucsia'
-  );
   const [extraCustomNotes, setExtraCustomNotes] = useState<string>('');
 
   // Selected accompaniments / props
@@ -302,7 +298,6 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     if (item.recommendedAccompaniments) setSelectedAccompanimentIds(item.recommendedAccompaniments);
     if (item.recommendedIngredients) setSelectedIngredientIds(item.recommendedIngredients);
     if (item.recommendedColorMood) setColorMoodId(item.recommendedColorMood);
-    if (item.realProductColor) setRealProductColor(item.realProductColor);
     setIsAssistantOpen(false);
     setSyncFeedback(`✓ Autocompletado: "${item.name}"`);
     setTimeout(() => setSyncFeedback(null), 3500);
@@ -339,7 +334,6 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
     setSelectedIngredientIds(preset.ingredientIds);
     setColorMoodId(preset.colorMoodId);
     setAspectRatio(preset.aspectRatio);
-    if (preset.realProductColor) setRealProductColor(preset.realProductColor);
   };
 
   // Sync when external preset is clicked from Catalog
@@ -569,25 +563,23 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
       ? ` High-converting advertising composition with clean top negative breathing room for campaign headline: "${headline.trim()}".`
       : '';
 
-  const productColorNoticeEs = realProductColor.trim()
-    ? ` [COLOR REAL OBLIGATORIO DE LA FOTO ADJUNTA: El envase de la foto adjunta es de COLOR "${realProductColor.trim().toUpperCase()}". Es estrictamente imperativo mantener con 100% de exactitud y fidelidad este color "${realProductColor.trim()}" en el empaque y respetar sus tipografías y logotipos originales sin deformar. QUEDA TOTALMENTE PROHIBIDO cambiar el envase a color verde esmeralda, dorado o cualquier otro tono que no sea el de la foto adjunta].`
-    : ` [COLOR REAL OBLIGATORIO: Mantener con 100% de exactitud los colores reales originales del envase de la foto adjunta, prohibido recolorear o aplicar tintes verdes o dorados al producto].`;
+  const productColorNoticeEs =
+    ' [PALETA Y COLOR REAL DEL OBJETO ADJUNTO: Extraer, heredar y replicar con 100% de fidelidad fotográfica la paleta de colores reales, tonalidades, degradados, logotipos, tipografías y acabados de material del objeto presente en la foto adjunta. Queda terminantemente PROHIBIDO recolorear el producto, inventar paletas ajenas o teñirlo de verde esmeralda, dorado o cualquier otro tono que no esté presente en la foto del objeto subido; todos los colores y gráficas del empaque deben clonarse directamente de la imagen adjunta].';
 
-  const productColorNoticeEn = realProductColor.trim()
-    ? ` [MANDATORY REAL COLOR FROM ATTACHED PHOTO: The container in the attached photo is strictly "${realProductColor.trim().toUpperCase()}". It is strictly mandatory to preserve this exact authentic "${realProductColor.trim()}" color on the packaging and keep original typography and logos without warping. STRICTLY FORBIDDEN to alter container color to emerald green, gold, or any other tone].`
-    : ` [MANDATORY REAL COLOR: Strictly preserve authentic true-to-life container colors from attached photo without recoloring].`;
+  const productColorNoticeEn =
+    ' [AUTHENTIC COLOR INHERITANCE FROM ATTACHED PHOTO: Directly inherit and replicate with 100% chromatic fidelity the exact authentic colors, gradients, logos, typography, and container materials from the object in the attached reference photo. Strictly FORBIDDEN to recolor the container, apply foreign color casts, or tint the product emerald green, gold, or any other hue not present on the uploaded object; all container colors must originate directly from the attached image].';
 
   // Strict color protection against background mood tinting
   const colorDirectiveEs = useReferencePhotoMode
     ? (colorMoodId === 'original-fiel'
-        ? `iluminación de estudio comercial neutra con luz blanca difusa pura (5500K balance de blancos limpio de catálogo), sin ningún tinte de color dominante, garantizando la reproducción 100% exacta y fidedigna del color ${realProductColor.trim() || 'original'} del envase de la foto adjunta. QUEDA PROHIBIDO teñir de verde esmeralda o dorado el empaque.`
-        : `iluminación ambiental sutil de fondo inspirada en ${activeMood.label} restringida estrictamente al fondo lejano, manteniendo de forma absoluta e inalterable el envase en su color auténtico ${realProductColor.trim() || 'original'} de la foto adjunta. PROHIBIDO teñir el envase de verde esmeralda o dorado.`)
+        ? 'iluminación de estudio comercial neutra con luz blanca pura 5500K (balance de blancos limpio de catálogo de producto), sin ningún tinte de color dominante, garantizando que el producto conserve con exactitud fotográfica los colores y materiales originales de la imagen adjunta. Queda prohibido teñir o alterar los colores del objeto.'
+        : `iluminación ambiental sutil restringida exclusivamente al fondo lejanísimo con matices de ${activeMood.label}, manteniendo de forma estricta e inalterable los colores, materiales y tonalidades auténticos del objeto de la foto adjunta sin teñirlo ni recolorearlo.`)
     : `con ${activeMood.promptEs}`;
 
   const colorDirectiveEn = useReferencePhotoMode
     ? (colorMoodId === 'original-fiel'
-        ? `neutral commercial studio lighting with pure white diffused light (5500K clean catalog white balance), zero dominant color tint, guaranteeing 100% accurate reproduction of authentic ${realProductColor.trim() || 'original'} packaging color. FORBIDDEN to alter container color to emerald green or gold.`
-        : `subtle ambient studio lighting strictly restricted to the distant background with nuances inspired by ${activeMood.label}, strictly preserving authentic ${realProductColor.trim() || 'original'} container color. Strictly forbidden to recolor container to emerald green or gold.`)
+        ? 'neutral commercial studio lighting with pure white diffused light (5500K clean product catalog white balance), zero dominant color casts, ensuring the product fully retains its authentic true-to-life colors and materials directly from the attached reference photo without recoloring'
+        : `subtle ambient studio lighting strictly restricted to the distant background with nuances inspired by ${activeMood.label}, strictly preserving authentic container colors, materials, and tones directly from the attached reference photo without recoloring`)
     : `with ${activeMood.promptEn}`;
 
   // Macro mode detection (prevents contradictory wide instructions like floating medallions or whole distant tables)
@@ -646,17 +638,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
 
   // 6-Shot Complete Photo Session
   const bottleRefEs = useReferencePhotoMode
-    ? `el envase original de la foto de referencia adjunta (manteniendo con exactitud su color ${realProductColor.trim() || 'original'}, silueta, tapa y diseño original de etiqueta sin recolorear)`
+    ? 'el envase original de la foto de referencia adjunta (extrayendo y replicando directamente sus colores reales, silueta, tapa y diseño original de etiqueta sin recolorear ni alterar)'
     : activePackaging.promptEs;
   const bottleRefEn = useReferencePhotoMode
-    ? `the original product container from the attached reference photo (preserving exact ${realProductColor.trim() || 'original'} color, silhouette, cap, and authentic label graphics without recoloring)`
+    ? 'the authentic product container from the attached reference photo (directly extracting and replicating its true-to-life colors, silhouette, cap, and authentic label graphics without recoloring)'
     : activePackaging.promptEn;
 
   const sessionRefPrefixEs = useReferencePhotoMode
-    ? `Tomando como referencia obligatoria la foto del envase adjunta (mantener estrictamente su color ${realProductColor.trim() || 'original'} real, diseño y tipografías sin alterar): `
+    ? 'Tomando como referencia obligatoria la foto del envase adjunta (heredar fielmente sus colores reales, materiales, diseño y tipografías sin alterar ni recolorear): '
     : '';
   const sessionRefPrefixEn = useReferencePhotoMode
-    ? `Using the attached product photo as mandatory reference (preserve exact authentic ${realProductColor.trim() || 'original'} color, design, and typography without alterations): `
+    ? 'Using the attached product photo as mandatory reference (faithfully extract and clone its authentic real colors, design, materials, and typography without alterations): '
     : '';
 
   const accInSessionEs = accompanimentsListEs ? `, acompañado armónicamente por ${accompanimentsListEs}` : '';
@@ -831,81 +823,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetId })
               </div>
 
               {useReferencePhotoMode && (
-                <div className="p-3.5 rounded-xl bg-gradient-to-r from-amber-500/15 via-rose-500/10 to-amber-500/15 border border-amber-500/40 text-xs space-y-3">
-                  <div className="flex items-start gap-2.5">
-                    <Upload className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                    <div className="space-y-0.5">
-                      <p className="font-bold text-amber-300 flex items-center gap-1.5">
-                        <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                        Modo Frasco Real Activo (Blindaje contra recoloreo verde/dorado):
-                      </p>
-                      <p className="text-[11px] text-slate-300 leading-relaxed">
-                        El prompt ordena a Gemini respetar al 100% tu empaque, logos y sellos reales. Especifica abajo el color exacto de tu frasco o bolsa para blindar el texto e impedir que la IA lo pinte de verde esmeralda o dorado. Recuerda adjuntar la foto con el clip 📎 en Gemini.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Real Product Color Selector */}
-                  <div className="pt-2 border-t border-amber-500/20 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label className="text-[11px] font-bold text-amber-300 flex items-center gap-1.5">
-                        <Palette className="w-3.5 h-3.5 text-rose-400" />
-                        Color Real de tu Frasco / Bolsa:
-                      </label>
-                      <span className="text-[10px] text-slate-400 font-mono">
-                        1 clic para blindar color
-                      </span>
-                    </div>
-
-                    {/* Quick Color Chips */}
-                    <div className="flex flex-wrap gap-1.5">
-                      {[
-                        { label: '🌸 Rosa / Fucsia (URO)', value: 'Rosa suave mate con tipografía blanca y fucsia' },
-                        { label: '⚪ Blanco / Crema', value: 'Blanco puro mate con tipografía negra nítida' },
-                        { label: '🔵 Azul / Marino', value: 'Azul cobalto intenso con detalles plateados' },
-                        { label: '🟠 Ámbar Farmacéutico', value: 'Vidrio ámbar oscuro farmacéutico con tapa negra' },
-                        { label: '⚫ Negro / Carbón', value: 'Negro carbón mate premium' },
-                        { label: '🟢 Verde Herbal', value: 'Verde oliva botánico natural' },
-                        { label: '🟣 Morado / Lavanda', value: 'Morado lavanda pastel suave' },
-                        { label: '🟡 Amarillo / Miel', value: 'Amarillo cálido con detalles dorados' },
-                      ].map((c) => {
-                        const isMatch = realProductColor === c.value;
-                        return (
-                          <button
-                            key={c.label}
-                            type="button"
-                            onClick={() => {
-                              setRealProductColor(c.value);
-                              setColorMoodId('original-fiel');
-                            }}
-                            className={`px-2 py-1 rounded-md text-[10.5px] font-semibold border transition-all cursor-pointer ${
-                              isMatch
-                                ? 'bg-rose-500 text-white border-rose-400 shadow font-bold ring-1 ring-rose-300'
-                                : isDark
-                                ? 'bg-black/40 border-slate-700 text-slate-300 hover:border-rose-400/60'
-                                : 'bg-white border-stone-300 text-stone-700 hover:border-rose-400'
-                            }`}
-                          >
-                            {c.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Custom input */}
-                    <div className="flex items-center gap-2 pt-0.5">
-                      <input
-                        type="text"
-                        value={realProductColor}
-                        onChange={(e) => setRealProductColor(e.target.value)}
-                        placeholder="Ej: Rosa suave mate con tipografía blanca y fucsia..."
-                        className={`w-full px-3 py-1.5 rounded-lg border text-xs font-semibold ${
-                          isDark
-                            ? 'bg-black/50 border-amber-500/40 text-amber-100 placeholder-slate-500'
-                            : 'bg-amber-50/50 border-amber-300 text-stone-900 placeholder-stone-400'
-                        }`}
-                      />
-                    </div>
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-2.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-amber-300 flex items-center gap-1.5">
+                      <span>Modo Frasco Real Activo · Herencia Cromática Automática</span>
+                    </p>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      El prompt ordena a Gemini <strong>extraer y clonar directamente los colores, tonalidades, logotipos y materiales del objeto de la foto adjunta</strong> (📎), prohibiendo de forma estricta cualquier recoloreo o tinte verde/dorado ajeno.
+                    </p>
                   </div>
                 </div>
               )}
