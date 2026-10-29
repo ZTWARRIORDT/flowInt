@@ -637,7 +637,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
       }
 
       case 'metric-cards': {
-        const formatted = list.slice(0, 3).map((b, i) => `Tarjeta ${i + 1}: "100% EFECTIVIDAD · ${b}"`).join(', ');
+        const formatted = list.slice(0, 3).map((b, i) => `Tarjeta ${i + 1}: "${b}"`).join(', ');
         return `Flotando armónicamente a los lados del envase hay tarjetas publicitarias de vidrio esmerilado (frosted glass) con datos clínicos de alto impacto impresos con tipografía bold ultra nítida: ${formatted}. Formato publicitario de alta respuesta y conversión directa.`;
       }
 
@@ -691,7 +691,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
       }
 
       case 'metric-cards': {
-        const formatted = list.slice(0, 3).map((b, i) => `Card ${i + 1}: "100% CLINICAL EFFECTIVENESS · ${b}"`).join(', ');
+        const formatted = list.slice(0, 3).map((b, i) => `Card ${i + 1}: "${b}"`).join(', ');
         return `Floating harmoniously beside the container are frosted glass advertising claim cards featuring bold crisp clinical typography: ${formatted}. High-conversion direct response advertising format.`;
       }
 
