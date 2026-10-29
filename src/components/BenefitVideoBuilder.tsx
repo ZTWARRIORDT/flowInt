@@ -12,13 +12,14 @@ import {
   UserCheck,
   CheckCircle2,
   ArrowUp,
+  ExternalLink,
 } from 'lucide-react';
 import { VOICE_PROFILES_LIBRARY } from '../data/flowData';
-import { SyncedProductPayload } from './ImagePromptStudio';
+
 
 interface Props {
   isDark: boolean;
-  syncedProduct?: SyncedProductPayload | null;
+  syncedProduct?: any;
 }
 
 interface PresetTemplate {

@@ -39,7 +39,12 @@ export interface NaturalProductExample {
   category: string;
   categoryId: 'suplementos' | 'doypack' | 'goteros' | 'sprays' | 'tarros' | 'polvos' | string;
   badgeText: string;
-  aspectRatio: '1:1 Estudio' | '9:16 Vertical';
+  aspectRatio: '1:1 Estudio' | '9:16 Vertical' | '4:5 Vertical';
+  packagingPromptEs?: string;
+  packagingPromptEn?: string;
+  environmentPromptEs?: string;
+  environmentPromptEn?: string;
+  [extra: string]: any;
   image: string;
   headline: string;
   summary: string;
