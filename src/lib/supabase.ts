@@ -151,7 +151,7 @@ export async function deleteCustomItemFromSupabase(id: string): Promise<boolean>
  */
 export async function checkSupabaseStatus(): Promise<'connected' | 'table_missing' | 'error'> {
   try {
-    const { error } = await supabase.from('studio_custom_items').select('id').limit(1);
+    const { error } = await supabase.from('studio_state').select('key').limit(1);
     if (!error) return 'connected';
     if (error.code === 'PGRST205' || error.message?.includes('schema cache')) {
       return 'table_missing';
@@ -159,5 +159,36 @@ export async function checkSupabaseStatus(): Promise<'connected' | 'table_missin
     return 'error';
   } catch {
     return 'error';
+  }
+}
+
+/**
+ * Estado sincronizado (sin login): tabla clave/valor `studio_state`.
+ * Ver supabase/schema.sql para crearla.
+ */
+export async function loadStudioState(): Promise<Record<string, any> | null> {
+  try {
+    const { data, error } = await supabase.from('studio_state').select('key,value');
+    if (error || !data) return null;
+    const out: Record<string, any> = {};
+    for (const r of data as { key: string; value: any }[]) out[r.key] = r.value;
+    return out;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveStudioState(key: string, value: any): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('studio_state')
+      .upsert({ key, value, updated_at: new Date().toISOString() });
+    if (error) {
+      console.warn('[Supabase] Error saving state:', error.message);
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
   }
 }

@@ -49,6 +49,8 @@ import {
 import { LensVisualModal } from './LensVisualModal';
 import {
   fetchCustomItemsFromSupabase,
+  loadStudioState,
+  saveStudioState,
   checkSupabaseStatus,
 } from '../lib/supabase';
 
@@ -187,12 +189,42 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   const [isAssistantOpen, setIsAssistantOpen] = useState<boolean>(false);
   const [assistantSearch, setAssistantSearch] = useState<string>('');
 
-  // Check Supabase status on mount
+  // Sincronización con Supabase (sin login): carga al abrir y guarda al cambiar
+  const [stateHydrated, setStateHydrated] = useState<boolean>(false);
   useEffect(() => {
-    checkSupabaseStatus().then((status) => {
+    checkSupabaseStatus().then(async (status) => {
       setSupabaseStatus(status);
+      if (status === 'connected') {
+        const remote = await loadStudioState();
+        if (remote) {
+          if (Array.isArray(remote.custom_envs)) setCustomEnvironments(remote.custom_envs);
+          if (Array.isArray(remote.custom_infographics)) setCustomInfographicStyles(remote.custom_infographics);
+          if (Array.isArray(remote.custom_phototypes)) setCustomPhotoTypes(remote.custom_phototypes);
+          if (Array.isArray(remote.custom_ratios)) setCustomAspectRatios(remote.custom_ratios);
+          const d = remote.draft;
+          if (d && typeof d === 'object') {
+            if (typeof d.productName === 'string') setProductName(d.productName);
+            if (typeof d.headline === 'string') setHeadline(d.headline);
+            if (Array.isArray(d.benefits)) setBenefits(d.benefits);
+          }
+        }
+        setStateHydrated(true);
+      }
     });
   }, []);
+
+  const syncKey = (key: string, value: any) => {
+    if (stateHydrated) saveStudioState(key, value);
+  };
+  useEffect(() => syncKey('custom_envs', customEnvironments), [customEnvironments, stateHydrated]);
+  useEffect(() => syncKey('custom_infographics', customInfographicStyles), [customInfographicStyles, stateHydrated]);
+  useEffect(() => syncKey('custom_phototypes', customPhotoTypes), [customPhotoTypes, stateHydrated]);
+  useEffect(() => syncKey('custom_ratios', customAspectRatios), [customAspectRatios, stateHydrated]);
+  useEffect(() => {
+    if (!stateHydrated) return;
+    const t = setTimeout(() => saveStudioState('draft', { productName, headline, benefits }), 800);
+    return () => clearTimeout(t);
+  }, [productName, headline, benefits, stateHydrated]);
 
   const handleResetCleanScene = () => {
     setProductName('');
