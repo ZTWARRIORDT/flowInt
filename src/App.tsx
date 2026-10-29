@@ -31,17 +31,17 @@ export function App() {
             : 'bg-[#FAF7F2]/90 border-stone-200'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand */}
-          <a href="#" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-950 shadow-md">
+          <a href="#" aria-label="NaturalStudio, inicio" className="flex items-center gap-2 sm:gap-2.5 group min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-950 shadow-md">
               <Camera className="w-5 h-5 stroke-[2.5]" />
             </div>
-            <div>
-              <span className="font-serif font-bold text-lg tracking-tight block leading-none">
+            <div className="min-w-0">
+              <span className="font-serif font-bold text-base sm:text-lg tracking-tight block leading-none">
                 Natural<span className="text-emerald-400">Studio</span>
               </span>
-              <span className="text-sm font-mono tracking-wide text-amber-400 block font-bold">
+              <span className="hidden sm:block text-xs lg:text-sm font-mono tracking-wide text-amber-400 font-bold truncate">
                 Fotografía Comercial IA para Productos Naturales
               </span>
             </div>
@@ -58,22 +58,23 @@ export function App() {
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 shrink-0">
             <a
               href="https://flow.google"
+              aria-label="Abrir Google Flow"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow hover:opacity-95 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 min-h-10 px-3 sm:px-3.5 py-1.5 rounded-xl text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow hover:opacity-95 transition-all cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 fill-slate-950" /> Abrir Flow
-              <ExternalLink className="w-3 h-3" />
+              <Sparkles className="w-3.5 h-3.5 fill-slate-950" /> <span>Flow</span>
+              <ExternalLink className="w-3 h-3 hidden sm:block" />
             </a>
 
             <button
               type="button"
               onClick={() => setIsDark(!isDark)}
               aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+              className={`min-h-10 min-w-10 flex items-center justify-center rounded-xl border transition-all cursor-pointer ${
                 isDark
                   ? 'bg-slate-900 border-slate-700 text-amber-400 hover:bg-slate-800'
                   : 'bg-white border-stone-300 text-stone-700 hover:bg-stone-100'
