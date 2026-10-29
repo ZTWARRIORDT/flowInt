@@ -190,6 +190,37 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   const [assistantSearch, setAssistantSearch] = useState<string>('');
 
   // Sincronización con Supabase (sin login): carga al abrir y guarda al cambiar
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  type ProductProfile = {
+    id: string; name: string; productName: string; headline: string;
+    benefits: string[]; packagingId: string; packagingPresentation: PackagingPresentationMode; realProductColor: string;
+  };
+  const [profiles, setProfiles] = useState<ProductProfile[]>(() => {
+    try { const x = localStorage.getItem('natural_studio_profiles'); return x ? JSON.parse(x) : []; } catch { return []; }
+  });
+  const [selectedProfileId, setSelectedProfileId] = useState<string>('');
+  const handleSaveProfile = () => {
+    if (!productName.trim()) { setSyncFeedback('Escribe el nombre del producto para guardar el perfil'); setTimeout(() => setSyncFeedback(null), 3000); return; }
+    const existing = profiles.find((x) => x.name.toLowerCase() === productName.trim().toLowerCase());
+    const prof: ProductProfile = {
+      id: existing?.id || `prof-${Date.now()}`, name: productName.trim(), productName, headline, benefits,
+      packagingId, packagingPresentation, realProductColor,
+    };
+    setProfiles([prof, ...profiles.filter((x) => x.id !== prof.id)]);
+    setSelectedProfileId(prof.id);
+    setSyncFeedback(`✓ Perfil "${prof.name}" guardado`); setTimeout(() => setSyncFeedback(null), 3000);
+  };
+  const handleLoadProfile = (id: string) => {
+    setSelectedProfileId(id);
+    const pr = profiles.find((x) => x.id === id);
+    if (!pr) return;
+    setProductName(pr.productName); setHeadline(pr.headline); setBenefits(pr.benefits);
+    setPackagingId(pr.packagingId); setPackagingPresentation(pr.packagingPresentation); setRealProductColor(pr.realProductColor);
+  };
+  const handleDeleteProfile = () => {
+    setProfiles(profiles.filter((x) => x.id !== selectedProfileId));
+    setSelectedProfileId('');
+  };
   const [stateHydrated, setStateHydrated] = useState<boolean>(false);
   useEffect(() => {
     checkSupabaseStatus().then(async (status) => {
@@ -200,6 +231,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
           if (Array.isArray(remote.custom_envs)) setCustomEnvironments(remote.custom_envs);
           if (Array.isArray(remote.custom_infographics)) setCustomInfographicStyles(remote.custom_infographics);
           if (Array.isArray(remote.custom_phototypes)) setCustomPhotoTypes(remote.custom_phototypes);
+          if (Array.isArray(remote.profiles)) setProfiles(remote.profiles);
           if (Array.isArray(remote.custom_ratios)) setCustomAspectRatios(remote.custom_ratios);
           const d = remote.draft;
           if (d && typeof d === 'object') {
@@ -219,6 +251,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   useEffect(() => syncKey('custom_envs', customEnvironments), [customEnvironments, stateHydrated]);
   useEffect(() => syncKey('custom_infographics', customInfographicStyles), [customInfographicStyles, stateHydrated]);
   useEffect(() => syncKey('custom_phototypes', customPhotoTypes), [customPhotoTypes, stateHydrated]);
+  useEffect(() => {
+    localStorage.setItem('natural_studio_profiles', JSON.stringify(profiles));
+    syncKey('profiles', profiles);
+  }, [profiles, stateHydrated]);
   useEffect(() => syncKey('custom_ratios', customAspectRatios), [customAspectRatios, stateHydrated]);
   useEffect(() => {
     if (!stateHydrated) return;
@@ -762,7 +798,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
 
   return (
-    <section id="estudio-imagenes" className="py-10 scroll-mt-16">
+    <section id="estudio-imagenes" className="py-10 pb-28 lg:pb-10 scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Top Header + Quick Actions */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -934,6 +970,31 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     }`}
                   />
                 </div>
+              </div>
+
+              {/* Perfiles de producto guardados */}
+              <div className="flex flex-wrap items-center gap-2">
+                <select
+                  value={selectedProfileId}
+                  onChange={(e) => handleLoadProfile(e.target.value)}
+                  aria-label="Perfiles de producto guardados"
+                  className="flex-1 min-w-[160px] px-3 py-2 rounded-lg border border-slate-700 bg-black/40 text-white text-sm"
+                >
+                  <option value="">{profiles.length ? 'Cargar un producto guardado…' : 'Sin perfiles guardados'}</option>
+                  {profiles.map((pr) => (
+                    <option key={pr.id} value={pr.id}>{pr.name}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={handleSaveProfile}
+                  className="px-3 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 text-sm font-semibold cursor-pointer transition-all">
+                  Guardar producto
+                </button>
+                {selectedProfileId && (
+                  <button type="button" onClick={handleDeleteProfile}
+                    className="px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:text-red-300 text-sm cursor-pointer">
+                    Borrar
+                  </button>
+                )}
               </div>
 
               {/* Dynamic Benefits / Claims Fields (Universal for ANY product) */}
@@ -1294,6 +1355,100 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
               </div>
 
+              {/* 4. Entorno Comercial Unificado (Superficie + Iluminación + Atmósfera en 1 solo selector) */}
+              <div className="pt-2 border-t border-slate-800/60 space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
+                    4. Entorno / Fondo Comercial Unificado ({allEnvironments.length} disponibles):
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsAddEnvModalOpen(true)}
+                      className="px-2 py-0.5 rounded-lg text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Añadir Escenario</span>
+                    </button>
+                    {environmentId !== 'estudio-neutro' && (
+                      <button
+                        type="button"
+                        onClick={() => setEnvironmentId('estudio-neutro')}
+                        className="text-sm text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                      >
+                        Restablecer a Estudio Neutro
+                      </button>
+                    )}
+                    <span className="text-sm text-amber-400 font-mono font-bold">
+                      {activeEnvironment.label}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 max-h-[500px] overflow-y-auto pr-1">
+                  {allEnvironments.map((env) => {
+                    const isSelected = environmentId === env.id;
+                    const isCustom = customEnvironments.some((c) => c.id === env.id);
+                    return (
+                      <button
+                        key={env.id}
+                        type="button"
+                        onClick={() => handleToggleEnvironment(env.id)}
+                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 h-full ${
+                          isSelected
+                            ? 'bg-gradient-to-br from-emerald-500/20 to-amber-500/15 border-emerald-400 ring-2 ring-emerald-400/50 shadow font-bold'
+                            : isDark
+                            ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
+                            : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 font-bold truncate">
+                            {env.badge}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            {isCustom && (
+                              <span
+                                onClick={(e) => handleDeleteCustomEnv(env.id, e)}
+                                className="text-slate-400 hover:text-rose-400 p-0.5"
+                                title="Eliminar escenario"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </span>
+                            )}
+                            {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
+                          </div>
+                        </div>
+                        <div>
+                          <div className={`text-sm font-bold leading-snug ${isSelected ? 'text-white' : ''}`}>
+                            {env.label}
+                          </div>
+                          <p className="text-sm text-slate-400 leading-relaxed mt-1">
+                            {env.shortDesc}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Opciones avanzadas (formato e infografía) */}
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                aria-expanded={showAdvanced}
+                className={`w-full py-2.5 rounded-xl border border-dashed text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                  isDark
+                    ? 'border-emerald-800/70 text-emerald-300 hover:border-emerald-500'
+                    : 'border-stone-300 text-stone-700 hover:border-emerald-600'
+                }`}
+              >
+                {showAdvanced ? 'Ocultar opciones avanzadas ▲' : 'Opciones avanzadas: formato e infografía ▼'}
+              </button>
+              {showAdvanced && (
+                <div className="space-y-4">
               {/* 2. Formato de Imagen / Relación de Aspecto */}
               <div className="space-y-1.5 pt-2 border-t border-slate-800/50">
                 <div className="flex items-center justify-between flex-wrap gap-2">
@@ -1435,84 +1590,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 )}
               </div>
 
-              {/* 4. Entorno Comercial Unificado (Superficie + Iluminación + Atmósfera en 1 solo selector) */}
-              <div className="pt-2 border-t border-slate-800/60 space-y-2">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                    4. Entorno / Fondo Comercial Unificado ({allEnvironments.length} disponibles):
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsAddEnvModalOpen(true)}
-                      className="px-2 py-0.5 rounded-lg text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>Añadir Escenario</span>
-                    </button>
-                    {environmentId !== 'estudio-neutro' && (
-                      <button
-                        type="button"
-                        onClick={() => setEnvironmentId('estudio-neutro')}
-                        className="text-sm text-slate-400 hover:text-amber-400 underline cursor-pointer"
-                      >
-                        Restablecer a Estudio Neutro
-                      </button>
-                    )}
-                    <span className="text-sm text-amber-400 font-mono font-bold">
-                      {activeEnvironment.label}
-                    </span>
-                  </div>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 max-h-[500px] overflow-y-auto pr-1">
-                  {allEnvironments.map((env) => {
-                    const isSelected = environmentId === env.id;
-                    const isCustom = customEnvironments.some((c) => c.id === env.id);
-                    return (
-                      <button
-                        key={env.id}
-                        type="button"
-                        onClick={() => handleToggleEnvironment(env.id)}
-                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 h-full ${
-                          isSelected
-                            ? 'bg-gradient-to-br from-emerald-500/20 to-amber-500/15 border-emerald-400 ring-2 ring-emerald-400/50 shadow font-bold'
-                            : isDark
-                            ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
-                            : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 font-bold truncate">
-                            {env.badge}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            {isCustom && (
-                              <span
-                                onClick={(e) => handleDeleteCustomEnv(env.id, e)}
-                                className="text-slate-400 hover:text-rose-400 p-0.5"
-                                title="Eliminar escenario"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </span>
-                            )}
-                            {isSelected && <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />}
-                          </div>
-                        </div>
-                        <div>
-                          <div className={`text-sm font-bold leading-snug ${isSelected ? 'text-white' : ''}`}>
-                            {env.label}
-                          </div>
-                          <p className="text-sm text-slate-400 leading-relaxed mt-1">
-                            {env.shortDesc}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              )}
             </div>
           </div>
 
@@ -2209,6 +2288,16 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
           </div>
         </div>
       )}
+      {/* Barra fija móvil: copiar prompt siempre a mano */}
+      <div className={`lg:hidden fixed bottom-0 inset-x-0 z-40 p-3 border-t backdrop-blur ${isDark ? 'bg-[#0A100E]/95 border-emerald-900' : 'bg-white/95 border-stone-200'}`}>
+        <button
+          type="button"
+          onClick={() => copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')}
+          className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer"
+        >
+          {copiedKey === 'main-copy' ? <><Check className="w-4 h-4" /> ¡Prompt copiado!</> : <><Copy className="w-4 h-4" /> Copiar prompt para Flow</>}
+        </button>
+      </div>
     </section>
   );
 };
