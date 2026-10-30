@@ -1161,7 +1161,7 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
     photoTypeId: 'poster-infografico-flow',
     shotId: 'eye-level',
     lensId: '85mm-f18',
-    environmentId: 'arena-zen',
+    environmentId: 'arena-mediterranea',
     packagingId: 'doypack-standup-pouch',
     packagingPresentation: 'solo',
     infographicStyle: 'pill-badges',

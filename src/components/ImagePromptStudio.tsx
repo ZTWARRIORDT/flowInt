@@ -287,7 +287,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     const updated = customEnvironments.filter((x) => x.id !== id);
     setCustomEnvironments(updated);
     localStorage.setItem('natural_studio_custom_envs', JSON.stringify(updated));
-    if (environmentId === id) setEnvironmentId('arena-zen');
+    if (environmentId === id) setEnvironmentId('estudio-neutro');
   };
 
   const handleSaveCustomInfographic = () => {
