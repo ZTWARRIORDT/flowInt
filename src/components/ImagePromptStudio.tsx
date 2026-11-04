@@ -86,7 +86,18 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
   const [lensId, setLensId] = useState<string>('85mm-f18');
   const [infographicStyle, setInfographicStyle] = useState<string>('none');
   const [benefits, setBenefits] = useState<string[]>(['', '', '', '']);
-  const [anglePreviewItem, setAnglePreviewItem] = useState<typeof CAMERA_SHOTS[0] | null>(null);
+  interface StudioPreviewItem {
+    type: 'angle' | 'environment';
+    id: string;
+    label: string;
+    badge?: string;
+    shortDesc?: string;
+    sampleImage?: string;
+    promptEs?: string;
+    surfaceEs?: string;
+    lightingEs?: string;
+  }
+  const [previewModalItem, setPreviewModalItem] = useState<StudioPreviewItem | null>(null);
 
   // Aspect ratio (fixed default 1:1)
   const aspectRatio = '1:1';
@@ -101,10 +112,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
     setShotId(newShotId);
     if (newShotId === 'macro-extremo') {
       setLensId('100mm-macro');
-    } else if (newShotId === 'cenital-90') {
+    } else if (newShotId === 'cenital-90' || newShotId === 'picado-45' || newShotId === 'tres-cuartos') {
       setLensId('50mm-f14');
-    } else if (newShotId === 'picado-45') {
-      setLensId('50mm-f14');
+    } else if (newShotId === 'plano-general-banner') {
+      setLensId('35mm-f2');
     } else {
       setLensId('85mm-f18');
     }
@@ -380,12 +391,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
       ? environmentsList
       : environmentsList.filter((e) => e.category === envCategoryFilter);
 
-  const curatedShots = [
-    CAMERA_SHOTS.find((s) => s.id === 'eye-level') || CAMERA_SHOTS[0],
-    CAMERA_SHOTS.find((s) => s.id === 'picado-45') || CAMERA_SHOTS[0],
-    CAMERA_SHOTS.find((s) => s.id === 'macro-extremo') || CAMERA_SHOTS[0],
-    CAMERA_SHOTS.find((s) => s.id === 'cenital-90') || CAMERA_SHOTS[0],
-  ];
+  const curatedShots = CAMERA_SHOTS;
 
   const curatedInfographics = [
     INFOGRAPHIC_STYLES.find((s) => s.id === 'none') || {
@@ -679,28 +685,61 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               ))}
             </div>
 
-            {/* Rejilla de 12 Entornos */}
+            {/* Rejilla de Entornos */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {filteredEnvironments.map((env) => {
                 const isSelected = environmentId === env.id;
                 return (
-                  <button
+                  <div
                     key={env.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setEnvironmentId(env.id)}
-                    className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        setEnvironmentId(env.id);
+                      }
+                    }}
+                    className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 group ${
                       isSelected
                         ? 'border-[#C85A32] bg-[#FDFBF9] ring-2 ring-[#C85A32]/20 shadow-xs'
                         : 'bg-[#FDFCF9] border-[#E7E5DF] hover:border-stone-400 text-stone-800'
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center justify-between gap-1.5">
                       <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold truncate ${
                         isSelected ? 'bg-[#C85A32]/15 text-[#C85A32]' : 'bg-[#EFECE6] text-stone-700'
                       }`}>
                         {env.badge}
                       </span>
-                      {isSelected && <Check className="w-4 h-4 text-[#C85A32] shrink-0 stroke-[2.5]" />}
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {env.sampleImage && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPreviewModalItem({
+                                type: 'environment',
+                                id: env.id,
+                                label: env.label,
+                                badge: env.badge,
+                                shortDesc: env.shortDesc,
+                                sampleImage: env.sampleImage,
+                                surfaceEs: env.surfaceEs,
+                                lightingEs: env.lightingEs,
+                              });
+                            }}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-700 hover:text-[#C85A32] border border-[#E7E5DF] transition-all cursor-pointer shadow-xs text-[11px] font-semibold"
+                            title={`Ver foto de ejemplo del escenario: ${env.label}`}
+                            aria-label={`Ver foto de ejemplo del escenario ${env.label}`}
+                          >
+                            <Eye className="w-3.5 h-3.5 text-[#C85A32]" />
+                            <span>Ejemplo</span>
+                          </button>
+                        )}
+                        {isSelected && <Check className="w-4 h-4 text-[#C85A32] shrink-0 stroke-[2.5]" />}
+                      </div>
                     </div>
                     <div>
                       <div className="text-sm font-bold text-stone-900 leading-snug">
@@ -710,7 +749,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                         {env.shortDesc}
                       </p>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -888,13 +927,18 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               </p>
             </div>
 
-            {/* Selector de 4 Ángulos de Cámara */}
+            {/* Selector de 8 Ángulos y Encuadres de Cámara */}
             <div className="space-y-2.5">
-              <label className="block text-xs font-bold text-stone-800 uppercase tracking-wider">
-                1. Ángulo y Encuadre de Cámara:
-              </label>
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <label className="block text-xs font-bold text-stone-800 uppercase tracking-wider">
+                  1. Ángulo y Encuadre de Cámara (8 Opciones Comerciales):
+                </label>
+                <span className="text-xs text-stone-500 font-medium">
+                  {activeShot.label.split('(')[0].trim()} activo
+                </span>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 {curatedShots.map((shot) => {
                   const isSelected = shotId === shot.id;
                   return (
@@ -927,7 +971,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setAnglePreviewItem(shot);
+                                setPreviewModalItem({
+                                  type: 'angle',
+                                  id: shot.id,
+                                  label: shot.label,
+                                  badge: shot.badge,
+                                  shortDesc: shot.shortDesc,
+                                  sampleImage: shot.sampleImage,
+                                  promptEs: shot.promptEs,
+                                });
                               }}
                               className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-700 hover:text-[#C85A32] border border-[#E7E5DF] transition-all cursor-pointer shadow-xs text-[11px] font-semibold"
                               title={`Ver foto de ejemplo del ángulo: ${shot.label}`}
@@ -1311,14 +1363,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
           </div>
         )}
 
-        {/* Modal de Ejemplo Visual de Ángulo de Cámara */}
-        {anglePreviewItem && (
+        {/* Modal de Ejemplo Visual Unificado (Ángulos y Escenarios) */}
+        {previewModalItem && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs animate-in fade-in duration-150"
-            onClick={() => setAnglePreviewItem(null)}
+            onClick={() => setPreviewModalItem(null)}
           >
             <div
-              className="bg-[#FDFCF9] border border-[#E7E5DF] rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl"
+              className="bg-[#FDFCF9] border border-[#E7E5DF] rounded-2xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Encabezado fijo */}
@@ -1329,17 +1381,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   </span>
                   <div>
                     <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#C85A32] block">
-                      Ejemplo de Ángulo · {anglePreviewItem.badge}
+                      {previewModalItem.type === 'angle' ? 'Ejemplo de Ángulo / Encuadre' : 'Ejemplo de Escenario'} · {previewModalItem.badge}
                     </span>
                     <h4 className="text-base font-black font-sans text-stone-900 leading-tight">
-                      {anglePreviewItem.label}
+                      {previewModalItem.label}
                     </h4>
                   </div>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => setAnglePreviewItem(null)}
+                  onClick={() => setPreviewModalItem(null)}
                   className="p-1.5 rounded-xl hover:bg-[#EFECE6] text-stone-500 hover:text-stone-900 transition-colors cursor-pointer"
                   title="Cerrar vista previa"
                   aria-label="Cerrar"
@@ -1352,10 +1404,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <div className="overflow-y-auto flex-1">
                 {/* Imagen de Ejemplo */}
                 <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden flex items-center justify-center border-b border-[#E7E5DF]">
-                  {anglePreviewItem.sampleImage ? (
+                  {previewModalItem.sampleImage ? (
                     <img
-                      src={anglePreviewItem.sampleImage}
-                      alt={`Ejemplo visual del ángulo ${anglePreviewItem.label}`}
+                      src={previewModalItem.sampleImage}
+                      alt={`Ejemplo visual de ${previewModalItem.label}`}
                       className="w-full h-full object-cover"
                       loading="eager"
                     />
@@ -1363,18 +1415,36 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                     <div className="text-xs text-stone-500">Sin imagen de ejemplo</div>
                   )}
                   <div className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-md text-[10px] font-mono font-medium shadow-xs">
-                    Foto de Demostración de Perspectiva
+                    {previewModalItem.type === 'angle' ? 'Foto de Demostración de Perspectiva' : 'Foto de Demostración de Escenario'}
                   </div>
                 </div>
 
-                {/* Detalles */}
+                {/* Detalles y Directivas */}
                 <div className="p-5 space-y-3 bg-[#FDFCF9]">
                   <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium">
-                    {anglePreviewItem.shortDesc}
+                    {previewModalItem.shortDesc}
                   </p>
-                  <p className="text-[11px] font-mono text-stone-600 bg-[#F7F5F0] p-2.5 rounded-lg border border-[#E7E5DF]">
-                    <span className="font-bold text-[#C85A32]">Comando Flow:</span> "{anglePreviewItem.promptEs}"
-                  </p>
+
+                  {previewModalItem.type === 'angle' && previewModalItem.promptEs && (
+                    <p className="text-[11px] font-mono text-stone-600 bg-[#F7F5F0] p-2.5 rounded-lg border border-[#E7E5DF]">
+                      <span className="font-bold text-[#C85A32]">Comando Flow:</span> "{previewModalItem.promptEs}"
+                    </p>
+                  )}
+
+                  {previewModalItem.type === 'environment' && (
+                    <div className="space-y-1.5 text-xs text-stone-700 bg-[#F7F5F0] p-3 rounded-xl border border-[#E7E5DF]">
+                      {previewModalItem.surfaceEs && (
+                        <p>
+                          <strong className="text-stone-900">Superficie:</strong> {previewModalItem.surfaceEs}
+                        </p>
+                      )}
+                      {previewModalItem.lightingEs && (
+                        <p>
+                          <strong className="text-stone-900">Iluminación:</strong> {previewModalItem.lightingEs}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1382,36 +1452,63 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <div className="p-4 bg-[#F7F5F0] border-t border-[#E7E5DF] flex items-center justify-between gap-3 shrink-0">
                 <button
                   type="button"
-                  onClick={() => setAnglePreviewItem(null)}
+                  onClick={() => setPreviewModalItem(null)}
                   className="py-2 px-4 rounded-xl text-xs font-semibold bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-700 border border-[#E7E5DF] transition-all cursor-pointer"
                 >
                   Cerrar
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleSelectShot(anglePreviewItem.id);
-                    setAnglePreviewItem(null);
-                  }}
-                  className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs ${
-                    shotId === anglePreviewItem.id
-                      ? 'bg-[#EFECE6] text-stone-800 border border-[#E7E5DF]'
-                      : 'bg-[#C85A32] hover:bg-[#B84A22] text-white'
-                  }`}
-                >
-                  {shotId === anglePreviewItem.id ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                      <span>Ángulo ya Seleccionado</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Seleccionar este Ángulo</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </>
-                  )}
-                </button>
+                {previewModalItem.type === 'angle' ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSelectShot(previewModalItem.id);
+                      setPreviewModalItem(null);
+                    }}
+                    className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                      shotId === previewModalItem.id
+                        ? 'bg-[#EFECE6] text-stone-800 border border-[#E7E5DF]'
+                        : 'bg-[#C85A32] hover:bg-[#B84A22] text-white'
+                    }`}
+                  >
+                    {shotId === previewModalItem.id ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                        <span>Ángulo ya Seleccionado</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Seleccionar este Ángulo</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEnvironmentId(previewModalItem.id);
+                      setPreviewModalItem(null);
+                    }}
+                    className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                      environmentId === previewModalItem.id
+                        ? 'bg-[#EFECE6] text-stone-800 border border-[#E7E5DF]'
+                        : 'bg-[#C85A32] hover:bg-[#B84A22] text-white'
+                    }`}
+                  >
+                    {environmentId === previewModalItem.id ? (
+                      <>
+                        <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                        <span>Escenario ya Seleccionado</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Seleccionar este Escenario</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           </div>

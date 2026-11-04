@@ -58,11 +58,13 @@ export interface CommercialEnvironmentOption {
   lightingEn: string;
   promptEs: string;
   promptEn: string;
+  sampleImage?: string;
 }
 
 export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   {
     id: 'estudio-neutro',
+    sampleImage: '/images/scenarios/scenario-estudio-neutro.jpg',
     label: 'Estudio Comercial Neutro',
     badge: 'E-Commerce Puro',
     shortDesc: 'Fondo infinito minimalista en tono neutro suave con iluminación difusa 5500K y sombras de contacto limpias.',
@@ -75,6 +77,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'naturaleza-bosque',
+    sampleImage: '/images/scenarios/scenario-naturaleza-bosque.jpg',
     label: 'Naturaleza & Rocío Fresco',
     badge: 'Orgánico / Botánico',
     shortDesc: 'Superficie de madera natural húmeda con musgo suave, luz de sol matutino filtrada y bokeh orgánico.',
@@ -87,6 +90,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'pedestal-spa',
+    sampleImage: '/images/scenarios/scenario-pedestal-spa.jpg',
     label: 'Pedestal Spa & Bienestar',
     badge: 'Vogue / Cosmética',
     shortDesc: 'Podio arquitectónico de travertino o mármol beige con luz cálida de ventana y sombras de hojas proyectadas.',
@@ -99,6 +103,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'agua-zen',
+    sampleImage: '/images/scenarios/scenario-agua-zen.jpg',
     label: 'Agua Zen & Pureza Cristalina',
     badge: 'Fresco / Detox',
     shortDesc: 'Superficie con espejo de agua cristalina pura, microondas luminosas y reflejos cáusticos celestes.',
@@ -111,6 +116,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'dark-luxury',
+    sampleImage: '/images/scenarios/scenario-dark-luxury.jpg',
     label: 'Pizarra Negra & Dark Luxury',
     badge: 'Alto Impacto Premium',
     shortDesc: 'Bloque de piedra pizarra negra mate con contraluz sutil, destellos especulares y contraste refinado.',
@@ -135,6 +141,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'invernadero-botanico',
+    sampleImage: '/images/scenarios/scenario-invernadero-botanico.jpg',
     label: 'Invernadero Botánico & Cristal',
     badge: 'Herbolaria Viva',
     shortDesc: 'Mesa de madera de cultivo rodeada de plantas aromáticas vivas, terracota artesanal y luz solar tamizada por cristales.',
@@ -147,6 +154,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'arena-mediterranea',
+    sampleImage: '/images/scenarios/scenario-arena-mediterranea.jpg',
     label: 'Arena Zen & Piedra Caliza',
     badge: 'Minimal Mediterráneo',
     shortDesc: 'Pedestal de arena fina color marfil con piedras calizas blancas esculpidas y sol cálido limpio (ideal para pouches y cosmética).',
@@ -159,6 +167,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'laboratorio-clinico',
+    sampleImage: '/images/scenarios/scenario-laboratorio-clinico.jpg',
     label: 'Laboratorio Clean Science',
     badge: 'Clínico & Pureza',
     shortDesc: 'Superficie inmaculada de cuarzo blanco reflectante, iluminación clínica 6000K sin sombras duras y cristalería científica sutil.',
@@ -183,6 +192,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'marmol-oro',
+    sampleImage: '/images/scenarios/scenario-marmol-oro.jpg',
     label: 'Mármol Calacatta & Oro',
     badge: 'Cosmética de Lujo',
     shortDesc: 'Mármol blanco pulido con vetas doradas suaves, destellos especulares y luz difusa de tocador de alta gama.',
@@ -255,6 +265,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'cocina-diseno',
+    sampleImage: '/images/scenarios/scenario-cocina-diseno.jpg',
     label: 'Cocina de Diseño y Luz Matutina',
     badge: 'Hogar Contemporáneo',
     shortDesc: 'Barra de silestone blanco mate y nogal cálido, luz suave de ventana matutina y atmósfera limpia de bienestar.',
@@ -267,6 +278,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'tocador-microcemento',
+    sampleImage: '/images/scenarios/scenario-tocador-microcemento.jpg',
     label: 'Tocador de Baño en Microcemento',
     badge: 'Baño / Skincare',
     shortDesc: 'Superficie mineral de microcemento gris cálido, grifería negra mate y espejo retroiluminado con halo cálido.',
@@ -279,6 +291,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'salon-japandi',
+    sampleImage: '/images/scenarios/scenario-salon-japandi.jpg',
     label: 'Mesa de Centro Estilo Japandi',
     badge: 'Japandi / Serenidad',
     shortDesc: 'Mesa baja de roble claro, cerámica artesanal wabi-sabi y luz de tarde filtrada por cortinas de lino crudo.',
@@ -291,6 +304,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'cafe-urbano',
+    sampleImage: '/images/scenarios/scenario-cafe-urbano.jpg',
     label: 'Café Urbano de Especialidad',
     badge: 'Lifestyle Urbano',
     shortDesc: 'Mesa de terrazo pulido contemporáneo junto a un gran ventanal de hierro con skyline difuso de la ciudad.',
@@ -303,6 +317,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'terraza-metropolitana',
+    sampleImage: '/images/scenarios/scenario-terraza-metropolitana.jpg',
     label: 'Terraza / Ático Metropolitano',
     badge: 'Skyline / Amanecer',
     shortDesc: 'Mesa de piedra exterior contemporánea en terraza de ático con vista panorámica de la ciudad al amanecer en bokeh.',
@@ -315,6 +330,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'mano-sujecion-base',
+    sampleImage: '/images/scenarios/scenario-mano-sujecion-base.jpg',
     label: 'Mano Editorial (Sujeción de Base)',
     badge: 'Interacción / Sin Tapar Logo',
     shortDesc: 'Mano cuidada con manicura limpia sosteniendo el envase delicadamente desde la base, dejando el 100% de la etiqueta y logo libres y legibles.',
@@ -327,6 +343,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'mano-gotero-piel',
+    sampleImage: '/images/scenarios/scenario-mano-gotero-piel.jpg',
     label: 'Aplicación con Gotero sobre Piel',
     badge: 'Textura en Piel / Skincare',
     shortDesc: 'Mano sosteniendo la pipeta del gotero suspendida sobre el dorso de la muñeca, con una microgota luminosa a punto de caer, producto nítido a un lado.',
@@ -339,6 +356,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'rutina-matutina-bokeh',
+    sampleImage: '/images/scenarios/scenario-rutina-matutina-bokeh.jpg',
     label: 'Rutina de Bienestar (Persona en Bokeh)',
     badge: 'Lifestyle / Mañana Saludable',
     shortDesc: 'Persona en ropa cómoda de lino en segundo plano en desenfoque profundo (bokeh) en una cocina luminosa, frasco en foco ultra nítido al frente.',
@@ -351,6 +369,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'ingredientes-deconstruccion',
+    sampleImage: '/images/scenarios/scenario-ingredientes-deconstruccion.jpg',
     label: 'Deconstrucción de Ingredientes Puros',
     badge: 'Botánico / Raw Elements',
     shortDesc: 'Superficie de piedra natural rodeada armoniosamente de ingredientes botánicos crudos en corte fresco, comunicando máxima potencia orgánica.',
@@ -363,6 +382,7 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
   },
   {
     id: 'spa-humedo-vapor',
+    sampleImage: '/images/scenarios/scenario-spa-humedo-vapor.jpg',
     label: 'Spa Húmedo & Vapor de Ducha',
     badge: 'Vapor / Hidratación Profunda',
     shortDesc: 'Estante de piedra zellige en ducha de spa contemporánea con sutil vapor cálido ambiental y gotas condensadas.',
@@ -526,14 +546,6 @@ export const PHOTO_TYPES: PhotoTypeOption[] = [
 
 export const CAMERA_SHOTS: StudioOptionItem[] = [
   {
-    id: 'contrapicado-heroico',
-    label: 'Contrapicado Heroico (Low Angle)',
-    badge: 'Poder y Presencia',
-    shortDesc: 'Cámara ligeramente por debajo mirando hacia arriba (15°); hace que el envase luzca imponente y premium.',
-    promptEs: 'en plano contrapicado heroico (low-angle hero shot a 15 grados) que engrandece la silueta del envase',
-    promptEn: 'shot from a heroic 15-degree low-angle perspective that gives the bottle a commanding, monumental presence',
-  },
-  {
     id: 'eye-level',
     sampleImage: '/images/angles/shot-eye-level.jpg',
     label: 'Nivel de Ojos (Eye-Level 0°)',
@@ -543,13 +555,13 @@ export const CAMERA_SHOTS: StudioOptionItem[] = [
     promptEn: 'shot straight-on at eye-level (0-degree frontal angle), perfectly centered and symmetrical with zero distortion',
   },
   {
-    id: 'cenital-90',
-    sampleImage: '/images/angles/shot-cenital-90.jpg',
-    label: 'Cenital 90° (Top-Down)',
-    badge: 'Flat Lay',
-    shortDesc: 'Vista perpendicular desde arriba hacia la mesa; ideal para rodear el producto de ingredientes.',
-    promptEs: 'en plano cenital perpendicular de 90 grados desde arriba (top-down overhead view)',
-    promptEn: 'shot from a perpendicular 90-degree overhead top-down perspective (flat lay angle)',
+    id: 'tres-cuartos',
+    sampleImage: '/images/angles/shot-tres-cuartos.jpg',
+    label: 'Ángulo 3/4 Dinámico',
+    badge: 'Volumen 3D',
+    shortDesc: 'Giro suave de 30° que aporta profundidad tridimensional al envase y su etiqueta.',
+    promptEs: 'en plano medio con ángulo dinámico de tres cuartos (3/4 commercial angle) que resalta el volumen tridimensional del envase',
+    promptEn: 'in a medium shot at a dynamic three-quarter commercial angle emphasizing the 3D volume of the container',
   },
   {
     id: 'picado-45',
@@ -561,6 +573,33 @@ export const CAMERA_SHOTS: StudioOptionItem[] = [
     promptEn: 'shot from a 45-degree high editorial angle showcasing the front label, cap, and base ingredients simultaneously',
   },
   {
+    id: 'contrapicado-heroico',
+    sampleImage: '/images/angles/shot-contrapicado-heroico.jpg',
+    label: 'Contrapicado Heroico (Low Angle)',
+    badge: 'Poder y Presencia',
+    shortDesc: 'Cámara ligeramente por debajo mirando hacia arriba (15°); hace que el envase luzca imponente y premium.',
+    promptEs: 'en plano contrapicado heroico (low-angle hero shot a 15 grados) que engrandece la silueta del envase',
+    promptEn: 'shot from a heroic 15-degree low-angle perspective that gives the bottle a commanding, monumental presence',
+  },
+  {
+    id: 'cenital-90',
+    sampleImage: '/images/angles/shot-cenital-90.jpg',
+    label: 'Cenital 90° (Top-Down)',
+    badge: 'Flat Lay',
+    shortDesc: 'Vista perpendicular desde arriba hacia la mesa; ideal para rodear el producto de ingredientes.',
+    promptEs: 'en plano cenital perpendicular de 90 grados desde arriba (top-down overhead view)',
+    promptEn: 'shot from a perpendicular 90-degree overhead top-down perspective (flat lay angle)',
+  },
+  {
+    id: 'rasante-mesa',
+    sampleImage: '/images/angles/shot-rasante-mesa.jpg',
+    label: 'Plano Rasante (Surface Level)',
+    badge: 'Profundidad Bokeh',
+    shortDesc: 'Cámara al ras de la mesa con hojas o ingredientes desenfocados en primer término (foreground bokeh).',
+    promptEs: 'en plano rasante a nivel de la superficie con elementos botánicos suavemente desenfocados en primer término (foreground bokeh)',
+    promptEn: 'at surface-skimming tabletop level with softly blurred botanical elements in the foreground creating deep dimensional bokeh',
+  },
+  {
     id: 'macro-extremo',
     sampleImage: '/images/angles/shot-macro-extremo.jpg',
     label: 'Plano Macro Extremo (Close-Up)',
@@ -570,20 +609,13 @@ export const CAMERA_SHOTS: StudioOptionItem[] = [
     promptEn: 'in an extreme macro close-up shot capturing every micro-droplet, organic texture, and metallic relief detail',
   },
   {
-    id: 'tres-cuartos',
-    label: 'Ángulo 3/4 Dinámico',
-    badge: 'Volumen 3D',
-    shortDesc: 'Giro suave de 30° que aporta profundidad tridimensional al envase y su etiqueta.',
-    promptEs: 'en plano medio con ángulo dinámico de tres cuartos (3/4 commercial angle) que resalta el volumen tridimensional del envase',
-    promptEn: 'in a medium shot at a dynamic three-quarter commercial angle emphasizing the 3D volume of the container',
-  },
-  {
-    id: 'rasante-mesa',
-    label: 'Plano Rasante (Surface Level)',
-    badge: 'Profundidad',
-    shortDesc: 'Cámara al ras de la mesa con hojas o ingredientes desenfocados en primer término (foreground bokeh).',
-    promptEs: 'en plano rasante a nivel de la superficie con elementos botánicos suavemente desenfocados en primer término (foreground bokeh)',
-    promptEn: 'at surface-skimming tabletop level with softly blurred botanical elements in the foreground creating deep dimensional bokeh',
+    id: 'plano-general-banner',
+    sampleImage: '/images/angles/shot-general-banner.jpg',
+    label: 'Plano General Publicitario',
+    badge: 'Hero Banner Web',
+    shortDesc: 'Encuadre amplio con aire limpio superior/lateral, ideal para cabeceras web, banners y textos de campaña.',
+    promptEs: 'en plano general publicitario amplio (wide commercial hero banner shot) con generoso espacio negativo limpio alrededor para diseño web',
+    promptEn: 'in a wide commercial hero banner packshot with generous clean negative breathing space around the product for web typography',
   },
 ];
 
