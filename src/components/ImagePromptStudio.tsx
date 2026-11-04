@@ -382,8 +382,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#EFECE6] text-stone-800 border border-[#E7E5DF]">
-                <Camera className="w-3.5 h-3.5 text-stone-700" />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#C85A32]/10 text-[#C85A32] border border-[#C85A32]/25">
+                <Camera className="w-3.5 h-3.5 text-[#C85A32]" />
                 <span>Configurador Visual en 4 Pasos</span>
               </span>
               {syncFeedback && (
@@ -392,7 +392,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 </span>
               )}
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold font-serif text-stone-900 tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black font-sans text-stone-900 tracking-tight">
               Estudio de Fotografía Comercial
             </h2>
             <p className="text-xs sm:text-sm text-stone-600 mt-0.5">
@@ -422,9 +422,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   key={s.num}
                   type="button"
                   onClick={() => setActiveStep(s.num)}
-                  className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                     isActive
-                      ? 'bg-stone-900 text-[#FDFCF9] shadow-xs'
+                      ? 'bg-[#C85A32] text-white shadow-xs'
                       : isCompleted
                       ? 'bg-[#EFECE6] text-stone-800 hover:bg-[#E7E5DF]'
                       : 'text-stone-500 hover:text-stone-800 hover:bg-[#F7F5F0]'
@@ -450,10 +450,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
         {activeStep === 1 && (
           <div className="bg-[#FDFCF9] border border-[#E7E5DF] rounded-2xl p-5 sm:p-7 space-y-6 shadow-xs">
             <div className="border-b border-[#E7E5DF] pb-4">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-stone-500 block">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C85A32] block">
                 Paso 1 de 4
               </span>
-              <h3 className="text-xl font-bold font-serif text-stone-900 mt-1">
+              <h3 className="text-xl font-black font-sans text-stone-900 mt-1">
                 Tu Producto y Silueta de Envase
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 mt-1">
@@ -472,7 +472,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   value={productName}
                   onChange={(e) => setProductName(e.target.value)}
                   placeholder="Ej: Cúrcuma Orgánica, Sérum Facial, Colágeno..."
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7E5DF] bg-[#F7F5F0] text-stone-800 placeholder:text-stone-400 text-sm font-medium focus:outline-none focus:border-stone-500 transition-colors"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7E5DF] bg-[#F7F5F0] text-stone-800 placeholder:text-stone-400 text-sm font-medium focus:outline-none focus:border-[#C85A32] focus:ring-1 focus:ring-[#C85A32] transition-colors"
                 />
               </div>
 
@@ -485,7 +485,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   value={headline}
                   onChange={(e) => setHeadline(e.target.value)}
                   placeholder="Ej: ARTICULACIONES MÁS FUERTES · SIN LÍMITES"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7E5DF] bg-[#F7F5F0] text-stone-800 placeholder:text-stone-400 text-sm font-medium focus:outline-none focus:border-stone-500 transition-colors"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7E5DF] bg-[#F7F5F0] text-stone-800 placeholder:text-stone-400 text-sm font-medium focus:outline-none focus:border-[#C85A32] focus:ring-1 focus:ring-[#C85A32] transition-colors"
                 />
               </div>
             </div>
@@ -506,15 +506,23 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                       onClick={() => setPackagingId(pkg.id)}
                       className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                         isSelected
-                          ? 'border-stone-900 bg-[#F7F5F0] ring-2 ring-stone-900/10 shadow-xs'
+                          ? 'border-[#C85A32] bg-[#FDFBF9] ring-2 ring-[#C85A32]/20 shadow-xs'
                           : 'bg-[#FDFCF9] border-[#E7E5DF] hover:border-stone-400 text-stone-800'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="p-1.5 rounded-lg bg-[#EFECE6] border border-[#E7E5DF]">
+                        <span className={`p-1.5 rounded-lg border transition-colors ${
+                          isSelected
+                            ? 'bg-[#C85A32]/10 border-[#C85A32]/30 text-[#C85A32]'
+                            : 'bg-[#EFECE6] border-[#E7E5DF] text-stone-700'
+                        }`}>
                           {getPackagingIcon(pkg.id)}
                         </span>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EFECE6] text-stone-700 font-semibold truncate">
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold truncate ${
+                          isSelected
+                            ? 'bg-[#C85A32]/15 text-[#C85A32]'
+                            : 'bg-[#EFECE6] text-stone-700'
+                        }`}>
                           {pkg.badge}
                         </span>
                       </div>
@@ -551,7 +559,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   onClick={() => setUseReferencePhotoMode(!useReferencePhotoMode)}
                   className={`px-3.5 py-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-2 transition-all cursor-pointer shrink-0 ${
                     useReferencePhotoMode
-                      ? 'bg-stone-900 text-[#FDFCF9] border-stone-900 shadow-xs'
+                      ? 'bg-[#C85A32] text-white border-[#C85A32] shadow-xs hover:bg-[#B84A22]'
                       : 'bg-[#FDFCF9] text-stone-700 border-[#E7E5DF] hover:border-stone-400'
                   }`}
                 >
@@ -561,8 +569,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               </div>
 
               {useReferencePhotoMode && (
-                <div className="p-3.5 rounded-xl bg-[#EFECE6] border border-[#E7E5DF] text-xs sm:text-sm text-stone-800 flex items-start gap-3">
-                  <ShieldCheck className="w-4 h-4 text-stone-800 mt-0.5 shrink-0" />
+                <div className="p-3.5 rounded-xl bg-[#FDFBF9] border border-[#C85A32]/30 text-xs sm:text-sm text-stone-800 flex items-start gap-3">
+                  <ShieldCheck className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
                   <div className="space-y-0.5">
                     <p className="font-bold text-stone-900">
                       Modo Frasco Real Activo
@@ -580,7 +588,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <button
                 type="button"
                 onClick={() => setActiveStep(2)}
-                className="py-2.5 px-5 rounded-xl bg-stone-900 hover:bg-stone-800 text-[#FDFCF9] text-sm font-medium flex items-center gap-2 cursor-pointer transition-all shadow-xs"
+                className="py-2.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs"
               >
                 <span>Continuar al Paso 2: Escenario</span>
                 <ArrowRight className="w-4 h-4" />
@@ -593,10 +601,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
         {activeStep === 2 && (
           <div className="bg-[#FDFCF9] border border-[#E7E5DF] rounded-2xl p-5 sm:p-7 space-y-6 shadow-xs">
             <div className="border-b border-[#E7E5DF] pb-4">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-stone-500 block">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C85A32] block">
                 Paso 2 de 4
               </span>
-              <h3 className="text-xl font-bold font-serif text-stone-900 mt-1">
+              <h3 className="text-xl font-black font-sans text-stone-900 mt-1">
                 Escenario y Atmósfera
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 mt-1">
@@ -618,7 +626,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   onClick={() => setEnvCategoryFilter(cat.id as EnvCategory)}
                   className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${
                     envCategoryFilter === cat.id
-                      ? 'bg-stone-900 text-[#FDFCF9]'
+                      ? 'bg-[#C85A32] text-white shadow-xs font-semibold'
                       : 'bg-[#EFECE6] text-stone-700 hover:text-stone-900 hover:bg-[#E7E5DF]'
                   }`}
                 >
@@ -638,15 +646,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                     onClick={() => setEnvironmentId(env.id)}
                     className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 ${
                       isSelected
-                        ? 'border-stone-900 bg-[#F7F5F0] ring-2 ring-stone-900/10 shadow-xs'
+                        ? 'border-[#C85A32] bg-[#FDFBF9] ring-2 ring-[#C85A32]/20 shadow-xs'
                         : 'bg-[#FDFCF9] border-[#E7E5DF] hover:border-stone-400 text-stone-800'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EFECE6] text-stone-700 font-semibold truncate">
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold truncate ${
+                        isSelected ? 'bg-[#C85A32]/15 text-[#C85A32]' : 'bg-[#EFECE6] text-stone-700'
+                      }`}>
                         {env.badge}
                       </span>
-                      {isSelected && <Check className="w-4 h-4 text-stone-900 shrink-0" />}
+                      {isSelected && <Check className="w-4 h-4 text-[#C85A32] shrink-0 stroke-[2.5]" />}
                     </div>
                     <div>
                       <div className="text-sm font-bold text-stone-900 leading-snug">
@@ -664,7 +674,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             {/* Previsualización de Superficie y Luz del Entorno Activo */}
             <div className="bg-[#F7F5F0] border border-[#E7E5DF] rounded-xl p-4 space-y-1.5 text-xs">
               <div className="font-bold text-stone-900 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-stone-700" />
+                <Sparkles className="w-3.5 h-3.5 text-[#C85A32]" />
                 <span>Escenario Seleccionado: {activeEnvironment.label}</span>
               </div>
               <p className="text-stone-700 leading-relaxed">
@@ -689,7 +699,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <button
                 type="button"
                 onClick={() => setActiveStep(3)}
-                className="py-2.5 px-5 rounded-xl bg-stone-900 hover:bg-stone-800 text-[#FDFCF9] text-sm font-medium flex items-center gap-2 cursor-pointer transition-all shadow-xs"
+                className="py-2.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs"
               >
                 <span>Continuar al Paso 3: Estilo y Textos</span>
                 <ArrowRight className="w-4 h-4" />
@@ -702,10 +712,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
         {activeStep === 3 && (
           <div className="bg-[#FDFCF9] border border-[#E7E5DF] rounded-2xl p-5 sm:p-7 space-y-6 shadow-xs">
             <div className="border-b border-[#E7E5DF] pb-4">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-stone-500 block">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C85A32] block">
                 Paso 3 de 4
               </span>
-              <h3 className="text-xl font-bold font-serif text-stone-900 mt-1">
+              <h3 className="text-xl font-black font-sans text-stone-900 mt-1">
                 Estilo Fotográfico y Textos
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 mt-1">
@@ -729,15 +739,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                       onClick={() => handleSelectShot(shot.id)}
                       className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
                         isSelected
-                          ? 'border-stone-900 bg-[#F7F5F0] ring-2 ring-stone-900/10 shadow-xs'
+                          ? 'border-[#C85A32] bg-[#FDFBF9] ring-2 ring-[#C85A32]/20 shadow-xs'
                           : 'bg-[#FDFCF9] border-[#E7E5DF] hover:border-stone-400 text-stone-800'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EFECE6] text-stone-700 font-semibold truncate">
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold truncate ${
+                          isSelected ? 'bg-[#C85A32]/15 text-[#C85A32]' : 'bg-[#EFECE6] text-stone-700'
+                        }`}>
                           {shot.badge}
                         </span>
-                        {isSelected && <Check className="w-4 h-4 text-stone-900 shrink-0" />}
+                        {isSelected && <Check className="w-4 h-4 text-[#C85A32] shrink-0 stroke-[2.5]" />}
                       </div>
                       <div>
                         <div className="text-sm font-bold text-stone-900">
@@ -774,15 +786,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                       onClick={() => setInfographicStyle(styleOpt.id)}
                       className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
                         isSelected
-                          ? 'border-stone-900 bg-[#F7F5F0] ring-2 ring-stone-900/10 shadow-xs'
+                          ? 'border-[#C85A32] bg-[#FDFBF9] ring-2 ring-[#C85A32]/20 shadow-xs'
                           : 'bg-[#FDFCF9] border-[#E7E5DF] hover:border-stone-400 text-stone-800'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1">
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EFECE6] text-stone-700 font-semibold truncate">
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold truncate ${
+                          isSelected ? 'bg-[#C85A32]/15 text-[#C85A32]' : 'bg-[#EFECE6] text-stone-700'
+                        }`}>
                           {styleOpt.badge}
                         </span>
-                        {isSelected && <Check className="w-4 h-4 text-stone-900 shrink-0" />}
+                        {isSelected && <Check className="w-4 h-4 text-[#C85A32] shrink-0 stroke-[2.5]" />}
                       </div>
                       <div>
                         <div className="text-sm font-bold text-stone-900 leading-snug">
@@ -803,7 +817,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <div className="bg-[#F7F5F0] border border-[#E7E5DF] rounded-xl p-4 sm:p-5 space-y-3.5">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-1.5">
-                    <Tag className="w-4 h-4 text-stone-700" />
+                    <Tag className="w-4 h-4 text-[#C85A32]" />
                     <span className="text-xs font-bold text-stone-800 uppercase tracking-wider">
                       Beneficios y Claims del Producto ({benefits.length} activos):
                     </span>
@@ -815,7 +829,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                       onClick={handleAddBenefit}
                       className="px-2.5 py-1 rounded-lg bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-xs font-semibold flex items-center gap-1 border border-[#E7E5DF] transition-all cursor-pointer"
                     >
-                      <Plus className="w-3 h-3" />
+                      <Plus className="w-3 h-3 text-[#C85A32]" />
                       <span>Añadir Beneficio</span>
                     </button>
                   )}
@@ -852,7 +866,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                         value={b}
                         onChange={(e) => handleUpdateBenefit(idx, e.target.value)}
                         placeholder={`${idx + 1}. Beneficio / Claim del producto`}
-                        className="w-full pl-3 pr-8 py-2 rounded-xl border border-[#E7E5DF] bg-[#FDFCF9] text-stone-800 text-xs sm:text-sm font-medium focus:outline-none focus:border-stone-500"
+                        className="w-full pl-3 pr-8 py-2 rounded-xl border border-[#E7E5DF] bg-[#FDFCF9] text-stone-800 text-xs sm:text-sm font-medium focus:outline-none focus:border-[#C85A32] focus:ring-1 focus:ring-[#C85A32]"
                       />
                       {benefits.length > 1 && (
                         <button
@@ -884,7 +898,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <button
                 type="button"
                 onClick={() => setActiveStep(4)}
-                className="py-2.5 px-5 rounded-xl bg-stone-900 hover:bg-stone-800 text-[#FDFCF9] text-sm font-medium flex items-center gap-2 cursor-pointer transition-all shadow-xs"
+                className="py-2.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs"
               >
                 <span>Continuar a Resumen y Prompt</span>
                 <ArrowRight className="w-4 h-4" />
@@ -898,10 +912,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
           <div className="bg-[#FDFCF9] border border-[#E7E5DF] rounded-2xl p-5 sm:p-7 space-y-6 shadow-xs">
             <div className="border-b border-[#E7E5DF] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <span className="text-xs font-mono font-bold uppercase tracking-wider text-stone-500 block">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#C85A32] block">
                   Paso 4 de 4 · Mesa de Entrega
                 </span>
-                <h3 className="text-xl font-bold font-serif text-stone-900 mt-1">
+                <h3 className="text-xl font-black font-sans text-stone-900 mt-1">
                   Tu Prompt Listo para Google Flow
                 </h3>
               </div>
@@ -913,7 +927,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   onClick={() => setOutputLang('es')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     outputLang === 'es'
-                      ? 'bg-stone-900 text-[#FDFCF9] shadow-xs'
+                      ? 'bg-[#C85A32] text-white shadow-xs'
                       : 'text-stone-700 hover:text-stone-900'
                   }`}
                 >
@@ -924,7 +938,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   onClick={() => setOutputLang('en')}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     outputLang === 'en'
-                      ? 'bg-stone-900 text-[#FDFCF9] shadow-xs'
+                      ? 'bg-[#C85A32] text-white shadow-xs'
                       : 'text-stone-700 hover:text-stone-900'
                   }`}
                 >
@@ -976,8 +990,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
 
             {/* Aviso de Foto de Referencia si está activa */}
             {useReferencePhotoMode && (
-              <div className="p-3.5 rounded-xl bg-[#EFECE6] border border-[#E7E5DF] text-xs text-stone-800 flex items-center gap-2.5">
-                <Upload className="w-4 h-4 text-stone-800 shrink-0" />
+              <div className="p-3.5 rounded-xl bg-[#FDFBF9] border border-[#C85A32]/30 text-xs text-stone-800 flex items-center gap-2.5">
+                <Upload className="w-4 h-4 text-[#C85A32] shrink-0" />
                 <span>
                   <strong>Recordatorio para Flow:</strong> Al enviar este prompt, haz clic en el icono <strong>📎</strong> y adjunta la foto de tu envase real para asegurar réplica 1:1.
                 </span>
@@ -989,7 +1003,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <button
                 type="button"
                 onClick={() => copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')}
-                className="sm:col-span-8 py-3.5 px-5 rounded-xl bg-stone-900 hover:bg-stone-800 text-[#FDFCF9] font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all active:scale-[0.99]"
+                className="sm:col-span-8 py-3.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all active:scale-[0.99]"
               >
                 {copiedKey === 'main-copy' ? (
                   <>
@@ -1023,7 +1037,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               <button
                 type="button"
                 onClick={() => setActiveStep(1)}
-                className="text-xs text-stone-600 hover:text-stone-900 underline cursor-pointer"
+                className="text-xs text-[#C85A32] hover:underline cursor-pointer font-medium"
               >
                 ← Modificar Selección (Volver al Paso 1)
               </button>

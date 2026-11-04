@@ -10,7 +10,7 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F5F0] text-stone-800 flex flex-col font-sans selection:bg-[#EFECE6] selection:text-stone-900">
+    <div className="min-h-screen bg-[#F7F5F0] text-stone-800 flex flex-col font-sans selection:bg-[#C85A32]/20 selection:text-stone-900">
       {/* Top Sticky Navigation */}
       <header className="sticky top-0 z-40 bg-[#F7F5F0]/90 backdrop-blur-md border-b border-[#E7E5DF] transition-colors">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -20,12 +20,12 @@ export function App() {
             aria-label="NaturalStudio, inicio"
             className="flex items-center gap-2.5 sm:gap-3 group min-w-0"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-stone-900 flex items-center justify-center text-[#FDFCF9] shadow-xs group-hover:bg-stone-800 transition-colors">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-[#C85A32] flex items-center justify-center text-white shadow-xs group-hover:bg-[#B84A22] transition-colors">
               <Camera className="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" />
             </div>
             <div className="min-w-0">
-              <span className="font-serif font-bold text-base sm:text-lg tracking-tight text-stone-900 block leading-tight">
-                Natural<span className="text-stone-600">Studio</span>
+              <span className="font-sans font-black text-base sm:text-lg tracking-tight text-stone-900 block leading-tight">
+                Natural<span className="text-[#C85A32]">Studio</span>
               </span>
               <span className="text-xs font-mono text-stone-500 tracking-wide hidden sm:block truncate">
                 Fotografía Comercial IA · 4 Pasos
@@ -51,11 +51,11 @@ export function App() {
               aria-label="Abrir Google Flow"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-stone-900 hover:bg-stone-800 text-[#FDFCF9] transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#C85A32] hover:bg-[#B84A22] text-white transition-all cursor-pointer shadow-xs active:scale-[0.98]"
             >
-              <Sparkles className="w-3.5 h-3.5 fill-[#FDFCF9]" />
+              <Sparkles className="w-3.5 h-3.5 fill-white" />
               <span>Flow</span>
-              <ExternalLink className="w-3 h-3 opacity-70" />
+              <ExternalLink className="w-3 h-3 opacity-80" />
             </a>
           </div>
         </div>
@@ -70,10 +70,10 @@ export function App() {
       <footer className="border-t border-[#E7E5DF] bg-[#FDFCF9] py-8 text-stone-600 text-xs sm:text-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-stone-900 flex items-center justify-center text-[#FDFCF9] text-xs font-bold shadow-xs">
+            <div className="w-6 h-6 rounded-lg bg-[#C85A32] flex items-center justify-center text-white text-xs font-black shadow-xs">
               N
             </div>
-            <span className="font-medium text-stone-800">
+            <span className="font-semibold text-stone-800">
               NaturalStudio · Generador de Prompts Comerciales para Google Flow
             </span>
           </div>
