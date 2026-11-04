@@ -21,6 +21,7 @@ import {
   Tag,
   Eye,
   X,
+  AlertCircle,
 } from 'lucide-react';
 import {
   ENVIRONMENTS,
@@ -297,6 +298,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
   // Dynamic surface customization for Raw Elements
   const hasCustomRawIngredients =
     environmentId === 'ingredientes-deconstruccion' && rawIngredientsInput.trim().length > 0;
+  const isRawIngredientsEmpty =
+    environmentId === 'ingredientes-deconstruccion' && rawIngredientsInput.trim().length === 0;
+  const filledBenefitsCount = benefits.filter((b) => b.trim().length > 0).length;
 
   const effectiveSurfaceEs = hasCustomRawIngredients
     ? `posado sobre una losa pulida de piedra natural texturizada rodeado armoniosamente de ingredientes botánicos crudos en corte transversal fresco: ${rawIngredientsInput.trim()}, con microgotas de rocío fresco comunicando máxima frescura orgánica y alta potencia biológica`
@@ -721,11 +725,19 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                     placeholder="Ej: Rodajas de naranja fresca, raíz de jengibre en corte, hojas de menta con rocío, semillas de chía..."
                     className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7E5DF] bg-[#F7F5F0] text-stone-800 placeholder:text-stone-400 text-sm font-medium focus:outline-none focus:border-[#C85A32] focus:ring-1 focus:ring-[#C85A32] transition-colors"
                   />
-                  <p className="text-[11px] text-stone-500">
-                    {rawIngredientsInput.trim()
-                      ? '✓ Flow rodeará tu envase exactamente con estos ingredientes.'
-                      : 'Dejar vacío para usar la mezcla botánica equilibrada por defecto (cúrcuma, cítricos y ramas frescas).'}
-                  </p>
+                  {isRawIngredientsEmpty ? (
+                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 text-xs flex items-start gap-2.5 mt-2">
+                      <AlertCircle className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
+                      <div>
+                        <span className="font-bold text-stone-900">Aviso de Ingredientes:</span> No has rellenado ningún ingrediente específico aún. Si no añades al menos uno, el prompt se generará con una mezcla botánica genérica. <strong>Escribe tus ingredientes arriba o añade una sugerencia rápida</strong> con 1 clic.
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-[11px] text-emerald-800 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 font-medium">
+                      <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                      <span>Ingredientes configurados: Flow rodeará tu envase con estos elementos en corte fresco.</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Sugerencias Rápidas de 1 Clic */}
@@ -899,13 +911,21 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
 
             {/* Selector de 5 Opciones de Infografía */}
             <div className="space-y-2.5 pt-2 border-t border-[#E7E5DF]">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <label className="block text-xs font-bold text-stone-800 uppercase tracking-wider">
                   2. Diseño Tipográfico / Infográfico:
                 </label>
-                <span className="text-xs text-stone-500 font-medium">
-                  {infographicStyle === 'none' ? 'Foto limpia activa' : 'Diseño con textos activo'}
-                </span>
+                <div className="flex items-center gap-2">
+                  {infographicStyle !== 'none' && filledBenefitsCount === 0 && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-950 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30">
+                      <AlertCircle className="w-3 h-3 text-[#C85A32]" />
+                      <span>Falta rellenar al menos 1 beneficio</span>
+                    </span>
+                  )}
+                  <span className="text-xs text-stone-500 font-medium">
+                    {infographicStyle === 'none' ? 'Foto limpia activa' : 'Diseño con textos activo'}
+                  </span>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -951,7 +971,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   <div className="flex items-center gap-1.5">
                     <Tag className="w-4 h-4 text-[#C85A32]" />
                     <span className="text-xs font-bold text-stone-800 uppercase tracking-wider">
-                      Beneficios y Claims del Producto ({benefits.length} activos):
+                      Beneficios y Claims del Producto ({filledBenefitsCount} de {benefits.length} completados):
                     </span>
                   </div>
 
@@ -966,6 +986,16 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                     </button>
                   )}
                 </div>
+
+                {/* Aviso si no hay ningún beneficio rellenado */}
+                {filledBenefitsCount === 0 && (
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 text-xs flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
+                    <div>
+                      <span className="font-bold text-stone-900">Aviso de Beneficios:</span> Has seleccionado un diseño con textos (<strong>{activeInfographic.label}</strong>), pero no has rellenado ningún beneficio todavía. <strong>Escribe al menos un beneficio o haz clic en una sugerencia</strong> para que las etiquetas aparezcan en el prompt de Flow.
+                    </div>
+                  </div>
+                )}
 
                 {/* Sugerencias Rápidas */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
@@ -1106,6 +1136,35 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 </span>
               </div>
             </div>
+
+            {/* Avisos en Caso de Opciones sin Rellenar */}
+            {isRawIngredientsEmpty && (
+              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 text-xs flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
+                <div className="space-y-0.5">
+                  <p className="font-bold text-stone-900">
+                    Aviso: Escenario de Deconstrucción sin Ingredientes Personalizados
+                  </p>
+                  <p className="text-stone-700 leading-relaxed">
+                    No especificaste ningún ingrediente activo en el Paso 2; el prompt se generará con la mezcla botánica genérica por defecto (cúrcuma, cítricos y ramas frescas). Si deseas ingredientes propios de tu fórmula, vuelve al Paso 2 y rellena al menos uno.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {infographicStyle !== 'none' && filledBenefitsCount === 0 && (
+              <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 text-xs flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
+                <div className="space-y-0.5">
+                  <p className="font-bold text-stone-900">
+                    Aviso: Estilo "{activeInfographic.label}" sin Beneficios Rellenados
+                  </p>
+                  <p className="text-stone-700 leading-relaxed">
+                    Seleccionaste un diseño con etiquetas o textos publicitarios, pero no rellenaste ningún beneficio en el Paso 3. Para no generar etiquetas vacías en Flow, el prompt se está compilando como foto limpia. Vuelve al Paso 3 y añade al menos un beneficio.
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Caja de Prompt en Fondo Alabastro Cálido */}
             <div className="space-y-2">
