@@ -6,6 +6,7 @@ export interface StudioOptionItem {
   promptEs: string;
   promptEn: string;
   isCustom?: boolean;
+  sampleImage?: string;
 }
 
 export type PackagingPresentationMode =
@@ -474,6 +475,7 @@ export const CAMERA_SHOTS: StudioOptionItem[] = [
   },
   {
     id: 'eye-level',
+    sampleImage: '/images/angles/shot-eye-level.jpg',
     label: 'Nivel de Ojos (Eye-Level 0°)',
     badge: 'Estándar Estudio',
     shortDesc: 'Cámara totalmente frontal a la altura del centro del envase; líneas verticales rectas sin distorsión.',
@@ -482,6 +484,7 @@ export const CAMERA_SHOTS: StudioOptionItem[] = [
   },
   {
     id: 'cenital-90',
+    sampleImage: '/images/angles/shot-cenital-90.jpg',
     label: 'Cenital 90° (Top-Down)',
     badge: 'Flat Lay',
     shortDesc: 'Vista perpendicular desde arriba hacia la mesa; ideal para rodear el producto de ingredientes.',
@@ -490,6 +493,7 @@ export const CAMERA_SHOTS: StudioOptionItem[] = [
   },
   {
     id: 'picado-45',
+    sampleImage: '/images/angles/shot-picado-45.jpg',
     label: 'Picado Editorial (45° Angle)',
     badge: 'Perspectiva Natural',
     shortDesc: 'Vista diagonal superior como la mirada humana hacia una mesa; muestra etiqueta, tapa y base.',
@@ -498,6 +502,7 @@ export const CAMERA_SHOTS: StudioOptionItem[] = [
   },
   {
     id: 'macro-extremo',
+    sampleImage: '/images/angles/shot-macro-extremo.jpg',
     label: 'Plano Macro Extremo (Close-Up)',
     badge: 'Detalle Textura',
     shortDesc: 'Encuadre muy cerrado resaltando gotas de rocío, relieve metálico del logo y textura pura.',

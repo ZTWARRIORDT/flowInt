@@ -19,6 +19,8 @@ import {
   ShoppingBag,
   Droplet,
   Tag,
+  Eye,
+  X,
 } from 'lucide-react';
 import {
   ENVIRONMENTS,
@@ -74,6 +76,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
   const [lensId, setLensId] = useState<string>('85mm-f18');
   const [infographicStyle, setInfographicStyle] = useState<string>('none');
   const [benefits, setBenefits] = useState<string[]>(['', '', '', '']);
+  const [anglePreviewItem, setAnglePreviewItem] = useState<typeof CAMERA_SHOTS[0] | null>(null);
 
   // Aspect ratio (fixed default 1:1)
   const aspectRatio = '1:1';
@@ -542,45 +545,21 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               </div>
             </div>
 
-            {/* Interruptor de Foto de Referencia */}
-            <div className="pt-2 border-t border-[#E7E5DF] space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <span className="text-sm font-bold text-stone-900 block">
-                    ¿Adjuntarás foto de tu envase real en Flow?
-                  </span>
-                  <span className="text-xs text-stone-600">
-                    Clona con 100% de exactitud la silueta, tapa y etiquetas originales de tu frasco.
-                  </span>
+            {/* Aviso Permanente de Réplica de Frasco Real */}
+            <div className="pt-2 border-t border-[#E7E5DF]">
+              <div className="p-3.5 rounded-xl bg-[#FDFBF9] border border-[#E7E5DF] text-xs text-stone-700 flex items-start sm:items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-[#C85A32]/10 border border-[#C85A32]/25 flex items-center justify-center shrink-0 text-[#C85A32]">
+                  <ShieldCheck className="w-4 h-4 stroke-[2.2]" />
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => setUseReferencePhotoMode(!useReferencePhotoMode)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-2 transition-all cursor-pointer shrink-0 ${
-                    useReferencePhotoMode
-                      ? 'bg-[#C85A32] text-white border-[#C85A32] shadow-xs hover:bg-[#B84A22]'
-                      : 'bg-[#FDFCF9] text-stone-700 border-[#E7E5DF] hover:border-stone-400'
-                  }`}
-                >
-                  <Upload className="w-3.5 h-3.5" />
-                  <span>{useReferencePhotoMode ? '✓ Respetar mi frasco real' : '¿Adjuntarás foto real?'}</span>
-                </button>
+                <div className="space-y-0.5">
+                  <p className="font-bold text-stone-900 text-xs sm:text-sm">
+                    Réplica 1:1 de Frasco Real Siempre Activa
+                  </p>
+                  <p className="text-stone-600 leading-relaxed text-xs">
+                    El prompt incluirá siempre la instrucción técnica para que Google Flow clone con 100% de exactitud y fidelidad la silueta del envase, tapa y etiquetas de la foto real que adjuntes (📎).
+                  </p>
+                </div>
               </div>
-
-              {useReferencePhotoMode && (
-                <div className="p-3.5 rounded-xl bg-[#FDFBF9] border border-[#C85A32]/30 text-xs sm:text-sm text-stone-800 flex items-start gap-3">
-                  <ShieldCheck className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
-                  <div className="space-y-0.5">
-                    <p className="font-bold text-stone-900">
-                      Modo Frasco Real Activo
-                    </p>
-                    <p className="text-stone-700 leading-relaxed text-xs">
-                      El prompt ordenará a Google Flow respetar con 100% de exactitud y fidelidad la silueta del envase, proporciones exactas, tapa y logotipo de la imagen adjunta (📎).
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Barra de Navegación Inferior */}
@@ -733,33 +712,58 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 {curatedShots.map((shot) => {
                   const isSelected = shotId === shot.id;
                   return (
-                    <button
+                    <div
                       key={shot.id}
-                      type="button"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => handleSelectShot(shot.id)}
-                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          handleSelectShot(shot.id);
+                        }
+                      }}
+                      className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2.5 group ${
                         isSelected
                           ? 'border-[#C85A32] bg-[#FDFBF9] ring-2 ring-[#C85A32]/20 shadow-xs'
                           : 'bg-[#FDFCF9] border-[#E7E5DF] hover:border-stone-400 text-stone-800'
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-1">
+                      <div className="flex items-center justify-between gap-1.5">
                         <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold truncate ${
                           isSelected ? 'bg-[#C85A32]/15 text-[#C85A32]' : 'bg-[#EFECE6] text-stone-700'
                         }`}>
                           {shot.badge}
                         </span>
-                        {isSelected && <Check className="w-4 h-4 text-[#C85A32] shrink-0 stroke-[2.5]" />}
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {shot.sampleImage && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setAnglePreviewItem(shot);
+                              }}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-700 hover:text-[#C85A32] border border-[#E7E5DF] transition-all cursor-pointer shadow-xs text-[11px] font-semibold"
+                              title={`Ver foto de ejemplo del ángulo: ${shot.label}`}
+                              aria-label={`Ver foto de ejemplo del ángulo ${shot.label}`}
+                            >
+                              <Eye className="w-3.5 h-3.5 text-[#C85A32]" />
+                              <span>Ejemplo</span>
+                            </button>
+                          )}
+                          {isSelected && <Check className="w-4 h-4 text-[#C85A32] shrink-0 stroke-[2.5]" />}
+                        </div>
                       </div>
+
                       <div>
-                        <div className="text-sm font-bold text-stone-900">
+                        <div className="text-sm font-bold text-stone-900 leading-snug">
                           {shot.label}
                         </div>
                         <p className="text-xs text-stone-600 mt-1 leading-relaxed">
                           {shot.shortDesc}
                         </p>
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
@@ -969,7 +973,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   ✨ {infographicStyle === 'none' ? 'Foto Limpia' : activeInfographic.label}
                 </span>
                 <span className="px-3 py-1.5 rounded-lg bg-[#EFECE6] text-stone-800 font-medium border border-[#E7E5DF]">
-                  {useReferencePhotoMode ? '📎 Foto Real Activa' : 'Frasco Generado'}
+                  📎 Réplica 1:1 de Foto Real
                 </span>
               </div>
             </div>
@@ -1053,6 +1057,112 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 <ArrowLeft className="w-4 h-4" />
                 <span>Atrás al Paso 3</span>
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de Ejemplo Visual de Ángulo de Cámara */}
+        {anglePreviewItem && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs animate-in fade-in duration-150"
+            onClick={() => setAnglePreviewItem(null)}
+          >
+            <div
+              className="bg-[#FDFCF9] border border-[#E7E5DF] rounded-2xl max-w-md w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Encabezado fijo */}
+              <div className="px-5 py-3.5 border-b border-[#E7E5DF] flex items-center justify-between bg-[#F7F5F0] shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <span className="p-1.5 rounded-lg bg-[#C85A32]/10 border border-[#C85A32]/25 text-[#C85A32]">
+                    <Eye className="w-4 h-4 stroke-[2.2]" />
+                  </span>
+                  <div>
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#C85A32] block">
+                      Ejemplo de Ángulo · {anglePreviewItem.badge}
+                    </span>
+                    <h4 className="text-base font-black font-sans text-stone-900 leading-tight">
+                      {anglePreviewItem.label}
+                    </h4>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setAnglePreviewItem(null)}
+                  className="p-1.5 rounded-xl hover:bg-[#EFECE6] text-stone-500 hover:text-stone-900 transition-colors cursor-pointer"
+                  title="Cerrar vista previa"
+                  aria-label="Cerrar"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Contenido scrolleable */}
+              <div className="overflow-y-auto flex-1">
+                {/* Imagen de Ejemplo */}
+                <div className="relative aspect-[4/3] bg-stone-100 overflow-hidden flex items-center justify-center border-b border-[#E7E5DF]">
+                  {anglePreviewItem.sampleImage ? (
+                    <img
+                      src={anglePreviewItem.sampleImage}
+                      alt={`Ejemplo visual del ángulo ${anglePreviewItem.label}`}
+                      className="w-full h-full object-cover"
+                      loading="eager"
+                    />
+                  ) : (
+                    <div className="text-xs text-stone-500">Sin imagen de ejemplo</div>
+                  )}
+                  <div className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-md text-[10px] font-mono font-medium shadow-xs">
+                    Foto de Demostración de Perspectiva
+                  </div>
+                </div>
+
+                {/* Detalles */}
+                <div className="p-5 space-y-3 bg-[#FDFCF9]">
+                  <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium">
+                    {anglePreviewItem.shortDesc}
+                  </p>
+                  <p className="text-[11px] font-mono text-stone-600 bg-[#F7F5F0] p-2.5 rounded-lg border border-[#E7E5DF]">
+                    <span className="font-bold text-[#C85A32]">Comando Flow:</span> "{anglePreviewItem.promptEs}"
+                  </p>
+                </div>
+              </div>
+
+              {/* Footer con Acciones fijas */}
+              <div className="p-4 bg-[#F7F5F0] border-t border-[#E7E5DF] flex items-center justify-between gap-3 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setAnglePreviewItem(null)}
+                  className="py-2 px-4 rounded-xl text-xs font-semibold bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-700 border border-[#E7E5DF] transition-all cursor-pointer"
+                >
+                  Cerrar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleSelectShot(anglePreviewItem.id);
+                    setAnglePreviewItem(null);
+                  }}
+                  className={`py-2 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-xs ${
+                    shotId === anglePreviewItem.id
+                      ? 'bg-[#EFECE6] text-stone-800 border border-[#E7E5DF]'
+                      : 'bg-[#C85A32] hover:bg-[#B84A22] text-white'
+                  }`}
+                >
+                  {shotId === anglePreviewItem.id ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Ángulo ya Seleccionado</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Seleccionar este Ángulo</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}
