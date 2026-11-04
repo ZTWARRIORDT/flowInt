@@ -37,13 +37,20 @@ interface Props {
 }
 
 type StepNumber = 1 | 2 | 3 | 4;
-type EnvCategory = 'todos' | 'estudio' | 'hogar' | 'ciudad-naturaleza';
+type EnvCategory = 'todos' | 'personas' | 'ingredientes-spa' | 'estudio' | 'hogar' | 'ciudad-naturaleza';
 
-const CURATED_ENVIRONMENTS: { id: string; category: 'estudio' | 'hogar' | 'ciudad-naturaleza' }[] = [
+const CURATED_ENVIRONMENTS: { id: string; category: Exclude<EnvCategory, 'todos'> }[] = [
+  // Interacción Humana y Lifestyle (Opción 1)
+  { id: 'mano-sujecion-base', category: 'personas' },
+  { id: 'mano-gotero-piel', category: 'personas' },
+  { id: 'rutina-matutina-bokeh', category: 'personas' },
+  // Ingredientes Puros y Spa Húmedo (Opción 3)
+  { id: 'ingredientes-deconstruccion', category: 'ingredientes-spa' },
+  { id: 'spa-humedo-vapor', category: 'ingredientes-spa' },
+  { id: 'pedestal-spa', category: 'ingredientes-spa' },
   // Estudio y Lujo
   { id: 'arena-mediterranea', category: 'estudio' },
   { id: 'marmol-oro', category: 'estudio' },
-  { id: 'pedestal-spa', category: 'estudio' },
   { id: 'estudio-neutro', category: 'estudio' },
   // Hogar Contemporáneo
   { id: 'cocina-diseno', category: 'hogar' },
@@ -311,14 +318,23 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
   const macroMedallionsEn =
     'Clean macro composition without external floating medallions to allow extreme camera close-up; product benefits are embodied in its tactile quality.';
 
+  // Directive for Human Interaction & Lifestyle scenes
+  const isPersonScene = activeEnvironment.id.startsWith('mano-') || activeEnvironment.id.includes('rutina');
+  const humanDirectiveEs = isPersonScene
+    ? ' DIRECTIVA ANATÓMICA OBLIGATORIA PARA FLOW: Manos con anatomía perfecta natural de 5 dedos proporcionados, manicura neutra y limpia, cero dedos adicionales o deformidades, y con el 100% de la etiqueta y logotipo del envase completamente despejados y legibles.'
+    : '';
+  const humanDirectiveEn = isPersonScene
+    ? ' CRITICAL ANATOMICAL DIRECTIVE FOR FLOW: Perfectly proportioned natural 5-finger hand anatomy, clean neutral manicured nails, zero extra digits or deformities, keeping 100% of the container label and logo completely unobstructed, clear, and readable.'
+    : '';
+
   // Main Prompt
   const mainPromptEs = isMacroMode
-    ? `${photoStyleEs} ${macroPackagingEs} ${macroMedallionsEs} Con ${activeEnvironment.lightingEs}, capturado con lente macro 100mm f/2.8 con nitidez microscópica en texturas y gotas. Fotografía comercial publicitaria 8k.`
-    : `${photoStyleEs} ${packagingDescriptionEs} ${getInfographicFragmentEs(infographicStyle)}${headlineDirectiveEs} Con ${activeEnvironment.lightingEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.`;
+    ? `${photoStyleEs} ${macroPackagingEs} ${macroMedallionsEs}${humanDirectiveEs} Con ${activeEnvironment.lightingEs}, capturado con lente macro 100mm f/2.8 con nitidez microscópica en texturas y gotas. Fotografía comercial publicitaria 8k.`
+    : `${photoStyleEs} ${packagingDescriptionEs} ${getInfographicFragmentEs(infographicStyle)}${headlineDirectiveEs}${humanDirectiveEs} Con ${activeEnvironment.lightingEs}, ${activeLens.promptEs}. Fotografía comercial hiperrealista 8k, calidad de estudio publicitario.`;
 
   const mainPromptEn = isMacroMode
-    ? `${photoStyleEn} ${macroPackagingEn} ${macroMedallionsEn} Featuring ${activeEnvironment.lightingEn}, captured with a 100mm f/2.8 macro lens with microscopic sharpness on textures and dew droplets. 8k commercial advertising photography.`
-    : `${photoStyleEn} ${packagingDescriptionEn} ${getInfographicFragmentEn(infographicStyle)}${headlineDirectiveEn} Featuring ${activeEnvironment.lightingEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.`;
+    ? `${photoStyleEn} ${macroPackagingEn} ${macroMedallionsEn}${humanDirectiveEn} Featuring ${activeEnvironment.lightingEn}, captured with a 100mm f/2.8 macro lens with microscopic sharpness on textures and dew droplets. 8k commercial advertising photography.`
+    : `${photoStyleEn} ${packagingDescriptionEn} ${getInfographicFragmentEn(infographicStyle)}${headlineDirectiveEn}${humanDirectiveEn} Featuring ${activeEnvironment.lightingEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.`;
 
   // Curated lists
   const environmentsList = CURATED_ENVIRONMENTS.map((c) => {
@@ -587,15 +603,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 Escenario y Atmósfera
               </h3>
               <p className="text-xs sm:text-sm text-stone-600 mt-1">
-                Selecciona uno de los 12 entornos curados para colocar tu producto con iluminación comercial integrada.
+                Selecciona uno de los {environmentsList.length} entornos curados para colocar tu producto con iluminación comercial integrada.
               </p>
             </div>
 
             {/* Filtros por Categoría */}
             <div className="flex flex-wrap items-center gap-2">
               {[
-                { id: 'todos', label: 'Todos (12)' },
-                { id: 'estudio', label: 'Estudio y Lujo (4)' },
+                { id: 'todos', label: `Todos (${environmentsList.length})` },
+                { id: 'personas', label: 'Personas y Manos (3)' },
+                { id: 'ingredientes-spa', label: 'Ingredientes y Spa (3)' },
+                { id: 'estudio', label: 'Estudio y Lujo (3)' },
                 { id: 'hogar', label: 'Hogar Contemporáneo (3)' },
                 { id: 'ciudad-naturaleza', label: 'Ciudad y Naturaleza (5)' },
               ].map((cat) => (
@@ -652,16 +670,27 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
 
             {/* Previsualización de Superficie y Luz del Entorno Activo */}
             <div className="bg-[#F7F5F0] border border-[#E7E5DF] rounded-xl p-4 space-y-1.5 text-xs">
-              <div className="font-bold text-stone-900 flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#C85A32]" />
-                <span>Escenario Seleccionado: {activeEnvironment.label}</span>
+              <div className="font-bold text-stone-900 flex items-center justify-between gap-1.5 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#C85A32]" />
+                  <span>Escenario Seleccionado: {activeEnvironment.label}</span>
+                </div>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EFECE6] text-stone-700 font-semibold">
+                  {activeEnvironment.badge}
+                </span>
               </div>
               <p className="text-stone-700 leading-relaxed">
-                <strong>Superficie:</strong> {activeEnvironment.surfaceEs}
+                <strong>Superficie / Sujeción:</strong> {activeEnvironment.surfaceEs}
               </p>
               <p className="text-stone-700 leading-relaxed">
                 <strong>Iluminación:</strong> {activeEnvironment.lightingEs}
               </p>
+              {isPersonScene && (
+                <div className="pt-2 mt-1 border-t border-[#E7E5DF] flex items-center gap-2 text-[#C85A32] font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                  <span>Directiva Anti-Artefacto: Sujeción baja obligatoria con 100% de etiqueta y logotipo despejados.</span>
+                </div>
+              )}
             </div>
 
             {/* Barra de Navegación Inferior */}
