@@ -6,14 +6,12 @@ import {
   ExternalLink,
   ArrowRight,
   Award,
-  BookOpen,
   Camera,
   Aperture,
   Layers,
   HelpCircle,
 } from 'lucide-react';
 import { ImagePromptStudio } from './components/ImagePromptStudio';
-import { ProductCatalogSection } from './components/ProductCatalogSection';
 
 export function App() {
   const [isDark, setIsDark] = useState<boolean>(true);
@@ -33,55 +31,50 @@ export function App() {
             : 'bg-[#FAF7F2]/90 border-stone-200'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand */}
-          <a href="#" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 shadow-md">
+          <a href="#" aria-label="NaturalStudio, inicio" className="flex items-center gap-2 sm:gap-2.5 group min-w-0">
+            <div className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-950 shadow-md">
               <Camera className="w-5 h-5 stroke-[2.5]" />
             </div>
-            <div>
-              <span className="font-serif font-bold text-lg tracking-tight block leading-none">
+            <div className="min-w-0">
+              <span className="font-serif font-bold text-base sm:text-lg tracking-tight block leading-none">
                 Natural<span className="text-emerald-400">Studio</span>
               </span>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-amber-400 block font-bold">
+              <span className="hidden sm:block text-xs lg:text-sm font-mono tracking-wide text-amber-400 font-bold truncate">
                 Fotografía Comercial IA para Productos Naturales
               </span>
             </div>
           </a>
 
           {/* Clean Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6 text-xs font-bold">
+          <nav className="hidden md:flex items-center gap-6 text-sm font-bold">
             <a
               href="#estudio-imagenes"
               className="text-emerald-400 hover:text-amber-400 transition-colors cursor-pointer flex items-center gap-1.5"
             >
               <Camera className="w-3.5 h-3.5" /> Estudio de Fotos y Planos
             </a>
-            <a
-              href="#catalogo-prompts"
-              className="hover:text-emerald-400 transition-colors cursor-pointer flex items-center gap-1.5"
-            >
-              <BookOpen className="w-3.5 h-3.5" /> Galería de Inspiración (10)
-            </a>
           </nav>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 shrink-0">
             <a
               href="https://flow.google"
+              aria-label="Abrir Google Flow"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-amber-500 text-slate-950 shadow hover:opacity-95 transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 min-h-10 px-3 sm:px-3.5 py-1.5 rounded-xl text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow hover:opacity-95 transition-all cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 fill-slate-950" /> Abrir Flow
-              <ExternalLink className="w-3 h-3" />
+              <Sparkles className="w-3.5 h-3.5 fill-slate-950" /> <span>Flow</span>
+              <ExternalLink className="w-3 h-3 hidden sm:block" />
             </a>
 
             <button
               type="button"
               onClick={() => setIsDark(!isDark)}
               aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-              className={`p-2 rounded-xl border transition-all cursor-pointer ${
+              className={`min-h-10 min-w-10 flex items-center justify-center rounded-xl border transition-all cursor-pointer ${
                 isDark
                   ? 'bg-slate-900 border-slate-700 text-amber-400 hover:bg-slate-800'
                   : 'bg-white border-stone-300 text-stone-700 hover:bg-stone-100'
@@ -104,7 +97,7 @@ export function App() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left Hero Copy */}
             <div className="lg:col-span-7 space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                 <span>Para creadores y marcas de productos naturales</span>
               </div>
@@ -132,20 +125,10 @@ export function App() {
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 <a
                   href="#estudio-imagenes"
-                  className="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 text-slate-950 font-black text-xs sm:text-sm flex items-center gap-2 shadow-lg hover:opacity-95 transition-all cursor-pointer"
+                  className="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm sm:text-sm flex items-center gap-2 shadow-lg hover:opacity-95 transition-all cursor-pointer"
                 >
                   <Camera className="w-4 h-4" /> Crear mi Foto en 3 Pasos
                   <ArrowRight className="w-4 h-4" />
-                </a>
-                <a
-                  href="#catalogo-prompts"
-                  className={`px-4 py-3 rounded-xl font-bold text-xs sm:text-sm border flex items-center gap-2 transition-all cursor-pointer ${
-                    isDark
-                      ? 'bg-[#121A16] border-emerald-800/70 text-emerald-300 hover:border-amber-400'
-                      : 'bg-white border-stone-300 text-stone-800 hover:border-emerald-600'
-                  }`}
-                >
-                  <BookOpen className="w-4 h-4 text-emerald-400" /> Ver 10 Fotos de Ejemplo
                 </a>
               </div>
             </div>
@@ -159,11 +142,11 @@ export function App() {
                     : 'bg-white border-stone-200 shadow-xl'
                 }`}
               >
-                <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center justify-between text-sm">
                   <span className="font-bold text-amber-400 flex items-center gap-1.5">
                     <Award className="w-4 h-4" /> Galería de Fotografías Reales de Estudio
                   </span>
-                  <span className="text-[11px] text-slate-400">Toca para cargar</span>
+                  <span className="text-sm text-slate-400">Toca para cargar</span>
                 </div>
 
                 <div className="grid grid-cols-6 gap-2">
@@ -178,10 +161,10 @@ export function App() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2">
-                      <span className="text-[10px] font-bold text-white block">
+                      <span className="text-sm font-bold text-white block">
                         URO Cranberry Rosa
                       </span>
-                      <span className="text-[9px] text-amber-300">Doypack · Arena Zen</span>
+                      <span className="text-sm text-amber-300">Doypack · Arena Zen</span>
                     </div>
                   </a>
 
@@ -196,10 +179,10 @@ export function App() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2">
-                      <span className="text-[10px] font-bold text-white block">
+                      <span className="text-sm font-bold text-white block">
                         Glucosamina + MSM
                       </span>
-                      <span className="text-[9px] text-amber-300">Frasco Blanco · Travertino</span>
+                      <span className="text-sm text-amber-300">Frasco Blanco · Travertino</span>
                     </div>
                   </a>
 
@@ -214,7 +197,7 @@ export function App() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
-                      <span className="text-[10px] font-bold text-white block truncate">
+                      <span className="text-sm font-bold text-white block truncate">
                         D3 Frasco Ámbar
                       </span>
                     </div>
@@ -231,7 +214,7 @@ export function App() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
-                      <span className="text-[10px] font-bold text-white block truncate">
+                      <span className="text-sm font-bold text-white block truncate">
                         D3 Pouch Doypack
                       </span>
                     </div>
@@ -248,7 +231,7 @@ export function App() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                     />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-1.5">
-                      <span className="text-[10px] font-bold text-white block truncate">
+                      <span className="text-sm font-bold text-white block truncate">
                         URO Macro 100mm
                       </span>
                     </div>
@@ -266,33 +249,24 @@ export function App() {
         externalPresetPayload={externalPresetPayload}
       />
 
-      {/* GALERÍA DE INSPIRACIÓN: 5 PRODUCTOS DE ESTUDIO */}
-      <ProductCatalogSection
-        isDark={isDark}
-        onLoadInImageStudio={(prodId) => setExternalPresetPayload({ id: prodId, key: Date.now() })}
-      />
-
       {/* FOOTER */}
       <footer
-        className={`border-t py-8 text-xs ${
+        className={`border-t py-8 text-sm ${
           isDark ? 'bg-[#050806] border-emerald-950 text-slate-400' : 'bg-stone-100 border-stone-200 text-stone-600'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black text-xs">
+            <div className="w-6 h-6 rounded-md bg-emerald-500 flex items-center justify-center text-slate-950 font-semibold text-sm">
               N
             </div>
-            <span className="font-bold text-xs text-white">
+            <span className="font-bold text-sm text-white">
               NaturalStudio · Generador Visual de Prompts para Google Flow
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs">
+          <div className="flex items-center gap-4 text-sm">
             <a href="#estudio-imagenes" className="hover:text-emerald-400">
               Estudio Fotográfico
-            </a>
-            <a href="#catalogo-prompts" className="hover:text-emerald-400">
-              Galería de Fotos
             </a>
           </div>
         </div>

@@ -49,6 +49,8 @@ import {
 import { LensVisualModal } from './LensVisualModal';
 import {
   fetchCustomItemsFromSupabase,
+  loadStudioState,
+  saveStudioState,
   checkSupabaseStatus,
 } from '../lib/supabase';
 
@@ -187,12 +189,78 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   const [isAssistantOpen, setIsAssistantOpen] = useState<boolean>(false);
   const [assistantSearch, setAssistantSearch] = useState<string>('');
 
-  // Check Supabase status on mount
+  // Sincronización con Supabase (sin login): carga al abrir y guarda al cambiar
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
+  type ProductProfile = {
+    id: string; name: string; productName: string; headline: string;
+    benefits: string[]; packagingId: string; packagingPresentation: PackagingPresentationMode; realProductColor: string;
+  };
+  const [profiles, setProfiles] = useState<ProductProfile[]>(() => {
+    try { const x = localStorage.getItem('natural_studio_profiles'); return x ? JSON.parse(x) : []; } catch { return []; }
+  });
+  const [selectedProfileId, setSelectedProfileId] = useState<string>('');
+  const handleSaveProfile = () => {
+    if (!productName.trim()) { setSyncFeedback('Escribe el nombre del producto para guardar el perfil'); setTimeout(() => setSyncFeedback(null), 3000); return; }
+    const existing = profiles.find((x) => x.name.toLowerCase() === productName.trim().toLowerCase());
+    const prof: ProductProfile = {
+      id: existing?.id || `prof-${Date.now()}`, name: productName.trim(), productName, headline, benefits,
+      packagingId, packagingPresentation, realProductColor,
+    };
+    setProfiles([prof, ...profiles.filter((x) => x.id !== prof.id)]);
+    setSelectedProfileId(prof.id);
+    setSyncFeedback(`✓ Perfil "${prof.name}" guardado`); setTimeout(() => setSyncFeedback(null), 3000);
+  };
+  const handleLoadProfile = (id: string) => {
+    setSelectedProfileId(id);
+    const pr = profiles.find((x) => x.id === id);
+    if (!pr) return;
+    setProductName(pr.productName); setHeadline(pr.headline); setBenefits(pr.benefits);
+    setPackagingId(pr.packagingId); setPackagingPresentation(pr.packagingPresentation); setRealProductColor(pr.realProductColor);
+  };
+  const handleDeleteProfile = () => {
+    setProfiles(profiles.filter((x) => x.id !== selectedProfileId));
+    setSelectedProfileId('');
+  };
+  const [stateHydrated, setStateHydrated] = useState<boolean>(false);
   useEffect(() => {
-    checkSupabaseStatus().then((status) => {
+    checkSupabaseStatus().then(async (status) => {
       setSupabaseStatus(status);
+      if (status === 'connected') {
+        const remote = await loadStudioState();
+        if (remote) {
+          if (Array.isArray(remote.custom_envs)) setCustomEnvironments(remote.custom_envs);
+          if (Array.isArray(remote.custom_infographics)) setCustomInfographicStyles(remote.custom_infographics);
+          if (Array.isArray(remote.custom_phototypes)) setCustomPhotoTypes(remote.custom_phototypes);
+          if (Array.isArray(remote.profiles)) setProfiles(remote.profiles);
+          if (Array.isArray(remote.custom_ratios)) setCustomAspectRatios(remote.custom_ratios);
+          const d = remote.draft;
+          if (d && typeof d === 'object') {
+            if (typeof d.productName === 'string') setProductName(d.productName);
+            if (typeof d.headline === 'string') setHeadline(d.headline);
+            if (Array.isArray(d.benefits)) setBenefits(d.benefits);
+          }
+        }
+        setStateHydrated(true);
+      }
     });
   }, []);
+
+  const syncKey = (key: string, value: any) => {
+    if (stateHydrated) saveStudioState(key, value);
+  };
+  useEffect(() => syncKey('custom_envs', customEnvironments), [customEnvironments, stateHydrated]);
+  useEffect(() => syncKey('custom_infographics', customInfographicStyles), [customInfographicStyles, stateHydrated]);
+  useEffect(() => syncKey('custom_phototypes', customPhotoTypes), [customPhotoTypes, stateHydrated]);
+  useEffect(() => {
+    localStorage.setItem('natural_studio_profiles', JSON.stringify(profiles));
+    syncKey('profiles', profiles);
+  }, [profiles, stateHydrated]);
+  useEffect(() => syncKey('custom_ratios', customAspectRatios), [customAspectRatios, stateHydrated]);
+  useEffect(() => {
+    if (!stateHydrated) return;
+    const t = setTimeout(() => saveStudioState('draft', { productName, headline, benefits }), 800);
+    return () => clearTimeout(t);
+  }, [productName, headline, benefits, stateHydrated]);
 
   const handleResetCleanScene = () => {
     setProductName('');
@@ -271,6 +339,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
       surfaceEn: newEnvForm.surfaceEn.trim() || `on custom surface for ${newEnvForm.label}`,
       lightingEs: newEnvForm.lightingEs.trim() || 'bajo luz comercial cálida de estudio',
       lightingEn: newEnvForm.lightingEn.trim() || 'under warm commercial studio light',
+      promptEs: '',
+      promptEn: '',
     };
     const updated = [created, ...customEnvironments];
     setCustomEnvironments(updated);
@@ -331,6 +401,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
       promptEn: newPhotoTypeForm.promptEn.trim() || `Commercial advertising photography of ${newPhotoTypeForm.label}`,
       recommendedShotId: 'eye-level',
       recommendedLensId: '85mm-f18',
+      recommendedLightingId: '',
       includeMedallionsByDefault: true,
     };
     const updated = [created, ...customPhotoTypes];
@@ -570,13 +641,13 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
       }
 
       case 'metric-cards': {
-        const formatted = list.slice(0, 3).map((b, i) => `Tarjeta ${i + 1}: "100% EFECTIVIDAD · ${b}"`).join(', ');
+        const formatted = list.slice(0, 3).map((b, i) => `Tarjeta ${i + 1}: "${b}"`).join(', ');
         return `Flotando armónicamente a los lados del envase hay tarjetas publicitarias de vidrio esmerilado (frosted glass) con datos clínicos de alto impacto impresos con tipografía bold ultra nítida: ${formatted}. Formato publicitario de alta respuesta y conversión directa.`;
       }
 
       case 'editorial-typography': {
         const formatted = list.map((b) => `· ${b}`).join(' ');
-        return `Diseño publicitario editorial estilo revista de bienestar (wellness editorial layout): en la parte superior e integrada con el aire de la escena destaca una tipografía serif moderna con titulares elegantes y viñetas minimalistas legibles: "${formatted}". Sin elementos pesados flotando, composición limpia y sofisticada con protagonismo central en el empaque.`;
+        return `Diseño publicitario editorial estilo revista de bienestar (wellness editorial layout): en la parte superior e integrada con el aire de la escena destaca una tipografía sans-serif moderna y legible con titulares elegantes y viñetas minimalistas legibles: "${formatted}". Sin elementos pesados flotando, composición limpia y sofisticada con protagonismo central en el empaque.`;
       }
 
       case 'crystal-minimal': {
@@ -628,13 +699,13 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
       }
 
       case 'metric-cards': {
-        const formatted = list.slice(0, 3).map((b, i) => `Card ${i + 1}: "100% CLINICAL EFFECTIVENESS · ${b}"`).join(', ');
+        const formatted = list.slice(0, 3).map((b, i) => `Card ${i + 1}: "${b}"`).join(', ');
         return `Floating harmoniously beside the container are frosted glass advertising claim cards featuring bold crisp clinical typography: ${formatted}. High-conversion direct response advertising format.`;
       }
 
       case 'editorial-typography': {
         const formatted = list.map((b) => `· ${b}`).join(' ');
-        return `Wellness editorial magazine advertising layout: integrated into the upper breathing space is sophisticated modern serif typography with elegant headline subtext and clean minimalist bullet points: "${formatted}". Clean, sophisticated composition with central focus on the product container.`;
+        return `Wellness editorial magazine advertising layout: integrated into the upper breathing space is sophisticated modern clean sans-serif typography with elegant headline subtext and clean minimalist bullet points: "${formatted}". Clean, sophisticated composition with central focus on the product container.`;
       }
 
       case 'crystal-minimal': {
@@ -719,7 +790,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
   const macroPackagingEn = useReferencePhotoMode
     ? `[ATTACHED REFERENCE PHOTO]: Using the attached authentic product as mandatory visual base, the framing focuses 100% on microscopic details of its authentic materials, typography, and embossed authentic logo.${productColorNoticeEn} Smooth creamy bokeh background with subtle organic tones of ${activeEnvironment.label}, strictly no distant wide elements.`
-    : `The camera focuses with microscopic sharpness on the texture of ${activePackaging?.label || 'the authentic container'}, its embossed botanical logo, and surface micro-droplets. Smooth creamy bokeh background with subtle organic tones of ${activeEnvironment.label}, strictly no distant wide elements.`;
+: `The camera focuses with microscopic sharpness on the texture of ${activePackaging?.label || 'the authentic container'}, its embossed botanical logo, and surface micro-droplets. Smooth creamy bokeh background with subtle organic tones of ${activeEnvironment.label}, strictly no distant wide elements.`;
 
   const macroMedallionsEs =
     'Composición macro limpia sin medallones externos flotantes para garantizar el acercamiento extremo de la cámara; los beneficios se reflejan en el acabado táctil del producto.';
@@ -737,13 +808,13 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
 
   return (
-    <section id="estudio-imagenes" className="py-10 scroll-mt-16">
+    <section id="estudio-imagenes" className="py-10 pb-28 lg:pb-10 scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {/* Top Header + Quick Actions */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-bold tracking-wide bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                 <Camera className="w-3.5 h-3.5 text-amber-400" /> Creador Visual de Fotos Comerciales
               </span>
 
@@ -751,7 +822,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={handleResetCleanScene}
-                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border border-slate-700 bg-black/40 text-slate-300 hover:text-white hover:border-amber-400 transition-all cursor-pointer shadow-xs"
+                className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-sm font-bold border border-slate-700 bg-black/40 text-slate-300 hover:text-white hover:border-amber-400 transition-all cursor-pointer shadow-xs"
                 title="Limpiar todos los elementos para volver a una foto de catálogo limpia"
               >
                 <RotateCcw className="w-3 h-3 text-amber-400" />
@@ -762,7 +833,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={() => setIsAssistantOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-black bg-gradient-to-r from-emerald-500 to-amber-500 text-slate-950 hover:opacity-90 transition-all cursor-pointer shadow"
+                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-sm font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 hover:opacity-90 transition-all cursor-pointer shadow"
                 title="Buscar o autocompletar beneficios clínicos y estilo publicitario"
               >
                 <Wand2 className="w-3 h-3 text-slate-950" />
@@ -773,7 +844,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={() => setIsSupabaseModalOpen(true)}
-                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-sm font-bold border transition-all cursor-pointer ${
                   supabaseStatus === 'connected'
                     ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/25'
                     : supabaseStatus === 'table_missing'
@@ -793,7 +864,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               </button>
 
               {syncFeedback && (
-                <span className="text-[11px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-400/40">
+                <span className="text-sm font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-400/40">
                   {syncFeedback}
                 </span>
               )}
@@ -822,7 +893,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
             >
               <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-md bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-md bg-emerald-500 text-slate-950 font-semibold text-sm flex items-center justify-center">
                     1
                   </span>
                   <h3 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-stone-900'}`}>
@@ -834,9 +905,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 <button
                   type="button"
                   onClick={() => setUseReferencePhotoMode(!useReferencePhotoMode)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-2.5 py-1 rounded-lg text-sm font-bold border flex items-center gap-1.5 transition-all cursor-pointer ${
                     useReferencePhotoMode
-                      ? 'bg-amber-500 text-slate-950 border-amber-400 font-extrabold'
+                      ? 'bg-amber-500 text-slate-950 border-amber-400 font-semibold'
                       : isDark
                       ? 'bg-black/30 border-slate-700 text-slate-300 hover:border-amber-400'
                       : 'bg-stone-100 border-stone-200 text-stone-700'
@@ -848,13 +919,13 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               </div>
 
               {useReferencePhotoMode && (
-                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-200 flex items-start gap-2.5">
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-sm text-amber-200 flex items-start gap-2.5">
                   <ShieldCheck className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                   <div className="space-y-0.5">
                     <p className="font-bold text-amber-300 flex items-center gap-1.5">
                       <span>Modo Frasco Real Activo · Herencia Cromática Automática</span>
                     </p>
-                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                    <p className="text-sm text-slate-300 leading-relaxed">
                       El prompt ordena a Flow <strong>extraer y clonar directamente los colores, tonalidades, logotipos y materiales del objeto de la foto adjunta</strong> (📎), prohibiendo de forma estricta cualquier recoloreo o tinte verde/dorado ajeno.
                     </p>
                   </div>
@@ -864,13 +935,13 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-bold text-emerald-400">
+                    <label className="text-sm font-bold text-emerald-400">
                       Nombre del Producto
                     </label>
                     <button
                       type="button"
                       onClick={() => setIsAssistantOpen(true)}
-                      className="text-[10px] font-bold text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
+                      className="text-sm font-bold text-amber-300 hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <Wand2 className="w-2.5 h-2.5" />
                       <span>Autocompletar</span>
@@ -881,7 +952,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
                     placeholder="Nombre de tu producto (ej: Cúrcuma, Colágeno, Gotero...)"
-                    className={`w-full px-3 py-1.5 rounded-lg border text-xs font-semibold placeholder:text-slate-500 ${
+                    className={`w-full px-3 py-1.5 rounded-lg border text-sm font-semibold placeholder:text-slate-500 ${
                       isDark
                         ? 'bg-black/40 border-slate-700 text-white'
                         : 'bg-stone-50 border-stone-300 text-stone-900'
@@ -890,7 +961,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-bold text-amber-400">
+                    <label className="text-sm font-bold text-amber-400">
                       Frase de Campaña / Titular
                     </label>
                     <span className="text-[9.5px] text-slate-400 font-mono">
@@ -902,7 +973,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     value={headline}
                     onChange={(e) => setHeadline(e.target.value)}
                     placeholder="Ej: ARTICULACIONES MÁS FUERTES · MUÉVETE SIN LÍMITES"
-                    className={`w-full px-3 py-1.5 rounded-lg border text-xs font-semibold ${
+                    className={`w-full px-3 py-1.5 rounded-lg border text-sm font-semibold ${
                       isDark
                         ? 'bg-black/40 border-slate-700 text-white'
                         : 'bg-stone-50 border-stone-300 text-stone-900'
@@ -911,22 +982,47 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
               </div>
 
+              {/* Perfiles de producto guardados */}
+              <div className="flex flex-wrap items-center gap-2">
+                <select
+                  value={selectedProfileId}
+                  onChange={(e) => handleLoadProfile(e.target.value)}
+                  aria-label="Perfiles de producto guardados"
+                  className="flex-1 min-w-[160px] px-3 py-2 rounded-lg border border-slate-700 bg-black/40 text-white text-sm"
+                >
+                  <option value="">{profiles.length ? 'Cargar un producto guardado…' : 'Sin perfiles guardados'}</option>
+                  {profiles.map((pr) => (
+                    <option key={pr.id} value={pr.id}>{pr.name}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={handleSaveProfile}
+                  className="px-3 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 text-sm font-semibold cursor-pointer transition-all">
+                  Guardar producto
+                </button>
+                {selectedProfileId && (
+                  <button type="button" onClick={handleDeleteProfile}
+                    className="px-3 py-2 rounded-lg border border-slate-700 text-slate-300 hover:text-red-300 text-sm cursor-pointer">
+                    Borrar
+                  </button>
+                )}
+              </div>
+
               {/* Dynamic Benefits / Claims Fields (Universal for ANY product) */}
               <div className="space-y-2 pt-1 border-t border-slate-800/40">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                  <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                     Beneficios y Claims del Producto ({benefits.length} activos):
                   </label>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <span className="text-sm text-slate-400 font-mono">
                       Aparecen en tus infografías/Flow
                     </span>
                     {benefits.length < 8 && (
                       <button
                         type="button"
                         onClick={handleAddBenefit}
-                        className="px-2 py-0.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-400 text-[10px] font-bold flex items-center gap-1 cursor-pointer transition-all border border-emerald-500/30"
+                        className="px-2 py-0.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-400 text-sm font-bold flex items-center gap-1 cursor-pointer transition-all border border-emerald-500/30"
                       >
                         <Plus className="w-3 h-3" />
                         <span>Añadir Beneficio</span>
@@ -968,7 +1064,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         value={b}
                         onChange={(e) => handleUpdateBenefit(idx, e.target.value)}
                         placeholder={`${idx + 1}. Beneficio / Claim del producto`}
-                        className={`w-full pl-2.5 pr-7 py-1.5 rounded-lg border text-xs font-medium ${
+                        className={`w-full pl-2.5 pr-7 py-1.5 rounded-lg border text-sm font-medium ${
                           isDark ? 'bg-black/40 border-slate-700 text-white' : 'bg-stone-50 border-stone-300 text-stone-900'
                         }`}
                       />
@@ -991,7 +1087,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <div className="space-y-3 pt-1">
                 <div>
                   <div className="flex items-center justify-between mb-1.5 flex-wrap gap-2">
-                    <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                    <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
                       <Package className="w-3.5 h-3.5 text-emerald-400" />
                       1. Elige el Formato de Envase o Empaque:
                     </label>
@@ -1002,7 +1098,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         setModalTab('packagings');
                         setIsLensModalOpen(true);
                       }}
-                      className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                      className="px-2.5 py-1 rounded-lg text-sm font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
                     >
                       <Eye className="w-3 h-3 text-amber-400" />
                       <span>Ver fotos reales de cada empaque</span>
@@ -1030,12 +1126,12 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                               <span className="p-1 rounded-md bg-white/5 border border-white/10">
                                 {getPackagingIcon(pkg.id)}
                               </span>
-                              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 truncate max-w-[85px]">
+                              <span className="text-sm font-mono px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 truncate max-w-[85px]">
                                 {pkg.badge}
                               </span>
                             </div>
                             <div>
-                              <div className={`text-xs font-bold line-clamp-1 ${isSelected ? 'text-white' : ''}`}>
+                              <div className={`text-sm font-bold line-clamp-1 ${isSelected ? 'text-white' : ''}`}>
                                 {pkg.label}
                               </div>
                               {pkg.shortDesc && (
@@ -1069,18 +1165,18 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     <button
                       type="button"
                       onClick={() => setShowMorePackagings(!showMorePackagings)}
-                      className="text-[11px] text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
+                      className="text-sm text-emerald-400 hover:underline flex items-center gap-1 cursor-pointer"
                     >
                       <span>{showMorePackagings ? '− Menos formatos' : '+ Ver más formatos (Tarro de miel, Pote XXL...)'}</span>
                     </button>
                     {packagingId && activePackaging ? (
                       !PACKAGING_OPTIONS.slice(0, 6).some((p) => p.id === packagingId) && (
-                        <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
+                        <span className="text-sm font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30">
                           Seleccionado: {activePackaging.label}
                         </span>
                       )
                     ) : (
-                      <span className="text-[10px] text-slate-400 italic">
+                      <span className="text-sm text-slate-400 italic">
                         (Empaque sin fijar · Puedes seleccionar uno o cargar un modelo abajo)
                       </span>
                     )}
@@ -1103,8 +1199,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                                 : 'bg-stone-50 border-stone-200 text-stone-700'
                             }`}
                           >
-                            <div className="text-[11px] font-bold line-clamp-1">{pkg.label}</div>
-                            <div className="text-[9px] text-amber-300">{pkg.badge}</div>
+                            <div className="text-sm font-bold line-clamp-1">{pkg.label}</div>
+                            <div className="text-sm text-amber-300">{pkg.badge}</div>
                           </button>
                         );
                       })}
@@ -1119,7 +1215,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   } space-y-2`}
                 >
                   <div className="flex items-center justify-between flex-wrap gap-2">
-                    <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                    <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
                       <Box className="w-3.5 h-3.5 text-amber-400" />
                       2. Presentación del Envase en la Foto:
                     </label>
@@ -1128,12 +1224,12 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         <button
                           type="button"
                           onClick={() => setPackagingPresentation('solo')}
-                          className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                          className="text-sm text-slate-400 hover:text-amber-400 underline cursor-pointer"
                         >
                           Deseleccionar (Solo el Envase)
                         </button>
                       )}
-                      <span className="text-[10px] text-emerald-400 font-mono font-bold">
+                      <span className="text-sm text-emerald-400 font-mono font-bold">
                         {activePackagingPresentation.label}
                       </span>
                     </div>
@@ -1159,13 +1255,13 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         >
                           <div className="flex items-center justify-between gap-1">
                             <span
-                              className={`text-[11px] font-bold ${
-                                isSelected ? 'text-amber-300 font-extrabold' : ''
+                              className={`text-sm font-bold ${
+                                isSelected ? 'text-amber-300 font-semibold' : ''
                               }`}
                             >
                               {pres.label}
                             </span>
-                            <span className="text-[9px] px-1 py-0.5 rounded bg-white/5 text-slate-400 font-mono">
+                            <span className="text-sm px-1 py-0.5 rounded bg-white/5 text-slate-400 font-mono">
                               {pres.badge}
                             </span>
                           </div>
@@ -1190,26 +1286,26 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
             >
               <div className="flex items-center justify-between border-b border-slate-800/60 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-md bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center">
+                  <span className="w-5 h-5 rounded-md bg-amber-500 text-slate-950 font-semibold text-sm flex items-center justify-center">
                     2
                   </span>
                   <h3 className={`font-bold text-sm ${isDark ? 'text-white' : 'text-stone-900'}`}>
                     Estilo Visual, Entorno & Composición
                   </h3>
                 </div>
-                <span className="text-[11px] text-slate-400">Selecciona con 1 clic</span>
+                <span className="text-sm text-slate-400">Selecciona con 1 clic</span>
               </div>
 
               {/* 1. Tipo de Foto / Encuadre */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <label className="text-[11px] font-bold text-slate-300 block">
+                  <label className="text-sm font-bold text-slate-300 block">
                     1. ¿Qué Estilo de Fotografía Necesitas?
                   </label>
                   <button
                     type="button"
                     onClick={() => setIsAddPhotoTypeModalOpen(true)}
-                    className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                    className="px-2 py-0.5 rounded-lg text-sm font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1 cursor-pointer transition-all"
                   >
                     <Plus className="w-3 h-3" />
                     <span>Añadir Tipo de Foto</span>
@@ -1235,9 +1331,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         <div>
                           <div className="flex items-center justify-between gap-1">
                             <span
-                              className={`text-xs font-bold ${
+                              className={`text-sm font-bold ${
                                 isSelected
-                                  ? 'text-amber-300 font-extrabold'
+                                  ? 'text-amber-300 font-semibold'
                                   : isDark
                                   ? 'text-white'
                                   : 'text-stone-900'
@@ -1256,11 +1352,11 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                               </button>
                             )}
                           </div>
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 inline-block mt-0.5">
+                          <span className="text-sm font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 inline-block mt-0.5">
                             {pt.badge}
                           </span>
                         </div>
-                        <p className="text-[10px] text-slate-400 leading-tight">
+                        <p className="text-sm text-slate-400 leading-tight">
                           {pt.shortDesc}
                         </p>
                       </div>
@@ -1269,151 +1365,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
               </div>
 
-              {/* 2. Formato de Imagen / Relación de Aspecto */}
-              <div className="space-y-1.5 pt-2 border-t border-slate-800/50">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <label className="text-[11px] font-bold text-slate-300 block">
-                    2. Formato de Imagen (Relación de Aspecto):
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] text-slate-400 font-normal">
-                      (Elige o añade tu formato preferido)
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setIsAddRatioModalOpen(true)}
-                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>Añadir Formato</span>
-                    </button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {allAspectRatios.map((ar) => {
-                    const isCustom = customAspectRatios.some((c) => c.id === ar.id);
-                    return (
-                      <button
-                        key={ar.id}
-                        type="button"
-                        onClick={() => setAspectRatio(ar.id)}
-                        className={`p-2 rounded-xl border text-left transition-all cursor-pointer relative ${
-                          aspectRatio === ar.id
-                            ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-extrabold shadow'
-                            : isDark
-                            ? 'bg-black/30 border-slate-800 text-slate-200'
-                            : 'bg-stone-50 border-stone-200 text-stone-700'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold">{ar.label}</span>
-                          {isCustom && (
-                            <span
-                              onClick={(e) => handleDeleteCustomRatio(ar.id, e)}
-                              className="text-slate-400 hover:text-rose-400 p-0.5"
-                              title="Eliminar formato"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-[9px] opacity-75">{ar.sub.split('/')[0]}</div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 3. Diseño de Beneficios e Infografía */}
-              <div className="pt-2 border-t border-slate-800/60 space-y-2">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div>
-                    <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
-                      <Tag className="w-3.5 h-3.5 text-amber-400" />
-                      3. Diseño de Beneficios e Infografía:
-                    </label>
-                    <span className="text-[10px] text-slate-400 block">
-                      Aprovecha que Flow genera tipografía y palabras nítidas. Elige cómo mostrar tus textos o añade tu diseño.
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setIsAddInfographicModalOpen(true)}
-                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1 cursor-pointer transition-all"
-                    >
-                      <Plus className="w-3 h-3" />
-                      <span>Añadir Estilo de Diseño</span>
-                    </button>
-                    {infographicStyle !== 'none' && (
-                      <button
-                        type="button"
-                        onClick={() => setInfographicStyle('none')}
-                        className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
-                      >
-                        Deseleccionar (Foto Limpia)
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-                  {allInfographicStyles.map((styleOpt) => {
-                    const isSelected = infographicStyle === styleOpt.id;
-                    const isCustom = customInfographicStyles.some((c) => c.id === styleOpt.id);
-                    return (
-                      <button
-                        key={styleOpt.id}
-                        type="button"
-                        onClick={() => handleToggleInfographicStyle(styleOpt.id)}
-                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 h-full ${
-                          isSelected
-                            ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/50 shadow font-bold'
-                            : isDark
-                            ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
-                            : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-1">
-                          <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 truncate">
-                            {styleOpt.badge}
-                          </span>
-                          <div className="flex items-center gap-1">
-                            {isCustom && (
-                              <span
-                                onClick={(e) => handleDeleteCustomInfographic(styleOpt.id, e)}
-                                className="text-slate-400 hover:text-rose-400 p-0.5"
-                                title="Eliminar diseño"
-                              >
-                                <Trash2 className="w-3 h-3" />
-                              </span>
-                            )}
-                            {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
-                          </div>
-                        </div>
-                        <div className={`text-xs font-bold leading-snug ${isSelected ? 'text-amber-200' : ''}`}>
-                          {styleOpt.label}
-                        </div>
-                        <div className="text-[10px] text-slate-400 leading-relaxed mt-1">
-                          {styleOpt.shortDesc}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                {isMacroMode && (
-                  <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-[10.5px] text-cyan-300 flex items-center gap-1.5">
-                    <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                    <span>En modo Macro (100mm), la toma es un primerísimo plano extremo del envase; los elementos flotantes se omiten automáticamente para no tapar la toma.</span>
-                  </div>
-                )}
-              </div>
-
               {/* 4. Entorno Comercial Unificado (Superficie + Iluminación + Atmósfera en 1 solo selector) */}
               <div className="pt-2 border-t border-slate-800/60 space-y-2">
                 <div className="flex items-center justify-between flex-wrap gap-2">
-                  <label className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                  <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
                     4. Entorno / Fondo Comercial Unificado ({allEnvironments.length} disponibles):
                   </label>
@@ -1421,7 +1376,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     <button
                       type="button"
                       onClick={() => setIsAddEnvModalOpen(true)}
-                      className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                      className="px-2 py-0.5 rounded-lg text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
                     >
                       <Plus className="w-3 h-3" />
                       <span>Añadir Escenario</span>
@@ -1430,12 +1385,12 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                       <button
                         type="button"
                         onClick={() => setEnvironmentId('estudio-neutro')}
-                        className="text-[10px] text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                        className="text-sm text-slate-400 hover:text-amber-400 underline cursor-pointer"
                       >
                         Restablecer a Estudio Neutro
                       </button>
                     )}
-                    <span className="text-[10px] text-amber-400 font-mono font-bold">
+                    <span className="text-sm text-amber-400 font-mono font-bold">
                       {activeEnvironment.label}
                     </span>
                   </div>
@@ -1476,10 +1431,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                           </div>
                         </div>
                         <div>
-                          <div className={`text-xs font-bold leading-snug ${isSelected ? 'text-white' : ''}`}>
+                          <div className={`text-sm font-bold leading-snug ${isSelected ? 'text-white' : ''}`}>
                             {env.label}
                           </div>
-                          <p className="text-[10px] text-slate-400 leading-relaxed mt-1">
+                          <p className="text-sm text-slate-400 leading-relaxed mt-1">
                             {env.shortDesc}
                           </p>
                         </div>
@@ -1488,6 +1443,165 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   })}
                 </div>
               </div>
+
+              {/* Opciones avanzadas (formato e infografía) */}
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                aria-expanded={showAdvanced}
+                className={`w-full py-2.5 rounded-xl border border-dashed text-sm font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
+                  isDark
+                    ? 'border-emerald-800/70 text-emerald-300 hover:border-emerald-500'
+                    : 'border-stone-300 text-stone-700 hover:border-emerald-600'
+                }`}
+              >
+                {showAdvanced ? 'Ocultar opciones avanzadas ▲' : 'Opciones avanzadas: formato e infografía ▼'}
+              </button>
+              {showAdvanced && (
+                <div className="space-y-4">
+              {/* 2. Formato de Imagen / Relación de Aspecto */}
+              <div className="space-y-1.5 pt-2 border-t border-slate-800/50">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <label className="text-sm font-bold text-slate-300 block">
+                    2. Formato de Imagen (Relación de Aspecto):
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-slate-400 font-normal">
+                      (Elige o añade tu formato preferido)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsAddRatioModalOpen(true)}
+                      className="px-2 py-0.5 rounded-lg text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/40 hover:bg-emerald-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Añadir Formato</span>
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {allAspectRatios.map((ar) => {
+                    const isCustom = customAspectRatios.some((c) => c.id === ar.id);
+                    return (
+                      <button
+                        key={ar.id}
+                        type="button"
+                        onClick={() => setAspectRatio(ar.id)}
+                        className={`p-2 rounded-xl border text-left transition-all cursor-pointer relative ${
+                          aspectRatio === ar.id
+                            ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-semibold shadow'
+                            : isDark
+                            ? 'bg-black/30 border-slate-800 text-slate-200'
+                            : 'bg-stone-50 border-stone-200 text-stone-700'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-bold">{ar.label}</span>
+                          {isCustom && (
+                            <span
+                              onClick={(e) => handleDeleteCustomRatio(ar.id, e)}
+                              className="text-slate-400 hover:text-rose-400 p-0.5"
+                              title="Eliminar formato"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm opacity-75">{ar.sub.split('/')[0]}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3. Diseño de Beneficios e Infografía */}
+              <div className="pt-2 border-t border-slate-800/60 space-y-2">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <label className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
+                      <Tag className="w-3.5 h-3.5 text-amber-400" />
+                      3. Diseño de Beneficios e Infografía:
+                    </label>
+                    <span className="text-sm text-slate-400 block">
+                      Aprovecha que Flow genera tipografía y palabras nítidas. Elige cómo mostrar tus textos o añade tu diseño.
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsAddInfographicModalOpen(true)}
+                      className="px-2 py-0.5 rounded-lg text-sm font-bold bg-amber-500/15 text-amber-300 border border-amber-400/40 hover:bg-amber-500/25 flex items-center gap-1 cursor-pointer transition-all"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Añadir Estilo de Diseño</span>
+                    </button>
+                    {infographicStyle !== 'none' && (
+                      <button
+                        type="button"
+                        onClick={() => setInfographicStyle('none')}
+                        className="text-sm text-slate-400 hover:text-amber-400 underline cursor-pointer"
+                      >
+                        Deseleccionar (Foto Limpia)
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                  {allInfographicStyles.map((styleOpt) => {
+                    const isSelected = infographicStyle === styleOpt.id;
+                    const isCustom = customInfographicStyles.some((c) => c.id === styleOpt.id);
+                    return (
+                      <button
+                        key={styleOpt.id}
+                        type="button"
+                        onClick={() => handleToggleInfographicStyle(styleOpt.id)}
+                        className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 h-full ${
+                          isSelected
+                            ? 'bg-amber-500/20 border-amber-400 ring-2 ring-amber-400/50 shadow font-bold'
+                            : isDark
+                            ? 'bg-black/30 border-slate-800 text-slate-300 hover:border-slate-700'
+                            : 'bg-stone-50 border-stone-200 text-stone-700 hover:border-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-sm font-mono px-1.5 py-0.5 rounded bg-white/5 text-amber-300 truncate">
+                            {styleOpt.badge}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            {isCustom && (
+                              <span
+                                onClick={(e) => handleDeleteCustomInfographic(styleOpt.id, e)}
+                                className="text-slate-400 hover:text-rose-400 p-0.5"
+                                title="Eliminar diseño"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </span>
+                            )}
+                            {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                          </div>
+                        </div>
+                        <div className={`text-sm font-bold leading-snug ${isSelected ? 'text-amber-200' : ''}`}>
+                          {styleOpt.label}
+                        </div>
+                        <div className="text-sm text-slate-400 leading-relaxed mt-1">
+                          {styleOpt.shortDesc}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {isMacroMode && (
+                  <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-[10.5px] text-cyan-300 flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                    <span>En modo Macro (100mm), la toma es un primerísimo plano extremo del envase; los elementos flotantes se omiten automáticamente para no tapar la toma.</span>
+                  </div>
+                )}
+              </div>
+
+                </div>
+              )}
             </div>
           </div>
 
@@ -1503,7 +1617,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               {/* Result Header */}
               <div className="flex items-center justify-between border-b border-slate-800/70 pb-3">
                 <div>
-                  <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 block font-bold">
+                  <span className="text-sm font-mono tracking-wide text-amber-400 block font-bold">
                     TU PROMPT DE FOTO LISTO PARA FLOW / NANOBANANA
                   </span>
                   <h3 className={`text-base font-bold font-serif ${isDark ? 'text-white' : 'text-stone-900'}`}>
@@ -1515,7 +1629,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   <button
                     type="button"
                     onClick={() => setOutputLang('es')}
-                    className={`px-2 py-0.5 rounded text-xs font-bold cursor-pointer ${
+                    className={`px-2 py-0.5 rounded text-sm font-bold cursor-pointer ${
                       outputLang === 'es' ? 'bg-emerald-500 text-slate-950' : 'text-slate-300'
                     }`}
                   >
@@ -1524,7 +1638,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   <button
                     type="button"
                     onClick={() => setOutputLang('en')}
-                    className={`px-2 py-0.5 rounded text-xs font-bold cursor-pointer ${
+                    className={`px-2 py-0.5 rounded text-sm font-bold cursor-pointer ${
                       outputLang === 'en' ? 'bg-amber-500 text-slate-950' : 'text-slate-300'
                     }`}
                   >
@@ -1535,15 +1649,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
               {/* Reference Photo Reminder Banner */}
               {useReferencePhotoMode && (
-                <div className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-emerald-500/15 border border-amber-400/40 text-xs text-amber-200 flex items-center gap-2 shadow-sm">
+                <div className="p-2.5 rounded-xl bg-gradient-to-r from-amber-500/20 to-emerald-500/15 border border-amber-400/40 text-sm text-amber-200 flex items-center gap-2 shadow-sm">
                   <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"></span>
-                  <span className="text-[11px] font-semibold">
+                  <span className="text-sm font-semibold">
                     Recuerda adjuntar la foto de tu frasco con el botón <strong>📎</strong> al enviar este prompt.
                   </span>
                 </div>
               )}
 
-              {/* PicWish/Kimi Modular Formula Breakdown */}
+{/* PicWish/Kimi Modular Formula Breakdown */}
               <div className="space-y-1.5">
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
                   <span>Fórmula Modular del Prompt</span>
@@ -1566,17 +1680,18 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     📐 {aspectRatio}
                   </span>
                 </div>
+
               </div>
 
               <div className="space-y-3 pt-2">
-                <div className="p-3.5 rounded-xl bg-black/85 border border-emerald-500/30 font-mono text-xs text-slate-100 leading-relaxed select-all max-h-[260px] overflow-y-auto">
+                <div className="p-3.5 rounded-xl bg-black/85 border border-emerald-500/30 font-mono text-sm text-slate-100 leading-relaxed select-all max-h-[260px] overflow-y-auto">
                   {outputLang === 'es' ? mainPromptEs : mainPromptEn}
                 </div>
 
                 {/* Smart Guidance Badges */}
                 <div className="space-y-2">
                   {isMacroMode && (
-                    <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-xs text-amber-200 flex items-start gap-2 shadow-xs">
+                    <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-sm text-amber-200 flex items-start gap-2 shadow-xs">
                       <Eye className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
                       <div>
                         <strong className="text-amber-300">Modo Macro Ultra Detalle Activo: </strong>
@@ -1586,7 +1701,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   )}
 
                   {useReferencePhotoMode && (
-                    <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-xs text-emerald-200 flex items-start gap-2 shadow-xs">
+                    <div className="p-2.5 rounded-xl bg-emerald-500/15 border border-emerald-400/40 text-sm text-emerald-200 flex items-start gap-2 shadow-xs">
                       <Upload className="w-3.5 h-3.5 text-emerald-400 mt-0.5 shrink-0" />
                       <div>
                         <strong className="text-emerald-300">Foto de Referencia Activa: </strong>
@@ -1595,11 +1710,11 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     </div>
                   )}
 
-                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-200 leading-relaxed">
+                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-sm text-emerald-200 leading-relaxed">
                     ✨ <strong>Lo que generará:</strong> Una foto de estudio con{' '}
                     <strong className="text-white">{displayProductName}</strong> al centro en{' '}
                     <strong className="text-white">{activeEnvironment.label}</strong>,{' '}
-                    {activePhotoType.shortDesc.toLowerCase()}
+                    {(activePhotoType.shortDesc || '').toLowerCase()}
                   </div>
                 </div>
 
@@ -1609,7 +1724,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                     onClick={() =>
                       copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')
                     }
-                    className="sm:col-span-8 py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all"
+                    className="sm:col-span-8 py-3.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 hover:opacity-95 text-slate-950 font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-lg transition-all"
                   >
                     {copiedKey === 'main-copy' ? (
                       <>
@@ -1630,7 +1745,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                       copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy');
                       window.open('https://flow.google', '_blank');
                     }}
-                    className="sm:col-span-4 py-3.5 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer border border-emerald-500/40 transition-all shadow"
+                    className="sm:col-span-4 py-3.5 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500 hover:text-slate-950 text-emerald-300 font-bold text-sm flex items-center justify-center gap-1.5 cursor-pointer border border-emerald-500/40 transition-all shadow"
                     title="Copia el prompt automáticamente y abre Google Flow en una nueva pestaña"
                   >
                     <ExternalLink className="w-4 h-4 shrink-0" />
@@ -1688,7 +1803,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="space-y-3 text-xs">
+            <div className="space-y-3 text-sm">
               <div>
                 <label className="font-bold block mb-1 text-slate-300">Nombre del Escenario</label>
                 <input
@@ -1696,7 +1811,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newEnvForm.label}
                   onChange={(e) => setNewEnvForm({ ...newEnvForm, label: e.target.value })}
                   placeholder="Ej: Terraza Mediterránea de Olivos"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
@@ -1706,7 +1821,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newEnvForm.badge}
                   onChange={(e) => setNewEnvForm({ ...newEnvForm, badge: e.target.value })}
                   placeholder="Ej: Exterior, Rústico, Spa, Lujo"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
@@ -1716,7 +1831,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   onChange={(e) => setNewEnvForm({ ...newEnvForm, surfaceEs: e.target.value })}
                   placeholder="Ej: sobre mesa de madera rústica de olivo frente al mar con flores secas y fondo de colinas doradas"
                   rows={2}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
@@ -1726,7 +1841,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newEnvForm.lightingEs}
                   onChange={(e) => setNewEnvForm({ ...newEnvForm, lightingEs: e.target.value })}
                   placeholder="Ej: bajo luz dorada cálida de poniente con reflejos sutiles y sombras alargadas"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
             </div>
@@ -1734,14 +1849,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={() => setIsAddEnvModalOpen(false)}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+                className="px-3 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveCustomEnv}
-                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
+                className="px-4 py-1.5 rounded-lg text-sm font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
               >
                 Guardar Escenario
               </button>
@@ -1775,7 +1890,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="space-y-3 text-xs">
+            <div className="space-y-3 text-sm">
               <div>
                 <label className="font-bold block mb-1 text-slate-300">Nombre del Estilo</label>
                 <input
@@ -1783,7 +1898,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newInfographicForm.label}
                   onChange={(e) => setNewInfographicForm({ ...newInfographicForm, label: e.target.value })}
                   placeholder="Ej: Etiquetas Neumórficas de Cristal"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
@@ -1793,17 +1908,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newInfographicForm.shortDesc}
                   onChange={(e) => setNewInfographicForm({ ...newInfographicForm, shortDesc: e.target.value })}
                   placeholder="Ej: Tarjetas de vidrio esmerilado con bordes brillantes y tipografía nítida."
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
-                <label className="font-bold block mb-1 text-slate-300">Instrucción para Flow (Usa {beneficios} donde van los textos)</label>
+                <label className="font-bold block mb-1 text-slate-300">Instrucción para Flow (Usa {'{beneficios}'} donde van los textos)</label>
                 <textarea
                   value={newInfographicForm.promptEs}
                   onChange={(e) => setNewInfographicForm({ ...newInfographicForm, promptEs: e.target.value })}
                   placeholder="Ej: Flotando armónicamente alrededor del envase destacan tarjetas de cristal esmerilado con bordes suaves que exhiben los beneficios: {beneficios}."
                   rows={3}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
             </div>
@@ -1811,14 +1926,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={() => setIsAddInfographicModalOpen(false)}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+                className="px-3 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveCustomInfographic}
-                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 shadow"
+                className="px-4 py-1.5 rounded-lg text-sm font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 shadow"
               >
                 Guardar Estilo
               </button>
@@ -1852,7 +1967,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="space-y-3 text-xs">
+            <div className="space-y-3 text-sm">
               <div>
                 <label className="font-bold block mb-1 text-slate-300">Nombre del Tipo de Foto</label>
                 <input
@@ -1860,7 +1975,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newPhotoTypeForm.label}
                   onChange={(e) => setNewPhotoTypeForm({ ...newPhotoTypeForm, label: e.target.value })}
                   placeholder="Ej: Levitación Cinematográfica Botánica"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
@@ -1870,7 +1985,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   onChange={(e) => setNewPhotoTypeForm({ ...newPhotoTypeForm, promptEs: e.target.value })}
                   placeholder="Ej: Fotografía comercial publicitaria con el envase suspendido en levitación sutil en el centro con humo botánico difuso y partículas de luz"
                   rows={2}
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
             </div>
@@ -1878,14 +1993,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={() => setIsAddPhotoTypeModalOpen(false)}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+                className="px-3 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveCustomPhotoType}
-                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
+                className="px-4 py-1.5 rounded-lg text-sm font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
               >
                 Guardar Tipo de Foto
               </button>
@@ -1919,7 +2034,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="space-y-3 text-xs">
+            <div className="space-y-3 text-sm">
               <div>
                 <label className="font-bold block mb-1 text-slate-300">Relación (ej: 3:4, 2:3, 21:9)</label>
                 <input
@@ -1927,7 +2042,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newRatioForm.id}
                   onChange={(e) => setNewRatioForm({ ...newRatioForm, id: e.target.value })}
                   placeholder="Ej: 3:4"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
@@ -1937,7 +2052,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newRatioForm.label}
                   onChange={(e) => setNewRatioForm({ ...newRatioForm, label: e.target.value })}
                   placeholder="Ej: 3:4 Retrato Editorial"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
               <div>
@@ -1947,7 +2062,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   value={newRatioForm.promptEs}
                   onChange={(e) => setNewRatioForm({ ...newRatioForm, promptEs: e.target.value })}
                   placeholder="Ej: formato vertical 3:4 con encuadre editorial equilibrado"
-                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-xs"
+                  className="w-full px-3 py-2 rounded-lg border border-slate-700 bg-black/50 text-white text-sm"
                 />
               </div>
             </div>
@@ -1955,14 +2070,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={() => setIsAddRatioModalOpen(false)}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-400 hover:text-white"
+                className="px-3 py-1.5 rounded-lg text-sm font-bold text-slate-400 hover:text-white"
               >
                 Cancelar
               </button>
               <button
                 type="button"
                 onClick={handleSaveCustomRatio}
-                className="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
+                className="px-4 py-1.5 rounded-lg text-sm font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400 shadow"
               >
                 Guardar Formato
               </button>
@@ -1987,17 +2102,17 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
           >
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-amber-500 text-slate-950 flex items-center justify-center font-black shadow-md">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500 text-slate-950 flex items-center justify-center font-semibold shadow-md">
                   <Wand2 className="w-5 h-5" />
                 </div>
                 <div>
                   <h3 className="font-bold text-base flex items-center gap-2">
                     Asistente de Suplementos & E-Commerce
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
+                    <span className="text-sm px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono">
                       Autocompletado
                     </span>
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm text-slate-400">
                     Selecciona un producto o busca cualquier fórmula para autocompletar beneficios clínicos y estilo
                   </p>
                 </div>
@@ -2019,7 +2134,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 value={assistantSearch}
                 onChange={(e) => setAssistantSearch(e.target.value)}
                 placeholder="Busca cualquier producto (ej: Glucosamina, Colágeno, Magnesio, D3+K2, Omega 3, Creatina, Cúrcuma...)"
-                className={`w-full pl-10 pr-16 py-2.5 rounded-xl border text-xs font-semibold placeholder:text-slate-500 ${
+                className={`w-full pl-10 pr-16 py-2.5 rounded-xl border text-sm font-semibold placeholder:text-slate-500 ${
                   isDark
                     ? 'bg-black/60 border-slate-700 text-white focus:border-emerald-400'
                     : 'bg-stone-50 border-stone-300 text-stone-900 focus:border-emerald-600'
@@ -2029,7 +2144,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 <button
                   type="button"
                   onClick={() => setAssistantSearch('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 hover:text-white"
                 >
                   Limpiar
                 </button>
@@ -2044,7 +2159,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 return (
                   item.name.toLowerCase().includes(term) ||
                   item.category.toLowerCase().includes(term) ||
-                  item.keywords.some((k) => k.toLowerCase().includes(term))
+                  item.keywords.some((k: string) => k.toLowerCase().includes(term))
                 );
               }).map((item) => (
                 <div
@@ -2057,14 +2172,14 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 >
                   <div className="space-y-1 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-bold text-xs text-white">
+                      <span className="font-bold text-sm text-white">
                         {item.name}
                       </span>
-                      <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                      <span className="text-sm font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
                         {item.category}
                       </span>
                     </div>
-                    <p className="text-[11px] text-amber-300 font-semibold">
+                    <p className="text-sm text-amber-300 font-semibold">
                       «{item.headline}»
                     </p>
                     <div className="flex flex-wrap gap-1 pt-0.5">
@@ -2081,7 +2196,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         4) {item.benefit4}
                       </span>
                     </div>
-                    <p className="text-[10px] text-slate-400">
+                    <p className="text-sm text-slate-400">
                       {item.shortClinicalDesc}
                     </p>
                   </div>
@@ -2089,7 +2204,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   <button
                     type="button"
                     onClick={() => handleApplyKnowledgeItem(item)}
-                    className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-90 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow shrink-0 self-end sm:self-center"
+                    className="px-3.5 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 hover:opacity-90 text-slate-950 font-semibold text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow shrink-0 self-end sm:self-center"
                   >
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
                     <span>Aplicar al Estudio</span>
@@ -2103,7 +2218,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                   item.name.toLowerCase().includes(assistantSearch.toLowerCase().trim())
                 ) && (
                   <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-center space-y-2">
-                    <p className="text-xs text-amber-200">
+                    <p className="text-sm text-amber-200">
                       ¿Quieres autocompletar tu estudio para <strong>"{assistantSearch}"</strong>?
                     </p>
                     <button
@@ -2112,15 +2227,15 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                         const clean = assistantSearch.trim();
                         setProductName(clean);
                         setHeadline(`MÁXIMA PUREZA, VITALIDAD Y BIENESTAR CON ${clean.toUpperCase()}`);
-                        setBenefit1(`Apoyo Integral con ${clean}`);
-                        setBenefit2('Absorción Celular de Alta Biodisponibilidad');
-                        setBenefit3('Fórmula Pura sin Aditivos Tóxicos');
-                        setBenefit4('Energía y Vitalidad Diaria Comprobada');
+                        setBenefits((b) => { const n = [...b]; n[0] = `Apoyo Integral con ${clean}`; return n; });
+                        setBenefits((b) => { const n = [...b]; n[1] = 'Absorción Celular de Alta Biodisponibilidad'; return n; });
+                        setBenefits((b) => { const n = [...b]; n[2] = 'Fórmula Pura sin Aditivos Tóxicos'; return n; });
+                        setBenefits((b) => { const n = [...b]; n[3] = 'Energía y Vitalidad Diaria Comprobada'; return n; });
                         setIsAssistantOpen(false);
                         setSyncFeedback(`✓ Autocompletado generado para "${clean}"`);
                         setTimeout(() => setSyncFeedback(null), 3000);
                       }}
-                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs transition-all shadow cursor-pointer"
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold text-sm transition-all shadow cursor-pointer"
                     >
                       ✨ Generar beneficios y estilo para "{assistantSearch}"
                     </button>
@@ -2128,7 +2243,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 )}
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800 text-[11px] text-slate-400">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800 text-sm text-slate-400">
               <span>💡 Ideal para Flow / Nanobanana Pro: genera composiciones estructuradas con textos de alta conversión.</span>
               <button
                 type="button"
@@ -2163,7 +2278,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
                 <div>
                   <h3 className="font-bold text-base">Conexión con Supabase</h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm text-slate-400">
                     Almacenamiento persistente en tu nube PostgreSQL
                   </p>
                 </div>
@@ -2177,8 +2292,8 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               </button>
             </div>
 
-            <div className="p-3 rounded-xl bg-black/40 border border-slate-800 space-y-1 text-xs">
-              <span className="text-[10px] text-slate-400 font-mono uppercase">Estado:</span>
+            <div className="p-3 rounded-xl bg-black/40 border border-slate-800 space-y-1 text-sm">
+              <span className="text-sm text-slate-400 font-mono uppercase">Estado:</span>
               <div className="font-bold text-emerald-400">
                 {supabaseStatus === 'connected' ? '✓ Conectado y sincronizado' : 'Modo local activo'}
               </div>
@@ -2188,7 +2303,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
               <button
                 type="button"
                 onClick={() => setIsSupabaseModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs cursor-pointer hover:bg-emerald-400"
+                className="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-semibold text-sm cursor-pointer hover:bg-emerald-400"
               >
                 Cerrar
               </button>
@@ -2196,6 +2311,16 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
           </div>
         </div>
       )}
+      {/* Barra fija móvil: copiar prompt siempre a mano */}
+      <div className={`lg:hidden fixed bottom-0 inset-x-0 z-40 p-3 border-t backdrop-blur ${isDark ? 'bg-[#0A100E]/95 border-emerald-900' : 'bg-white/95 border-stone-200'}`}>
+        <button
+          type="button"
+          onClick={() => copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')}
+          className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer"
+        >
+          {copiedKey === 'main-copy' ? <><Check className="w-4 h-4" /> ¡Prompt copiado!</> : <><Copy className="w-4 h-4" /> Copiar prompt para Flow</>}
+        </button>
+      </div>
     </section>
   );
 };

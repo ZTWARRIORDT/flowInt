@@ -1376,6 +1376,25 @@ export const STUDIO_QUICK_PRESETS: ProductQuickPreset[] = [
   }
 ];
 
+export interface SupplementKnowledgeItem {
+  id: string;
+  name: string;
+  category: string;
+  keywords: string[];
+  headline: string;
+  benefit1: string;
+  benefit2: string;
+  benefit3: string;
+  benefit4: string;
+  recommendedPackagingId: string;
+  recommendedPresentation: PackagingPresentationMode;
+  recommendedAccompaniments: string[];
+  recommendedIngredients: string[];
+  recommendedColorMood: string;
+  realProductColor?: string;
+  shortClinicalDesc: string;
+}
+
 export const SUPPLEMENT_KNOWLEDGE_BASE: SupplementKnowledgeItem[] = [
   {
     id: 'kb-uro-cranberry',

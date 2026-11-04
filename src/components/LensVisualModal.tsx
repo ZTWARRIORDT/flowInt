@@ -384,11 +384,11 @@ export const LensVisualModal: React.FC<Props> = ({
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-amber-500 flex items-center justify-center text-slate-950 font-black shadow-md shrink-0">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500 flex items-center justify-center text-slate-950 font-semibold shadow-md shrink-0">
               {modalTab === 'lenses' ? <Camera className="w-5 h-5" /> : <Package className="w-5 h-5" />}
             </div>
             <div>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 block font-bold">
+              <span className="text-sm font-mono tracking-wide text-amber-400 block font-bold">
                 GUÍA VISUAL CON FOTOGRAFÍAS REALES DE ESTUDIO
               </span>
               <h3 className="text-lg sm:text-xl font-bold font-serif">
@@ -405,9 +405,9 @@ export const LensVisualModal: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => setModalTab('lenses')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   modalTab === 'lenses'
-                    ? 'bg-amber-500 text-slate-950 shadow font-extrabold'
+                    ? 'bg-amber-500 text-slate-950 shadow font-semibold'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -417,9 +417,9 @@ export const LensVisualModal: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => setModalTab('packagings')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                   modalTab === 'packagings'
-                    ? 'bg-emerald-500 text-slate-950 shadow font-extrabold'
+                    ? 'bg-emerald-500 text-slate-950 shadow font-semibold'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
@@ -476,10 +476,10 @@ export const LensVisualModal: React.FC<Props> = ({
                       </div>
                       <div className="overflow-hidden">
                         <div className="flex items-center gap-1">
-                          <span className="text-xs font-black">{lens.focalLength}</span>
+                          <span className="text-sm font-semibold">{lens.focalLength}</span>
                         </div>
                         <div
-                          className={`text-[10px] font-bold truncate ${
+                          className={`text-sm font-bold truncate ${
                             isSelected
                               ? 'text-amber-300'
                               : isDark
@@ -509,19 +509,19 @@ export const LensVisualModal: React.FC<Props> = ({
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-black bg-amber-500 text-slate-950 shadow-md flex items-center gap-1">
+                      <span className="px-2.5 py-1 rounded-full text-sm font-semibold bg-amber-500 text-slate-950 shadow-md flex items-center gap-1">
                         <Aperture className="w-3.5 h-3.5" /> {currentLens.focalLength} {currentLens.aperture}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-black/75 text-emerald-300 text-[10px] font-mono border border-emerald-400/30">
+                      <span className="px-2 py-0.5 rounded-md bg-black/75 text-emerald-300 text-sm font-mono border border-emerald-400/30">
                         Foto real de estudio
                       </span>
                     </div>
 
                     <div className="absolute bottom-3 left-3 right-3 p-3 rounded-2xl bg-black/85 backdrop-blur-md border border-amber-500/30">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-amber-300 font-bold">
+                      <div className="text-sm font-mono tracking-wide text-amber-300 font-bold">
                         {currentLens.photoAngleLabel}
                       </div>
-                      <div className="text-xs text-slate-200 mt-0.5">{currentLens.visualEffect}</div>
+                      <div className="text-sm text-slate-200 mt-0.5">{currentLens.visualEffect}</div>
                     </div>
                   </div>
                 </div>
@@ -537,7 +537,7 @@ export const LensVisualModal: React.FC<Props> = ({
                   <div className="space-y-4">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 inline-block mb-1">
+                        <span className="px-3 py-1 rounded-full text-sm font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 inline-block mb-1">
                           {currentLens.tag}
                         </span>
                         <h4 className="text-2xl font-bold font-serif text-white">
@@ -550,7 +550,7 @@ export const LensVisualModal: React.FC<Props> = ({
                           isDark ? 'bg-black/60 border-slate-800' : 'bg-white border-stone-200'
                         }`}
                       >
-                        <div className="text-[10px] font-mono uppercase tracking-wider text-slate-400 mb-1">
+                        <div className="text-sm font-mono tracking-wide text-slate-400 mb-1">
                           Fondo desenfocado (Bokeh):
                         </div>
                         <div className="flex items-center gap-1">
@@ -566,7 +566,7 @@ export const LensVisualModal: React.FC<Props> = ({
                               }`}
                             />
                           ))}
-                          <span className="text-xs font-bold text-amber-300 ml-1.5">
+                          <span className="text-sm font-bold text-amber-300 ml-1.5">
                             {currentLens.depthOfFieldLevel === 5
                               ? 'Máximo'
                               : currentLens.depthOfFieldLevel >= 3
@@ -594,10 +594,10 @@ export const LensVisualModal: React.FC<Props> = ({
                         isDark ? 'bg-black/40 border-slate-800' : 'bg-white border-stone-200'
                       }`}
                     >
-                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+                      <span className="text-sm font-bold tracking-wide text-emerald-400 flex items-center gap-1.5">
                         <Check className="w-3.5 h-3.5" /> ¿Para qué tipo de foto te conviene?
                       </span>
-                      <ul className="space-y-1.5 text-xs sm:text-sm">
+                      <ul className="space-y-1.5 text-sm sm:text-sm">
                         {currentLens.idealFor.map((use, i) => (
                           <li key={i} className="flex items-start gap-2">
                             <span className="text-emerald-400 font-bold">✓</span>
@@ -614,7 +614,7 @@ export const LensVisualModal: React.FC<Props> = ({
                       onSelectLens(currentLens.id);
                       onClose();
                     }}
-                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg"
+                    className="w-full py-3 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 hover:opacity-95 text-slate-950 font-semibold text-sm sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg"
                   >
                     <Check className="w-4 h-4 stroke-[3]" />
                     <span>Aplicar {currentLens.name} a mi Foto</span>
@@ -655,13 +655,13 @@ export const LensVisualModal: React.FC<Props> = ({
                       </div>
                       <div className="overflow-hidden">
                         <div
-                          className={`text-xs font-bold truncate ${
+                          className={`text-sm font-bold truncate ${
                             isSelected ? 'text-amber-300' : isDark ? 'text-white' : 'text-stone-900'
                           }`}
                         >
                           {pkg.name}
                         </div>
-                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 inline-block mt-0.5">
+                        <span className="text-sm font-mono px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 inline-block mt-0.5">
                           {pkg.badge}
                         </span>
                       </div>
@@ -683,19 +683,19 @@ export const LensVisualModal: React.FC<Props> = ({
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
                     <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-500 text-slate-950 shadow-md flex items-center gap-1">
+                      <span className="px-2.5 py-1 rounded-full text-sm font-semibold bg-emerald-500 text-slate-950 shadow-md flex items-center gap-1">
                         <Package className="w-3.5 h-3.5" /> {currentPkg.badge}
                       </span>
-                      <span className="px-2 py-0.5 rounded-md bg-black/75 text-amber-300 text-[10px] font-mono border border-amber-400/30">
+                      <span className="px-2 py-0.5 rounded-md bg-black/75 text-amber-300 text-sm font-mono border border-amber-400/30">
                         Foto real de producto
                       </span>
                     </div>
 
                     <div className="absolute bottom-3 left-3 right-3 p-3 rounded-2xl bg-black/85 backdrop-blur-md border border-emerald-500/30">
-                      <div className="text-[10px] font-mono uppercase tracking-wider text-emerald-300 font-bold">
+                      <div className="text-sm font-mono tracking-wide text-emerald-300 font-bold">
                         {currentPkg.photoAngleLabel}
                       </div>
-                      <div className="text-xs text-slate-200 mt-0.5">{currentPkg.visualEffect}</div>
+                      <div className="text-sm text-slate-200 mt-0.5">{currentPkg.visualEffect}</div>
                     </div>
                   </div>
                 </div>
@@ -710,7 +710,7 @@ export const LensVisualModal: React.FC<Props> = ({
                 >
                   <div className="space-y-4">
                     <div>
-                      <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 inline-block mb-1">
+                      <span className="px-3 py-1 rounded-full text-sm font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 inline-block mb-1">
                         {currentPkg.badge}
                       </span>
                       <h4 className="text-2xl font-bold font-serif text-white">
@@ -735,10 +735,10 @@ export const LensVisualModal: React.FC<Props> = ({
                         isDark ? 'bg-black/40 border-slate-800' : 'bg-white border-stone-200'
                       }`}
                     >
-                      <span className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                      <span className="text-sm font-bold tracking-wide text-amber-400 flex items-center gap-1.5">
                         <Check className="w-3.5 h-3.5" /> Ideal para fotografiar:
                       </span>
-                      <ul className="space-y-1.5 text-xs sm:text-sm">
+                      <ul className="space-y-1.5 text-sm sm:text-sm">
                         {currentPkg.idealFor.map((use, i) => (
                           <li key={i} className="flex items-start gap-2">
                             <span className="text-emerald-400 font-bold">✓</span>
@@ -749,7 +749,7 @@ export const LensVisualModal: React.FC<Props> = ({
                     </div>
 
                     <div
-                      className={`p-3 rounded-2xl border text-xs flex items-center justify-between gap-2 ${
+                      className={`p-3 rounded-2xl border text-sm flex items-center justify-between gap-2 ${
                         isDark ? 'bg-black/30 border-slate-800 text-slate-300' : 'bg-white border-stone-200 text-stone-700'
                       }`}
                     >
@@ -768,7 +768,7 @@ export const LensVisualModal: React.FC<Props> = ({
                       onSelectLens(currentPkg.recommendedLensId);
                       onClose();
                     }}
-                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-amber-500 hover:opacity-95 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg"
+                    className="w-full py-3 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 hover:opacity-95 text-slate-950 font-semibold text-sm sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg"
                   >
                     <Check className="w-4 h-4 stroke-[3]" />
                     <span>Usar este Empaque en mi Estudio</span>
