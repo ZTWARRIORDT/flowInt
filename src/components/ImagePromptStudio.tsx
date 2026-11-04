@@ -77,6 +77,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
   // Step 2: Environment
   const [environmentId, setEnvironmentId] = useState<string>('arena-mediterranea');
   const [envCategoryFilter, setEnvCategoryFilter] = useState<EnvCategory>('todos');
+  const [rawIngredientsInput, setRawIngredientsInput] = useState<string>('');
 
   // Step 3: Camera & Typography / Infographic
   const [shotId, setShotId] = useState<string>('eye-level');
@@ -293,15 +294,27 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
     photoStyleEn = `Commercial advertising photography in ${aspectRatio} format for the natural product "${displayProductName}", ${activeShot.promptEn}.`;
   }
 
+  // Dynamic surface customization for Raw Elements
+  const hasCustomRawIngredients =
+    environmentId === 'ingredientes-deconstruccion' && rawIngredientsInput.trim().length > 0;
+
+  const effectiveSurfaceEs = hasCustomRawIngredients
+    ? `posado sobre una losa pulida de piedra natural texturizada rodeado armoniosamente de ingredientes botánicos crudos en corte transversal fresco: ${rawIngredientsInput.trim()}, con microgotas de rocío fresco comunicando máxima frescura orgánica y alta potencia biológica`
+    : activeEnvironment.surfaceEs;
+
+  const effectiveSurfaceEn = hasCustomRawIngredients
+    ? `resting on a polished natural textured stone slab harmoniously surrounded by fresh cross-cut raw botanical active ingredients: ${rawIngredientsInput.trim()}, with fresh dew micro-droplets conveying peak organic freshness and biological potency`
+    : activeEnvironment.surfaceEn;
+
   // Packaging description with Reference Photo Mode
-  let packagingDescriptionEs = `En el centro destaca ${activePackaging.promptEs}, ${activeEnvironment.surfaceEs}.`;
-  let packagingDescriptionEn = `Centered is ${activePackaging.promptEn}, ${activeEnvironment.surfaceEn}.`;
+  let packagingDescriptionEs = `En el centro destaca ${activePackaging.promptEs}, ${effectiveSurfaceEs}.`;
+  let packagingDescriptionEn = `Centered is ${activePackaging.promptEn}, ${effectiveSurfaceEn}.`;
 
   if (useReferencePhotoMode) {
     const packagingHintEs = ` (silueta de ${activePackaging.label.toLowerCase()})`;
     const packagingHintEn = ` (${activePackaging.label.toLowerCase()} silhouette)`;
-    packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase original${packagingHintEs} de la imagen adjunta: misma silueta geométrica, proporciones exactas, misma tapa o cierre hermético y diseño original de la etiqueta con sus logotipos reales sin rediseñar. En la escena destaca este envase original, ${activeEnvironment.surfaceEs}.`;
-    packagingDescriptionEn = `[MANDATORY ATTACHED REFERENCE PHOTO]: It is strictly mandatory to preserve with 100% fidelity the authentic product container${packagingHintEn} from the attached image: identical geometric silhouette, exact proportions, authentic cap or seal, and original label graphics without redesigning. Centered in the scene is this authentic container, ${activeEnvironment.surfaceEn}.`;
+    packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase original${packagingHintEs} de la imagen adjunta: misma silueta geométrica, proporciones exactas, misma tapa o cierre hermético y diseño original de la etiqueta con sus logotipos reales sin rediseñar. En la escena destaca este envase original, ${effectiveSurfaceEs}.`;
+    packagingDescriptionEn = `[MANDATORY ATTACHED REFERENCE PHOTO]: It is strictly mandatory to preserve with 100% fidelity the authentic product container${packagingHintEn} from the attached image: identical geometric silhouette, exact proportions, authentic cap or seal, and original label graphics without redesigning. Centered in the scene is this authentic container, ${effectiveSurfaceEn}.`;
   }
 
   // Macro Mode descriptions
@@ -668,6 +681,92 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               })}
             </div>
 
+            {/* Panel de Personalización de Ingredientes en Escena (Solo visible en Deconstrucción) */}
+            {environmentId === 'ingredientes-deconstruccion' && (
+              <div className="bg-[#FDFBF9] border border-[#C85A32]/30 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E7E5DF] pb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-[#C85A32]/10 border border-[#C85A32]/25 text-[#C85A32]">
+                      <Sparkles className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#C85A32] block">
+                        Personalización de Escena
+                      </span>
+                      <h4 className="text-sm font-bold text-stone-900 leading-tight">
+                        Ingredientes a Deconstruir alrededor del Envase
+                      </h4>
+                    </div>
+                  </div>
+
+                  {rawIngredientsInput && (
+                    <button
+                      type="button"
+                      onClick={() => setRawIngredientsInput('')}
+                      className="text-xs text-stone-500 hover:text-[#C85A32] transition-colors cursor-pointer self-start sm:self-center font-medium"
+                    >
+                      Restablecer a sugerencia base
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-stone-800 uppercase tracking-wider">
+                    Escribe tus ingredientes activos (separados por coma):
+                  </label>
+                  <input
+                    type="text"
+                    value={rawIngredientsInput}
+                    onChange={(e) => setRawIngredientsInput(e.target.value)}
+                    placeholder="Ej: Rodajas de naranja fresca, raíz de jengibre en corte, hojas de menta con rocío, semillas de chía..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E7E5DF] bg-[#F7F5F0] text-stone-800 placeholder:text-stone-400 text-sm font-medium focus:outline-none focus:border-[#C85A32] focus:ring-1 focus:ring-[#C85A32] transition-colors"
+                  />
+                  <p className="text-[11px] text-stone-500">
+                    {rawIngredientsInput.trim()
+                      ? '✓ Flow rodeará tu envase exactamente con estos ingredientes.'
+                      : 'Dejar vacío para usar la mezcla botánica equilibrada por defecto (cúrcuma, cítricos y ramas frescas).'}
+                  </p>
+                </div>
+
+                {/* Sugerencias Rápidas de 1 Clic */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[11px] font-bold text-stone-700 block">
+                    Añadir con 1 clic:
+                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {[
+                      'Raíz de Cúrcuma fresca',
+                      'Cítricos en rodajas',
+                      'Frutos Rojos / Berries',
+                      'Hojas de Menta con rocío',
+                      'Raíz de Jengibre en corte',
+                      'Hojas de Aloe Vera',
+                      'Polvo de Matcha verde',
+                      'Semillas de Chía',
+                      'Flores secas de Caléndula',
+                      'Cristales de Sal Marina',
+                    ].map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => {
+                          setRawIngredientsInput((prev) => {
+                            const trimmed = prev.trim();
+                            if (!trimmed) return item;
+                            if (trimmed.toLowerCase().includes(item.toLowerCase())) return prev;
+                            return `${trimmed}, ${item}`;
+                          });
+                        }}
+                        className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#F7F5F0] hover:bg-[#EFECE6] text-stone-700 hover:text-stone-900 border border-[#E7E5DF] transition-all cursor-pointer shadow-2xs active:scale-[0.98]"
+                      >
+                        + {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Previsualización de Superficie y Luz del Entorno Activo */}
             <div className="bg-[#F7F5F0] border border-[#E7E5DF] rounded-xl p-4 space-y-1.5 text-xs">
               <div className="font-bold text-stone-900 flex items-center justify-between gap-1.5 flex-wrap">
@@ -680,7 +779,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 </span>
               </div>
               <p className="text-stone-700 leading-relaxed">
-                <strong>Superficie / Sujeción:</strong> {activeEnvironment.surfaceEs}
+                <strong>Superficie / Sujeción:</strong> {effectiveSurfaceEs}
               </p>
               <p className="text-stone-700 leading-relaxed">
                 <strong>Iluminación:</strong> {activeEnvironment.lightingEs}
@@ -994,6 +1093,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 </span>
                 <span className="px-3 py-1.5 rounded-lg bg-[#EFECE6] text-stone-800 font-medium border border-[#E7E5DF]">
                   🌿 {activeEnvironment.label}
+                  {hasCustomRawIngredients ? ` (${rawIngredientsInput.slice(0, 24)}...)` : ''}
                 </span>
                 <span className="px-3 py-1.5 rounded-lg bg-[#EFECE6] text-stone-800 font-medium border border-[#E7E5DF]">
                   📷 {activeShot.label.split('(')[0].trim()}
