@@ -34,7 +34,9 @@ export type InfographicStyle =
   | 'metric-cards'
   | 'editorial-typography'
   | 'gold-3d'
-  | 'crystal-minimal';
+  | 'crystal-minimal'
+  | 'editorial-vogue'
+  | 'frosted-glass-metrics';
 
 export interface InfographicStyleOption {
   id: InfographicStyle;
@@ -250,7 +252,71 @@ export const COMMERCIAL_ENVIRONMENTS: CommercialEnvironmentOption[] = [
     promptEs: 'posado sobre listones de bambú claro junto a lino crudo y tallos de bambú en suave desenfoque, bajo luz dorada serena de media tarde',
     promptEn: 'resting on light bamboo slats beside raw linen and blurred bamboo stems, under serene golden mid-afternoon mindfulness light',
   },
+  {
+    id: 'cocina-diseno',
+    label: 'Cocina de Diseño y Luz Matutina',
+    badge: 'Hogar Contemporáneo',
+    shortDesc: 'Barra de silestone blanco mate y nogal cálido, luz suave de ventana matutina y atmósfera limpia de bienestar.',
+    surfaceEs: 'posado sobre una barra de cocina contemporánea en silestone blanco mate y detalles de madera de nogal cálido',
+    surfaceEn: 'resting on a contemporary kitchen island of matte white silestone and warm walnut wood accents',
+    lightingEs: 'iluminación natural suave y envolvente de ventana matutina con sombras sutiles y aire limpio',
+    lightingEn: 'soft enveloping natural morning window daylight with subtle diffused shadows and pristine atmosphere',
+    promptEs: 'posado sobre una barra de cocina de diseño contemporáneo en silestone blanco mate y detalles de madera de nogal, bajo iluminación natural suave y envolvente de ventana matutina con sombras limpias',
+    promptEn: 'resting on a designer contemporary kitchen island of matte white silestone and warm walnut wood accents, under soft enveloping natural morning window daylight with clean soft shadows',
+  },
+  {
+    id: 'tocador-microcemento',
+    label: 'Tocador de Baño en Microcemento',
+    badge: 'Baño / Skincare',
+    shortDesc: 'Superficie mineral de microcemento gris cálido, grifería negra mate y espejo retroiluminado con halo cálido.',
+    surfaceEs: 'posado sobre un tocador de baño minimalista en microcemento gris cálido texturizado con grifería negra mate en suave desenfoque al fondo',
+    surfaceEn: 'resting on a minimalist textured warm-gray microcement bathroom vanity with matte black designer fixtures in soft background blur',
+    lightingEs: 'iluminación arquitectónica cálida de tocador con halo suave de espejo retroiluminado y luz difusa de spa de lujo',
+    lightingEn: 'warm architectural luxury vanity lighting with subtle backlit mirror halo glow and diffused ambient spa lighting',
+    promptEs: 'posado sobre un tocador de baño minimalista en microcemento gris cálido texturizado con grifería negra mate, bajo iluminación arquitectónica de espejo retroiluminado cálido y luz difusa de spa',
+    promptEn: 'resting on a minimalist textured warm-gray microcement bathroom vanity with matte black accents, under warm architectural backlit mirror glow and soft diffused luxury spa lighting',
+  },
+  {
+    id: 'salon-japandi',
+    label: 'Mesa de Centro Estilo Japandi',
+    badge: 'Japandi / Serenidad',
+    shortDesc: 'Mesa baja de roble claro, cerámica artesanal wabi-sabi y luz de tarde filtrada por cortinas de lino crudo.',
+    surfaceEs: 'posado sobre una mesa baja de centro de roble claro estilo Japandi junto a una pieza de cerámica artesanal en suave desenfoque',
+    surfaceEn: 'resting on a low Japandi-style light oak coffee table beside an artisanal wabi-sabi ceramic piece in soft background blur',
+    lightingEs: 'luz cálida de media tarde tamizada a través de cortinas de lino natural con sombras suaves y atmósfera serena',
+    lightingEn: 'warm mid-afternoon sunlight filtered through natural linen curtains with gentle diffused shadows and serene atmosphere',
+    promptEs: 'posado sobre una mesa baja de roble claro estilo Japandi junto a cerámica artesanal wabi-sabi, bajo luz cálida de media tarde filtrada por cortinas de lino crudo',
+    promptEn: 'resting on a low light oak Japandi-style coffee table beside artisanal wabi-sabi ceramics, under warm mid-afternoon light filtered through raw linen curtains',
+  },
+  {
+    id: 'cafe-urbano',
+    label: 'Café Urbano de Especialidad',
+    badge: 'Lifestyle Urbano',
+    shortDesc: 'Mesa de terrazo pulido contemporáneo junto a un gran ventanal de hierro con skyline difuso de la ciudad.',
+    surfaceEs: 'posado sobre una mesa de terrazo pulido contemporáneo con sutiles motas minerales junto a un ventanal industrial con marcos de hierro negro',
+    surfaceEn: 'resting on a contemporary polished terrazzo tabletop with subtle mineral flecks beside an industrial black-framed glass window',
+    lightingEs: 'luz diurna natural de café cosmopolita con vista al skyline urbano en suave bokeh desenfocado y reflejos elegantes',
+    lightingEn: 'natural cosmopolitan cafe daylight overlooking a softly blurred urban skyline with elegant surface highlights',
+    promptEs: 'posado sobre una mesa de terrazo pulido contemporáneo junto a un ventanal industrial de hierro con el skyline de la ciudad en suave bokeh, bajo luz diurna urbana natural',
+    promptEn: 'resting on a contemporary polished terrazzo table beside an industrial black steel window with urban skyline in soft bokeh, under natural cafe daylight',
+  },
+  {
+    id: 'terraza-metropolitana',
+    label: 'Terraza / Ático Metropolitano',
+    badge: 'Skyline / Amanecer',
+    shortDesc: 'Mesa de piedra exterior contemporánea en terraza de ático con vista panorámica de la ciudad al amanecer en bokeh.',
+    surfaceEs: 'posado sobre una losa contemporánea de piedra exterior en la terraza de un ático metropolitano con barandilla de cristal',
+    surfaceEn: 'resting on a contemporary outdoor stone table on a metropolitan penthouse rooftop terrace with glass railing',
+    lightingEs: 'primera luz dorada del amanecer reflejándose en rascacielos con atmósfera limpia, destellos sutiles y bokeh de ciudad moderna',
+    lightingEn: 'crisp golden dawn light glowing over distant skyscrapers with clean atmosphere, subtle lens flares and modern cityscape bokeh',
+    promptEs: 'posado sobre una mesa de piedra exterior contemporánea en la terraza de un ático metropolitano con la ciudad al amanecer en bokeh, bajo primera luz dorada del alba',
+    promptEn: 'resting on a contemporary outdoor stone table on a metropolitan penthouse terrace overlooking a blurred city skyline at dawn, under golden sunrise daylight',
+  },
 ];
+
+// Alias para nuevos componentes y compatibilidad
+export const ENVIRONMENTS = COMMERCIAL_ENVIRONMENTS;
+export type EnvironmentOption = CommercialEnvironmentOption;
 
 export interface PhotoTypeOption extends StudioOptionItem {
   recommendedShotId: string;
@@ -686,6 +752,20 @@ export const INFOGRAPHIC_STYLES: InfographicStyleOption[] = [
     shortDesc: 'Burbujas de agua y cristal con iconos 3D grabados y cáusticas de luz.',
   },
   {
+    id: 'editorial-vogue',
+    label: 'Titular Editorial de Revista de Lujo (Wellness Magazine)',
+    badge: 'Vogue Wellness',
+    iconType: 'type',
+    shortDesc: 'Titular editorial refinado con espacio negativo superior diseñado para tipografía serif moderna y subtítulo elegante.',
+  },
+  {
+    id: 'frosted-glass-metrics',
+    label: 'Tarjetas Métricas de Vidrio Esmerilado',
+    badge: 'Tarjetas Frosted Glass',
+    iconType: 'chart',
+    shortDesc: 'Paneles flotantes de vidrio esmerilado semitransparente con métricas de alta conversión y datos clínicos.',
+  },
+  {
     id: 'none',
     label: 'Sin Elementos Flotantes (Foto 100% Limpia)',
     badge: 'Catálogo Puro',
@@ -694,6 +774,7 @@ export const INFOGRAPHIC_STYLES: InfographicStyleOption[] = [
   },
 ];
 
+// 6 Tipos de envase clave consolidados para el flujo principal del Stepper
 export const PACKAGING_OPTIONS: StudioOptionItem[] = [
   {
     id: 'gotero-vidrio-ambar',
@@ -743,6 +824,12 @@ export const PACKAGING_OPTIONS: StudioOptionItem[] = [
     promptEs: 'un tarro bajo cosmético de boca ancha de vidrio pesado ámbar para ungüento o pomada botánica con tapa de rosca metálica o de bambú y etiqueta botánica minimalista',
     promptEn: 'a low-profile heavy-base amber glass cosmetic ointment jar with brushed metal or bamboo screw lid and minimalist botanical label',
   },
+];
+
+export const CORE_PACKAGING_OPTIONS = PACKAGING_OPTIONS;
+
+// Formatos adicionales y alias para compatibilidad retrospectiva
+export const ADDITIONAL_PACKAGING_OPTIONS: StudioOptionItem[] = [
   {
     id: 'tarro-hexagonal-yute',
     label: 'Tarro Hexagonal + Tela de Yute',
@@ -759,7 +846,6 @@ export const PACKAGING_OPTIONS: StudioOptionItem[] = [
     promptEs: 'un pote ancho premium de acabado verde esmeralda mate con tapa metálica dorada brillante y sello botánico central en relieve de oro 3D',
     promptEn: 'a wide premium matte emerald-green canister jar with a gleaming brushed gold lid and central 3D gold-embossed botanical crest',
   },
-  // Alias de compatibilidad
   {
     id: 'frasco-ambar-dorado',
     label: 'Frasco Vidrio Ámbar + Tapa Dorada',
@@ -795,6 +881,11 @@ export const PACKAGING_OPTIONS: StudioOptionItem[] = [
     promptEs: 'un empaque vertical tipo bolsa Doypack de papel kraft orgánico texturizado con cierre hermético y sello circular estampado en oro metálico',
     promptEn: 'a stand-up textured organic kraft paper Doypack pouch with matte finish and a central metallic gold-foil stamped circular emblem',
   },
+];
+
+export const ALL_PACKAGING_OPTIONS: StudioOptionItem[] = [
+  ...PACKAGING_OPTIONS,
+  ...ADDITIONAL_PACKAGING_OPTIONS,
 ];
 
 export const SURFACE_OPTIONS: StudioOptionItem[] = [
@@ -1441,7 +1532,7 @@ export const SUPPLEMENT_KNOWLEDGE_BASE: SupplementKnowledgeItem[] = [
     benefit2: 'Fortalece Cabello, Pestañas y Uñas',
     benefit3: 'Protege Ligamentos y Tendones',
     benefit4: 'Antioxidante Celular con Vitamina C',
-    recommendedPackagingId: 'pote-ancho-gold',
+    recommendedPackagingId: 'doypack-standup-pouch',
     recommendedPresentation: 'con-cuchara',
     recommendedAccompaniments: ['cuchara-madera-polvo', 'capsulas-softgel-base'],
     recommendedIngredients: ['citricos-vitamina', 'polen-oro', 'gotas-rocio'],
@@ -1492,7 +1583,7 @@ export const SUPPLEMENT_KNOWLEDGE_BASE: SupplementKnowledgeItem[] = [
     benefit2: 'Mayor Resistencia en Entrenamientos',
     benefit3: 'Recuperación Muscular Rápida',
     benefit4: 'Soporte Cognitivo y Enfoque Mental',
-    recommendedPackagingId: 'pote-ancho-gold',
+    recommendedPackagingId: 'doypack-standup-pouch',
     recommendedPresentation: 'con-cuchara',
     recommendedAccompaniments: ['cuchara-madera-polvo', 'vaso-agua-cristal'],
     recommendedIngredients: ['polen-oro'],
