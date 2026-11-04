@@ -69,7 +69,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   const [lensId, setLensId] = useState<string>(STUDIO_QUICK_PRESETS[0].lensId);
   const [packagingId, setPackagingId] = useState<string>('');
   const [packagingPresentation, setPackagingPresentation] = useState<PackagingPresentationMode>('solo');
-  const [environmentId, setEnvironmentId] = useState<string>(STUDIO_QUICK_PRESETS[0].environmentId || 'arena-zen');
+  const [environmentId, setEnvironmentId] = useState<string>(STUDIO_QUICK_PRESETS[0].environmentId || 'arena-mediterranea');
   const [aspectRatio, setAspectRatio] = useState<string>(
     STUDIO_QUICK_PRESETS[0].aspectRatio
   );
@@ -536,7 +536,11 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
   // Infographic & Claims Design Fragment with Dynamic Benefits
   const getInfographicFragmentEs = (style: string) => {
     const activeBenefits = benefits.filter((b) => b.trim().length > 0);
-    const list = activeBenefits.length > 0 ? activeBenefits : ['Salud y Vitalidad', 'Fórmula Pura', 'Protección Diaria', 'Bienestar Integral'];
+    if (style === 'none' || activeBenefits.length === 0) {
+      return 'Composición 100% limpia de catálogo comercial sin medallones, sin textos flotantes ni tarjetas externas, dejando el protagonismo visual absoluto y puro en el envase.';
+    }
+
+    const list = activeBenefits;
 
     const customFound = customInfographicStyles.find((c) => c.id === style);
     if (customFound) {
@@ -590,7 +594,11 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
   const getInfographicFragmentEn = (style: string) => {
     const activeBenefits = benefits.filter((b) => b.trim().length > 0);
-    const list = activeBenefits.length > 0 ? activeBenefits : ['Health & Vitality', 'Pure Formula', 'Daily Protection', 'Total Wellness'];
+    if (style === 'none' || activeBenefits.length === 0) {
+      return '100% clean commercial catalog composition with no external medallions, floating text, or cards, showcasing only the pure product container and its textures.';
+    }
+
+    const list = activeBenefits;
 
     const customFound = customInfographicStyles.find((c) => c.id === style);
     if (customFound) {
@@ -672,21 +680,21 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     : '';
 
   // 1. Framing & Lens harmony
-  let photoStyleEs = `${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}.`;
-  let photoStyleEn = `${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}.`;
+  let photoStyleEs = `${activePhotoType.promptEs} en ${activeRatio.promptEs} para el producto natural "${displayProductName}", ${activeShot.promptEs}.`;
+  let photoStyleEn = `${activePhotoType.promptEn} in ${activeRatio.promptEn} for the natural product "${displayProductName}", ${activeShot.promptEn}.`;
 
   if (isMacroMode) {
-    photoStyleEs = `Fotografía macro sensorial de ultra detalle publicitario en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre microscópico cerrado enfocado en primerísimo plano sobre el relieve del logo, la textura táctil del material y las microgotas de rocío fresco condensadas, cortando estéticamente los bordes del envase para llenar por completo la toma con nitidez 8K.`;
-    photoStyleEn = `Advertising sensory ultra-detail macro photography in ${activeRatio.promptEn} for the natural product "${productName}": tightly focused microscopic close-up framing on embossed logo relief, container material texture, and fresh micro-droplets, aesthetically cropping container edges to fill the entire frame with 8K clarity.`;
+    photoStyleEs = `Fotografía macro sensorial de ultra detalle publicitario en ${activeRatio.promptEs} para el producto natural "${displayProductName}": encuadre microscópico cerrado enfocado en primerísimo plano sobre el relieve del logo, la textura táctil del material y las microgotas de rocío fresco condensadas, cortando estéticamente los bordes del envase para llenar por completo la toma con nitidez 8K.`;
+    photoStyleEn = `Advertising sensory ultra-detail macro photography in ${activeRatio.promptEn} for the natural product "${displayProductName}": tightly focused microscopic close-up framing on embossed logo relief, container material texture, and fresh micro-droplets, aesthetically cropping container edges to fill the entire frame with 8K clarity.`;
   } else if (lensId === '35mm-f2') {
-    photoStyleEs = `Fotografía ambiental comercial capturada con lente gran angular 35mm f/2.0 en ${activeRatio.promptEs} para el producto natural "${productName}": encuadre amplio integrando el producto de forma orgánica en el entorno con gran profundidad de campo y atmósfera botánica pura.`;
-    photoStyleEn = `Environmental commercial photography captured with a 35mm f/2.0 wide-angle lens in ${activeRatio.promptEn} for the natural product "${productName}": wide environmental framing organically integrating the product into the surrounding atmosphere.`;
+    photoStyleEs = `Fotografía ambiental comercial capturada con lente gran angular 35mm f/2.0 en ${activeRatio.promptEs} para el producto natural "${displayProductName}": encuadre amplio integrando el producto de forma orgánica en el entorno con gran profundidad de campo y atmósfera botánica pura.`;
+    photoStyleEn = `Environmental commercial photography captured with a 35mm f/2.0 wide-angle lens in ${activeRatio.promptEn} for the natural product "${displayProductName}": wide environmental framing organically integrating the product into the surrounding atmosphere.`;
   } else if (lensId === '90mm-highspeed') {
-    photoStyleEs = `Fotografía publicitaria de alta velocidad (1/4000s freeze-motion) capturada con óptica de estudio 90mm f/4 en ${activeRatio.promptEs} para el producto natural "${productName}": acción dinámica congelando en el aire cada partícula botánica, salpicadura y gota con nitidez absoluta.`;
-    photoStyleEn = `High-speed 1/4000s freeze-motion commercial advertising photography captured with a 90mm f/4 studio lens in ${activeRatio.promptEn} for the natural product "${productName}": dynamic mid-air action freezing every botanical particle, splash, and droplet in crystal-clear focus.`;
+    photoStyleEs = `Fotografía publicitaria de alta velocidad (1/4000s freeze-motion) capturada con óptica de estudio 90mm f/4 en ${activeRatio.promptEs} para el producto natural "${displayProductName}": acción dinámica congelando en el aire cada partícula botánica, salpicadura y gota con nitidez absoluta.`;
+    photoStyleEn = `High-speed 1/4000s freeze-motion commercial advertising photography captured with a 90mm f/4 studio lens in ${activeRatio.promptEn} for the natural product "${displayProductName}": dynamic mid-air action freezing every botanical particle, splash, and droplet in crystal-clear focus.`;
   } else if (lensId === '85mm-f18') {
-    photoStyleEs = `${activePhotoType.promptEs} con lente prime 85mm f/1.8 (bokeh cremoso de estudio) en ${activeRatio.promptEs} para el producto natural "${productName}", ${activeShot.promptEs}.`;
-    photoStyleEn = `${activePhotoType.promptEn} with an 85mm f/1.8 prime lens (creamy studio bokeh) in ${activeRatio.promptEn} for the natural product "${productName}", ${activeShot.promptEn}.`;
+    photoStyleEs = `${activePhotoType.promptEs} con lente prime 85mm f/1.8 (bokeh cremoso de estudio) en ${activeRatio.promptEs} para el producto natural "${displayProductName}", ${activeShot.promptEs}.`;
+    photoStyleEn = `${activePhotoType.promptEn} with an 85mm f/1.8 prime lens (creamy studio bokeh) in ${activeRatio.promptEn} for the natural product "${displayProductName}", ${activeShot.promptEn}.`;
   }
 
   // 2. Reference Photo Mode vs New Packaging
@@ -698,8 +706,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
     : `Centered is the natural product container${presentationEn}, ${activeEnvironment.surfaceEn}.`;
 
   if (useReferencePhotoMode) {
-    packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase de la imagen adjunta: misma silueta geométrica, misma tapa o cierre hermético y diseño original de la etiqueta con sus logotipos reales sin rediseñar.${productColorNoticeEs} En la escena destaca este envase original${presentationEs}, ${activeEnvironment.surfaceEs}.`;
-    packagingDescriptionEn = `[MANDATORY ATTACHED REFERENCE PHOTO]: It is strictly mandatory to preserve with 100% fidelity the exact product container from the attached image: identical silhouette shape, real cap or airtight seal, and authentic label graphics without redesigning.${productColorNoticeEn} Centered in the scene is this authentic product container${presentationEn}, ${activeEnvironment.surfaceEn}.`;
+    const packagingHintEs = activePackaging ? ` (silueta de ${activePackaging.label.toLowerCase()})` : '';
+    const packagingHintEn = activePackaging ? ` (${activePackaging.label.toLowerCase()} silhouette)` : '';
+    packagingDescriptionEs = `[FOTO DE REFERENCIA ADJUNTA OBLIGATORIA]: Es indispensable e imperativo mantener con 100% de exactitud y fidelidad el producto y envase original${packagingHintEs} de la imagen adjunta: misma silueta geométrica, proporciones exactas, misma tapa o cierre hermético y diseño original de la etiqueta con sus logotipos reales sin rediseñar.${productColorNoticeEs} En la escena destaca este envase original${presentationEs}, ${activeEnvironment.surfaceEs}.`;
+    packagingDescriptionEn = `[MANDATORY ATTACHED REFERENCE PHOTO]: It is strictly mandatory to preserve with 100% fidelity the authentic product container${packagingHintEn} from the attached image: identical geometric silhouette, exact proportions, authentic cap or seal, and original label graphics without redesigning.${productColorNoticeEn} Centered in the scene is this authentic container${presentationEn}, ${activeEnvironment.surfaceEn}.`;
   }
 
   // Macro specific descriptions
@@ -709,7 +719,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
 
   const macroPackagingEn = useReferencePhotoMode
     ? `[ATTACHED REFERENCE PHOTO]: Using the attached authentic product as mandatory visual base, the framing focuses 100% on microscopic details of its authentic materials, typography, and embossed authentic logo.${productColorNoticeEn} Smooth creamy bokeh background with subtle organic tones of ${activeEnvironment.label}, strictly no distant wide elements.`
-    : `The camera focuses with microscopic sharpness on the texture of ${activePackaging.label}, its embossed botanical logo, and surface micro-droplets. Smooth creamy bokeh background with subtle organic tones of ${activeEnvironment.label}, strictly no distant wide elements.`;
+    : `The camera focuses with microscopic sharpness on the texture of ${activePackaging?.label || 'the authentic container'}, its embossed botanical logo, and surface micro-droplets. Smooth creamy bokeh background with subtle organic tones of ${activeEnvironment.label}, strictly no distant wide elements.`;
 
   const macroMedallionsEs =
     'Composición macro limpia sin medallones externos flotantes para garantizar el acercamiento extremo de la cámara; los beneficios se reflejan en el acabado táctil del producto.';
@@ -1533,17 +1543,29 @@ export const ImagePromptStudio: React.FC<Props> = ({ isDark, externalPresetPaylo
                 </div>
               )}
 
-              {/* Recipe Quick Badges */}
-              <div className="flex flex-wrap gap-1 text-[10px]">
-                <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold">
-                  {activePhotoType.label}
-                </span>
-                <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">
-                  {activeEnvironment.label}
-                </span>
-                <span className="px-2 py-0.5 rounded bg-white/10 text-slate-200 font-mono">
-                  {aspectRatio}
-                </span>
+              {/* PicWish/Kimi Modular Formula Breakdown */}
+              <div className="space-y-1.5">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Fórmula Modular del Prompt</span>
+                  <span className="text-emerald-400 font-mono text-[9px]">Sujeto + Encuadre + Fondo + Estilo</span>
+                </div>
+                <div className="flex flex-wrap gap-1 text-[10px]">
+                  <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold" title="Sujeto y Envase">
+                    📦 {displayProductName} {activePackaging ? `(${activePackaging.label.split(' ')[0]})` : ''}
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-medium" title="Encuadre y Óptica">
+                    📷 {activeShot.label.split('(')[0].trim()} · {activeLens.label.split(' ')[0]}
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-medium" title="Entorno e Iluminación">
+                    🌿 {activeEnvironment.label}
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-medium" title="Estilo Infográfico">
+                    ✨ {infographicStyle === 'none' ? 'Sin Textos' : infographicStyle}
+                  </span>
+                  <span className="px-2 py-0.5 rounded bg-white/10 text-slate-200 font-mono" title="Aspect Ratio">
+                    📐 {aspectRatio}
+                  </span>
+                </div>
               </div>
 
               <div className="space-y-3 pt-2">
