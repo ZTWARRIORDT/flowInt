@@ -23,6 +23,10 @@ import {
   X,
   AlertCircle,
   Lock,
+  Film,
+  Play,
+  Volume2,
+  Clapperboard,
 } from 'lucide-react';
 import {
   ENVIRONMENTS,
@@ -102,8 +106,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
   // Aspect ratio (fixed default 1:1)
   const aspectRatio = '1:1';
 
-  // Step 4: Language & Feedback
+  // Step 4: Language, Mode & Feedback
   const [outputLang, setOutputLang] = useState<'es' | 'en'>('es');
+  const [deliveryMode, setDeliveryMode] = useState<'photo' | 'video'>('photo');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
 
@@ -379,6 +384,85 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
   const mainPromptEn = isMacroMode
     ? `${photoStyleEn} ${macroPackagingEn} ${macroMedallionsEn}${humanDirectiveEn} Featuring ${activeEnvironment.lightingEn}, captured with a 100mm f/2.8 macro lens with microscopic sharpness on textures and dew droplets. 8k commercial advertising photography.`
     : `${photoStyleEn} ${packagingDescriptionEn} ${getInfographicFragmentEn(infographicStyle)}${headlineDirectiveEn}${humanDirectiveEn} Featuring ${activeEnvironment.lightingEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.`;
+
+  // Dynamic Video Storyboard generation for Flow (15s commercial / 4 sequential scenes)
+  const b1 = benefits.filter((b) => b.trim().length > 0)[0] || 'ingredientes botánicos activos de alta pureza';
+  const b2 = benefits.filter((b) => b.trim().length > 0)[1] || 'absorción celular optimizada y rápida acción';
+
+  const videoScenes = [
+    {
+      sceneNum: 1,
+      timeRange: '00:00 - 00:03',
+      title: outputLang === 'es' ? 'Escena 1 · El Gancho Visual (Hook Shot)' : 'Scene 1 · The Hook Shot',
+      badge: '0–3s · Scroll-Stopper',
+      cameraMovement: outputLang === 'es' ? 'Slow Push-In a 120fps' : '120fps Slow Push-In',
+      promptEs: `Cámara en movimiento rápido de acercamiento (Push-In) hacia ${displayProductName} sobre ${effectiveSurfaceEs}. En cámara superlenta a 120fps se anima una suave onda de luz y microgotas de rocío en el entorno mientras el envase, sus tipografías y logotipo original permanecen 100% firmes y estáticos en el centro. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: El producto no debe mutar ni recolorearse; animar exclusivamente la atmósfera y partículas circundantes. Cinematografía comercial publicitaria 8k.`,
+      promptEn: `Dynamic rapid push-in camera motion toward ${displayProductName} on ${effectiveSurfaceEn}. In 120fps super slow motion, animate expanding gentle light waves and micro-dew mist in the surroundings while the authentic bottle, typography, and logo remain 100% steady and static in the center. [FLOW ANTI-MORPHING DIRECTIVE]: Product must not mutate or recolor; animate strictly surrounding atmosphere and particles. 8k commercial motion cinematography.`,
+      voiceScriptEs: `¿Buscas máxima potencia natural para tu bienestar diario? Descubre ${displayProductName}.`,
+      voiceScriptEn: `Looking for maximum natural potency in your daily routine? Discover ${displayProductName}.`,
+      soundDesignEs: 'Whoosh cinemático suave con impacto sutil de bajo y percusión orgánica de ritmo ascendente.',
+      soundDesignEn: 'Soft cinematic whoosh with subtle bass pulse and rising organic percussion rhythm.',
+    },
+    {
+      sceneNum: 2,
+      timeRange: '00:03 - 00:07',
+      title: outputLang === 'es' ? 'Escena 2 · La Revelación (Hero Reveal)' : 'Scene 2 · The Hero Reveal',
+      badge: '3–7s · Volumen 3D',
+      cameraMovement: outputLang === 'es' ? 'Giro Orbital Suave 15°' : 'Smooth 15° Orbital Pan',
+      promptEs: `Giro orbital suave de cámara a 15 grados alrededor de ${displayProductName} en ${activeEnvironment.label}. Un barrido de luz solar cálida recorre la curvatura del envase destacando su vidrio y etiqueta original nítida. Con ${activeEnvironment.lightingEs}. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: Silueta del envase y textos intactos sin temblores ni distorsión; animar únicamente el haz de luz y suaves sombras botánicas en movimiento. Calidad cinematográfica publicitaria 8k.`,
+      promptEn: `Smooth 15-degree orbital camera pan around ${displayProductName} in ${activeEnvironment.label}. A sweep of warm sunlight travels across the container surface highlighting its glass finish and authentic label. Featuring ${activeEnvironment.lightingEn}. [FLOW ANTI-MORPHING DIRECTIVE]: Container silhouette and texts stay intact without jitter; animate only the light beam and gentle drifting botanical shadows. 8k commercial motion cinematography.`,
+      voiceScriptEs: headline.trim()
+        ? `${headline.trim()}. Formulado con ${b1} para resultados de alta fidelidad.`
+        : `Fórmula botánica avanzada con ${b1}. Diseñada para acompañar tu estilo de vida.`,
+      voiceScriptEn: headline.trim()
+        ? `${headline.trim()}. Formulated with ${b1} for high-fidelity results.`
+        : `Advanced botanical formula with ${b1}. Designed for your daily lifestyle.`,
+      soundDesignEs: 'Melodía inspiradora de cuerdas acústicas y piano moderno con brillo especular sutil.',
+      soundDesignEn: 'Uplifting acoustic strings and modern piano melody with subtle shimmer chime.',
+    },
+    {
+      sceneNum: 3,
+      timeRange: '00:07 - 00:11',
+      title: outputLang === 'es' ? 'Escena 3 · Acción Sensorial & Beneficios' : 'Scene 3 · Sensory Action & Benefits',
+      badge: '7–11s · Textura & Prueba',
+      cameraMovement: outputLang === 'es' ? 'Slow Tilt-Down Macro' : 'Slow Tilt-Down Macro',
+      promptEs: `Toma macro con cámara descendente lenta (Slow Tilt-Down). Un haz de luz resalta una microgota brillante deslizándose con tensión superficial perfecta cerca del envase ${displayProductName}, mientras flotan sutiles partículas luminosas de frescura botánica. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: Los logotipos del envase permanecen nítidos y fijos; animar únicamente el brillo de la gota y la profundidad de campo. Calidad de estudio publicitario 8k.`,
+      promptEn: `Macro shot with slow downward camera glide (Slow Tilt-Down). A beam of light illuminates a sparkling dew droplet gliding with perfect surface tension near the ${displayProductName} container, accompanied by subtle floating luminous botanical particles. [FLOW ANTI-MORPHING DIRECTIVE]: Container logos remain tack-sharp and stationary; animate only droplet glint and depth-of-field transition. 8k commercial studio quality.`,
+      voiceScriptEs: `Doble acción comprobada: ${b1} y ${b2}. Siente la diferencia desde la primera toma.`,
+      voiceScriptEn: `Proven dual action: ${b1} and ${b2}. Feel the difference from day one.`,
+      soundDesignEs: 'Gota cristalina con eco suave (droplet chime) y transición a ritmo envolvente y positivo.',
+      soundDesignEn: 'Crystal droplet sound with soft reverb and smooth transition into warm confident beat.',
+    },
+    {
+      sceneNum: 4,
+      timeRange: '00:11 - 00:15',
+      title: outputLang === 'es' ? 'Escena 4 · Cierre Comercial & CTA' : 'Scene 4 · Commercial Lockup & CTA',
+      badge: '11–15s · Llamada a la Acción',
+      cameraMovement: outputLang === 'es' ? 'Slow Pull-Back Frontal' : 'Frontal Slow Pull-Back',
+      promptEs: `Encuadre frontal heroico de ${displayProductName} con sutil retroceso lento de cámara (Slow Pull-Back), revelando una composición simétrica limpia con aire superior para titular publicitario. Iluminación comercial de alta gama con sutiles destellos de éxito en los bordes del envase. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: Logo y envase 100% fidedignos y estáticos; el video cierra en un fotograma publicitario impecable listo para llamada a la acción. Fotografía comercial de alta conversión 8k.`,
+      promptEn: `Heroic frontal lockup of ${displayProductName} with subtle slow camera pull-back, revealing a clean symmetrical composition with top breathing room for advertising text. High-end commercial studio lighting with gentle edge rim glints. [FLOW ANTI-MORPHING DIRECTIVE]: Logo and container 100% faithful and static; video concludes on a flawless commercial hero frame ready for call-to-action. 8k high-conversion advertising cinematography.`,
+      voiceScriptEs: `Lleva tu bienestar al siguiente nivel con ${displayProductName}. Haz clic en el enlace y pide el tuyo hoy.`,
+      voiceScriptEn: `Elevate your wellness with ${displayProductName}. Click the link below and get yours today.`,
+      soundDesignEs: 'Resolución musical armoniosa de alta energía, campana sutil de confirmación de marca.',
+      soundDesignEn: 'Harmonious high-energy musical resolution, subtle brand lockup confirmation chime.',
+    },
+  ];
+
+  const fullStoryboardText = videoScenes
+    .map(
+      (s) =>
+        `========================================\n` +
+        `${s.title.toUpperCase()} (${s.timeRange})\n` +
+        `Cámara: ${s.cameraMovement}\n` +
+        `----------------------------------------\n` +
+        `PROMPT FLOW VIDEO (IMAGE-TO-VIDEO):\n` +
+        `${outputLang === 'es' ? s.promptEs : s.promptEn}\n\n` +
+        `GUION DE LOCUCIÓN (VOICEOVER):\n` +
+        `"${outputLang === 'es' ? s.voiceScriptEs : s.voiceScriptEn}"\n\n` +
+        `DISEÑO SONORO / SFX:\n` +
+        `${outputLang === 'es' ? s.soundDesignEs : s.soundDesignEn}\n`
+    )
+    .join('\n');
 
   // Curated lists
   const environmentsList = CURATED_ENVIRONMENTS.map((c) => {
@@ -1280,63 +1364,240 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
               </div>
             )}
 
-            {/* Caja de Prompt en Fondo Alabastro Cálido */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-stone-800 uppercase tracking-wider">
-                  Prompt Final (Selección directa o 1 clic para copiar):
-                </span>
-                <span className="text-xs text-stone-500 font-mono">Formato {aspectRatio}</span>
-              </div>
+            {/* Selector de Modo de Entrega: Foto Maestra 8K vs Video Storyboard */}
+            <div className="bg-[#EFECE6] p-1.5 rounded-2xl flex flex-col sm:flex-row border border-[#E7E5DF] gap-1">
+              <button
+                type="button"
+                onClick={() => setDeliveryMode('photo')}
+                className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  deliveryMode === 'photo'
+                    ? 'bg-[#FDFCF9] text-stone-900 shadow-xs border border-[#E7E5DF]'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                <Camera className="w-4 h-4 text-[#C85A32]" />
+                <span>1. Foto Maestra 8K (Master Keyframe)</span>
+              </button>
 
-              <div className="p-4 sm:p-5 rounded-xl bg-[#FDFCF9] border border-[#E7E5DF] font-mono text-xs sm:text-sm text-stone-800 leading-relaxed select-all max-h-[300px] overflow-y-auto shadow-inner whitespace-pre-wrap">
-                {outputLang === 'es' ? mainPromptEs : mainPromptEn}
-              </div>
+              <button
+                type="button"
+                onClick={() => setDeliveryMode('video')}
+                className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                  deliveryMode === 'video'
+                    ? 'bg-[#FDFCF9] text-stone-900 shadow-xs border border-[#E7E5DF]'
+                    : 'text-stone-600 hover:text-stone-900'
+                }`}
+              >
+                <Film className="w-4 h-4 text-[#C85A32]" />
+                <span>2. Storyboard de Video (15s · 4 Escenas)</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#C85A32]/10 text-[#C85A32] font-semibold border border-[#C85A32]/25">
+                  Flow Video
+                </span>
+              </button>
             </div>
 
-            {/* Aviso de Foto de Referencia si está activa */}
-            {useReferencePhotoMode && (
-              <div className="p-3.5 rounded-xl bg-[#FDFBF9] border border-[#C85A32]/30 text-xs text-stone-800 flex items-center gap-2.5">
-                <Upload className="w-4 h-4 text-[#C85A32] shrink-0" />
-                <span>
-                  <strong>Recordatorio para Flow:</strong> Al enviar este prompt, haz clic en el icono <strong>📎</strong> y adjunta la foto de tu envase real para asegurar réplica 1:1.
-                </span>
+            {/* MODO FOTO: PROMPT MAESTRO DE CATÁLOGO */}
+            {deliveryMode === 'photo' && (
+              <div className="space-y-4">
+                {/* Banner de Explicación del Pipeline */}
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-950 flex items-start gap-2.5">
+                  <Sparkles className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
+                  <p className="leading-relaxed">
+                    <strong>Fase 1 del Pipeline de Video:</strong> En Google Flow, genera primero esta <strong>Foto Maestra</strong> adjuntando tu foto real con el clip (📎). Una vez obtenida la imagen 8K perfecta de tu producto, pasa a la pestaña <strong>"2. Storyboard de Video"</strong> para animarla escena por escena sin deformaciones.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-stone-800 uppercase tracking-wider">
+                      Prompt de Foto Maestra (Keyframe para Flow):
+                    </span>
+                    <span className="text-xs text-stone-500 font-mono">Formato {aspectRatio}</span>
+                  </div>
+
+                  <div className="p-4 sm:p-5 rounded-xl bg-[#FDFCF9] border border-[#E7E5DF] font-mono text-xs sm:text-sm text-stone-800 leading-relaxed select-all max-h-[280px] overflow-y-auto shadow-inner whitespace-pre-wrap">
+                    {outputLang === 'es' ? mainPromptEs : mainPromptEn}
+                  </div>
+                </div>
+
+                {useReferencePhotoMode && (
+                  <div className="p-3 rounded-xl bg-[#FDFBF9] border border-[#C85A32]/30 text-xs text-stone-800 flex items-center gap-2.5">
+                    <Upload className="w-4 h-4 text-[#C85A32] shrink-0" />
+                    <span>
+                      <strong>Recordatorio en Flow:</strong> Al pegar este prompt, haz clic en el icono <strong>📎</strong> y sube la foto de tu envase real para anclar la marca con 100% de exactitud.
+                    </span>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')}
+                    className="sm:col-span-8 py-3.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all active:scale-[0.99]"
+                  >
+                    {copiedKey === 'main-copy' ? (
+                      <>
+                        <Check className="w-4 h-4 stroke-[3]" />
+                        <span>¡Prompt Copiado! Pégalo en Flow</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-4 h-4" />
+                        <span>Copiar Prompt de Foto Maestra</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy');
+                      window.open('https://flow.google', '_blank');
+                    }}
+                    className="sm:col-span-4 py-3.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] border border-[#E7E5DF] text-stone-800 font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs"
+                    title="Copia el prompt y abre Google Flow"
+                  >
+                    <ExternalLink className="w-4 h-4 shrink-0" />
+                    <span>Abrir Flow ↗</span>
+                  </button>
+                </div>
               </div>
             )}
 
-            {/* Botones de Acción Primarios */}
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy')}
-                className="sm:col-span-8 py-3.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white font-bold text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all active:scale-[0.99]"
-              >
-                {copiedKey === 'main-copy' ? (
-                  <>
-                    <Check className="w-4 h-4 stroke-[3]" />
-                    <span>¡Prompt Copiado! Pégalo en Flow</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    <span>Copiar Prompt para Google Flow</span>
-                  </>
-                )}
-              </button>
+            {/* MODO VIDEO: STORYBOARD COMERCIAL EN 4 ESCENAS PARA FLOW */}
+            {deliveryMode === 'video' && (
+              <div className="space-y-5">
+                {/* Banner de Guía del Pipeline de Video */}
+                <div className="p-4 rounded-xl bg-[#F7F5F0] border border-[#E7E5DF] space-y-2 text-xs text-stone-700">
+                  <div className="flex items-center gap-2 font-bold text-stone-900 text-sm">
+                    <Clapperboard className="w-4 h-4 text-[#C85A32]" />
+                    <span>Pipeline Image-to-Video en Google Flow (Anuncio de 15 Segundos)</span>
+                  </div>
+                  <p className="leading-relaxed">
+                    Sube la <strong>Foto Maestra generada en la Fase 1</strong> a la sección de video de Flow como <strong>Fotograma Inicial (Start Frame)</strong>. Luego, genera cada una de estas 4 escenas pegando su prompt de cámara y locución.
+                  </p>
+                  <div className="pt-2 flex flex-wrap gap-2 items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => copyText(fullStoryboardText, 'full-storyboard')}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#C85A32] hover:bg-[#B84A22] text-white transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                    >
+                      {copiedKey === 'full-storyboard' ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                          <span>¡Storyboard Completo Copiado!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-3.5 h-3.5" />
+                          <span>Copiar Guion Completo (4 Escenas)</span>
+                        </>
+                      )}
+                    </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  copyText(outputLang === 'es' ? mainPromptEs : mainPromptEn, 'main-copy');
-                  window.open('https://flow.google', '_blank');
-                }}
-                className="sm:col-span-4 py-3.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] border border-[#E7E5DF] text-stone-800 font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer transition-all shadow-xs"
-                title="Copia el prompt y abre Google Flow en una pestaña nueva"
-              >
-                <ExternalLink className="w-4 h-4 shrink-0" />
-                <span>Abrir Flow ↗</span>
-              </button>
-            </div>
+                    <button
+                      type="button"
+                      onClick={() => window.open('https://flow.google', '_blank')}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 border border-[#E7E5DF] transition-all cursor-pointer"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Ir a Google Flow ↗</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Lista de las 4 Tarjetas de Escena */}
+                <div className="space-y-4">
+                  {videoScenes.map((scene) => (
+                    <div
+                      key={scene.sceneNum}
+                      className="p-4 sm:p-5 rounded-2xl bg-[#FDFCF9] border border-[#E7E5DF] space-y-3.5 shadow-2xs hover:border-stone-400 transition-all"
+                    >
+                      {/* Cabecera de la Escena */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#E7E5DF] pb-3">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="w-6 h-6 rounded-lg bg-[#C85A32] text-white flex items-center justify-center text-xs font-black">
+                            {scene.sceneNum}
+                          </span>
+                          <span className="font-black text-sm text-stone-900">
+                            {scene.title}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EFECE6] text-stone-700 font-semibold">
+                            ⏱ {scene.timeRange}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#C85A32]/10 text-[#C85A32] font-semibold border border-[#C85A32]/25">
+                            📹 {scene.cameraMovement}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => copyText(outputLang === 'es' ? scene.promptEs : scene.promptEn, `scene-${scene.sceneNum}`)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 border border-[#E7E5DF] transition-all cursor-pointer self-start sm:self-auto"
+                        >
+                          {copiedKey === `scene-${scene.sceneNum}` ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
+                              <span className="text-emerald-700">¡Copiado!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5 text-[#C85A32]" />
+                              <span>Copiar Prompt Escena</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Prompt para el generador de video */}
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-stone-700">
+                          <span className="flex items-center gap-1">
+                            <Play className="w-3 h-3 text-[#C85A32] fill-current" />
+                            Prompt de Movimiento para Flow Video:
+                          </span>
+                          <span className="text-stone-400 font-mono text-[10px]">Start Frame Image-to-Video</span>
+                        </div>
+                        <div className="p-3 rounded-xl bg-[#F7F5F0] border border-[#E7E5DF] font-mono text-xs text-stone-800 leading-relaxed select-all">
+                          {outputLang === 'es' ? scene.promptEs : scene.promptEn}
+                        </div>
+                      </div>
+
+                      {/* Guion de Locución y SFX */}
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs pt-1">
+                        <div className="sm:col-span-8 p-3 rounded-xl bg-[#FDFBF9] border border-[#E7E5DF] space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-stone-800 flex items-center gap-1.5 text-[11px]">
+                              <Volume2 className="w-3.5 h-3.5 text-[#C85A32]" />
+                              Guion de Voz en Off (Voiceover):
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => copyText(outputLang === 'es' ? scene.voiceScriptEs : scene.voiceScriptEn, `voice-${scene.sceneNum}`)}
+                              className="text-[10px] text-[#C85A32] hover:underline font-semibold cursor-pointer"
+                            >
+                              {copiedKey === `voice-${scene.sceneNum}` ? '✓ Copiado' : 'Copiar voz'}
+                            </button>
+                          </div>
+                          <p className="italic text-stone-800 font-medium">
+                            "{outputLang === 'es' ? scene.voiceScriptEs : scene.voiceScriptEn}"
+                          </p>
+                        </div>
+
+                        <div className="sm:col-span-4 p-3 rounded-xl bg-[#F7F5F0] border border-[#E7E5DF] space-y-1">
+                          <span className="font-bold text-stone-700 block text-[11px]">
+                            🎵 Audio & SFX:
+                          </span>
+                          <p className="text-stone-600 text-[11px] leading-relaxed">
+                            {outputLang === 'es' ? scene.soundDesignEs : scene.soundDesignEn}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Enlace para Modificar Selecciones */}
             <div className="pt-2 text-center">
