@@ -22,6 +22,7 @@ import {
   Eye,
   X,
   AlertCircle,
+  Lock,
 } from 'lucide-react';
 import {
   ENVIRONMENTS,
@@ -137,6 +138,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
     setBenefits(['', '', '', '']);
     setPackagingId(PACKAGING_OPTIONS[0]?.id || 'gotero-vidrio-ambar');
     setEnvironmentId('estudio-neutro');
+    setRawIngredientsInput('');
     setShotId('eye-level');
     setLensId('85mm-f18');
     setInfographicStyle('none');
@@ -302,6 +304,20 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
     environmentId === 'ingredientes-deconstruccion' && rawIngredientsInput.trim().length === 0;
   const filledBenefitsCount = benefits.filter((b) => b.trim().length > 0).length;
 
+  // Navigation Blocking Rules: Hard block forward navigation when required inputs are missing
+  const isStep2Blocked = isRawIngredientsEmpty;
+  const isStep3Blocked = infographicStyle !== 'none' && filledBenefitsCount === 0;
+
+  const canNavigateToStep = (targetStep: StepNumber): boolean => {
+    // Going backward or staying on current step is always allowed
+    if (targetStep <= activeStep) return true;
+    // Step 2 is blocked if raw ingredients is selected but empty
+    if (targetStep > 2 && isStep2Blocked) return false;
+    // Step 3 is blocked if an infographic design is selected but benefits are empty
+    if (targetStep > 3 && isStep3Blocked) return false;
+    return true;
+  };
+
   const effectiveSurfaceEs = hasCustomRawIngredients
     ? `posado sobre una losa pulida de piedra natural texturizada rodeado armoniosamente de ingredientes botánicos crudos en corte transversal fresco: ${rawIngredientsInput.trim()}, con microgotas de rocío fresco comunicando máxima frescura orgánica y alta potencia biológica`
     : activeEnvironment.surfaceEs;
@@ -453,21 +469,35 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             {STEPS.map((s) => {
               const isActive = activeStep === s.num;
               const isCompleted = activeStep > s.num;
+              const canNavigate = canNavigateToStep(s.num);
+
               return (
                 <button
                   key={s.num}
                   type="button"
-                  onClick={() => setActiveStep(s.num)}
-                  className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                  disabled={!canNavigate}
+                  onClick={() => {
+                    if (canNavigate) setActiveStep(s.num);
+                  }}
+                  title={
+                    !canNavigate
+                      ? 'Paso bloqueado: completa los campos obligatorios del paso actual para avanzar'
+                      : undefined
+                  }
+                  className={`py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
                     isActive
-                      ? 'bg-[#C85A32] text-white shadow-xs'
+                      ? 'bg-[#C85A32] text-white shadow-xs cursor-default'
+                      : !canNavigate
+                      ? 'opacity-40 text-stone-400 bg-transparent cursor-not-allowed'
                       : isCompleted
-                      ? 'bg-[#EFECE6] text-stone-800 hover:bg-[#E7E5DF]'
-                      : 'text-stone-500 hover:text-stone-800 hover:bg-[#F7F5F0]'
+                      ? 'bg-[#EFECE6] text-stone-800 hover:bg-[#E7E5DF] cursor-pointer'
+                      : 'text-stone-500 hover:text-stone-800 hover:bg-[#F7F5F0] cursor-pointer'
                   }`}
                 >
                   {isCompleted ? (
                     <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                  ) : !canNavigate ? (
+                    <Lock className="w-3.5 h-3.5 opacity-70" />
                   ) : (
                     <span className="w-4 h-4 rounded-full flex items-center justify-center text-[10px] border border-current opacity-70">
                       {s.num}
@@ -729,7 +759,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                     <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 text-xs flex items-start gap-2.5 mt-2">
                       <AlertCircle className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
                       <div>
-                        <span className="font-bold text-stone-900">Aviso de Ingredientes:</span> No has rellenado ningún ingrediente específico aún. Si no añades al menos uno, el prompt se generará con una mezcla botánica genérica. <strong>Escribe tus ingredientes arriba o añade una sugerencia rápida</strong> con 1 clic.
+                        <span className="font-bold text-stone-900">Paso Bloqueado · Ingredientes Obligatorios:</span> No has rellenado ningún ingrediente específico. Para poder avanzar al Paso 3, <strong>escribe tus ingredientes arriba o añade una sugerencia rápida</strong> con 1 clic (o elige otro escenario).
                       </div>
                     </div>
                   ) : (
@@ -805,24 +835,40 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             </div>
 
             {/* Barra de Navegación Inferior */}
-            <div className="pt-4 border-t border-[#E7E5DF] flex items-center justify-between">
+            <div className="pt-4 border-t border-[#E7E5DF] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setActiveStep(1)}
-                className="py-2.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-sm font-medium flex items-center gap-2 cursor-pointer transition-all border border-[#E7E5DF]"
+                className="py-2.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer transition-all border border-[#E7E5DF]"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Atrás</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveStep(3)}
-                className="py-2.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs"
-              >
-                <span>Continuar al Paso 3: Estilo y Textos</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                {isStep2Blocked && (
+                  <span className="text-xs font-semibold text-[#C85A32] bg-[#C85A32]/10 border border-[#C85A32]/25 px-3 py-1.5 rounded-xl text-center flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-[#C85A32]" />
+                    Añade al menos un ingrediente para avanzar
+                  </span>
+                )}
+                <button
+                  type="button"
+                  disabled={isStep2Blocked}
+                  onClick={() => {
+                    if (!isStep2Blocked) setActiveStep(3);
+                  }}
+                  className={`py-2.5 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
+                    isStep2Blocked
+                      ? 'bg-stone-200 text-stone-400 cursor-not-allowed opacity-75 shadow-none'
+                      : 'bg-[#C85A32] hover:bg-[#B84A22] text-white cursor-pointer shadow-xs active:scale-[0.99]'
+                  }`}
+                  title={isStep2Blocked ? 'Añade al menos un ingrediente para desbloquear' : undefined}
+                >
+                  <span>Continuar al Paso 3: Estilo y Textos</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -917,9 +963,9 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 </label>
                 <div className="flex items-center gap-2">
                   {infographicStyle !== 'none' && filledBenefitsCount === 0 && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-950 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#C85A32] bg-[#C85A32]/10 px-2 py-0.5 rounded-md border border-[#C85A32]/30">
                       <AlertCircle className="w-3 h-3 text-[#C85A32]" />
-                      <span>Falta rellenar al menos 1 beneficio</span>
+                      <span>Bloqueado: Rellena al menos 1 beneficio</span>
                     </span>
                   )}
                   <span className="text-xs text-stone-500 font-medium">
@@ -989,10 +1035,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
 
                 {/* Aviso si no hay ningún beneficio rellenado */}
                 {filledBenefitsCount === 0 && (
-                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 text-xs flex items-start gap-2.5">
+                  <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-950 text-xs flex items-start gap-2.5">
                     <AlertCircle className="w-4 h-4 text-[#C85A32] mt-0.5 shrink-0" />
                     <div>
-                      <span className="font-bold text-stone-900">Aviso de Beneficios:</span> Has seleccionado un diseño con textos (<strong>{activeInfographic.label}</strong>), pero no has rellenado ningún beneficio todavía. <strong>Escribe al menos un beneficio o haz clic en una sugerencia</strong> para que las etiquetas aparezcan en el prompt de Flow.
+                      <span className="font-bold text-stone-900">Paso Bloqueado · Beneficios Obligatorios:</span> Has seleccionado un diseño con textos (<strong>{activeInfographic.label}</strong>), pero no has rellenado ningún beneficio todavía. Para poder avanzar al Paso 4, <strong>escribe al menos un beneficio o haz clic en una sugerencia</strong> con 1 clic (o selecciona "Foto Limpia de Catálogo").
                     </div>
                   </div>
                 )}
@@ -1047,24 +1093,40 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             )}
 
             {/* Barra de Navegación Inferior */}
-            <div className="pt-4 border-t border-[#E7E5DF] flex items-center justify-between">
+            <div className="pt-4 border-t border-[#E7E5DF] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
                 onClick={() => setActiveStep(2)}
-                className="py-2.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-sm font-medium flex items-center gap-2 cursor-pointer transition-all border border-[#E7E5DF]"
+                className="py-2.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer transition-all border border-[#E7E5DF]"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Atrás</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveStep(4)}
-                className="py-2.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs"
-              >
-                <span>Continuar a Resumen y Prompt</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+                {isStep3Blocked && (
+                  <span className="text-xs font-semibold text-[#C85A32] bg-[#C85A32]/10 border border-[#C85A32]/25 px-3 py-1.5 rounded-xl text-center flex items-center justify-center gap-1.5">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 text-[#C85A32]" />
+                    Rellena al menos un beneficio para avanzar
+                  </span>
+                )}
+                <button
+                  type="button"
+                  disabled={isStep3Blocked}
+                  onClick={() => {
+                    if (!isStep3Blocked) setActiveStep(4);
+                  }}
+                  className={`py-2.5 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
+                    isStep3Blocked
+                      ? 'bg-stone-200 text-stone-400 cursor-not-allowed opacity-75 shadow-none'
+                      : 'bg-[#C85A32] hover:bg-[#B84A22] text-white cursor-pointer shadow-xs active:scale-[0.99]'
+                  }`}
+                  title={isStep3Blocked ? 'Rellena al menos un beneficio para desbloquear' : undefined}
+                >
+                  <span>Continuar a Resumen y Prompt</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}
