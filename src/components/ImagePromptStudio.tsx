@@ -415,82 +415,87 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
     ? `${photoStyleEn} ${macroPackagingEn} ${macroMedallionsEn}${humanDirectiveEn} Featuring ${activeEnvironment.lightingEn}, captured with a 100mm f/2.8 macro lens with microscopic sharpness on textures and dew droplets. 8k commercial advertising photography.`
     : `${photoStyleEn} ${packagingDescriptionEn} ${getInfographicFragmentEn(infographicStyle)}${headlineDirectiveEn}${humanDirectiveEn} Featuring ${activeEnvironment.lightingEn}, ${activeLens.promptEn}. Hyper-realistic 8k commercial product photography, advertising studio quality.`;
 
-  // Dynamic Video Storyboard generation for Flow (15s commercial / 4 sequential scenes)
+  // Dynamic Video Storyboard generation for Flow (4 sequential scenes of 4-6s each / 16-20s commercial)
   const b1 = benefits.filter((b) => b.trim().length > 0)[0] || 'ingredientes botánicos activos de alta pureza';
   const b2 = benefits.filter((b) => b.trim().length > 0)[1] || 'absorción celular optimizada y rápida acción';
 
-  const videoScenes = [
+  const rawVideoScenes = [
     {
       sceneNum: 1,
-      timeRange: '00:00 - 00:03',
+      timeRange: '00:00 - 00:05',
+      durationTag: '4–6 seg',
       title: outputLang === 'es' ? 'Escena 1 · El Gancho Visual (Hook Shot)' : 'Scene 1 · The Hook Shot',
-      badge: '0–3s · Scroll-Stopper',
+      badge: '4–6s · Scroll-Stopper',
       cameraMovement: outputLang === 'es' ? 'Slow Push-In a 120fps' : '120fps Slow Push-In',
       promptEs: `Cámara en movimiento rápido de acercamiento (Push-In) hacia ${displayProductName} sobre ${effectiveSurfaceEs}. En cámara superlenta a 120fps se anima una suave onda de luz y microgotas de rocío en el entorno mientras el envase, sus tipografías y logotipo original permanecen 100% firmes y estáticos en el centro. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: El producto no debe mutar ni recolorearse; animar exclusivamente la atmósfera y partículas circundantes. Cinematografía comercial publicitaria 8k.`,
       promptEn: `Dynamic rapid push-in camera motion toward ${displayProductName} on ${effectiveSurfaceEn}. In 120fps super slow motion, animate expanding gentle light waves and micro-dew mist in the surroundings while the authentic bottle, typography, and logo remain 100% steady and static in the center. [FLOW ANTI-MORPHING DIRECTIVE]: Product must not mutate or recolor; animate strictly surrounding atmosphere and particles. 8k commercial motion cinematography.`,
-      voiceScriptEs: `¿Buscas máxima potencia natural para tu bienestar diario? Descubre ${displayProductName}.`,
-      voiceScriptEn: `Looking for maximum natural potency in your daily routine? Discover ${displayProductName}.`,
+      voiceScriptEs: `¿Buscas bienestar real y natural? Descubre ${displayProductName}.`,
+      voiceScriptEn: `Seeking real natural wellness? Discover ${displayProductName}.`,
       soundDesignEs: 'Whoosh cinemático suave con impacto sutil de bajo y percusión orgánica de ritmo ascendente.',
       soundDesignEn: 'Soft cinematic whoosh with subtle bass pulse and rising organic percussion rhythm.',
     },
     {
       sceneNum: 2,
-      timeRange: '00:03 - 00:07',
+      timeRange: '00:05 - 00:10',
+      durationTag: '4–6 seg',
       title: outputLang === 'es' ? 'Escena 2 · La Revelación (Hero Reveal)' : 'Scene 2 · The Hero Reveal',
-      badge: '3–7s · Volumen 3D',
+      badge: '4–6s · Volumen 3D',
       cameraMovement: outputLang === 'es' ? 'Giro Orbital Suave 15°' : 'Smooth 15° Orbital Pan',
       promptEs: `Giro orbital suave de cámara a 15 grados alrededor de ${displayProductName} en ${activeEnvironment.label}. Un barrido de luz solar cálida recorre la curvatura del envase destacando su vidrio y etiqueta original nítida. Con ${activeEnvironment.lightingEs}. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: Silueta del envase y textos intactos sin temblores ni distorsión; animar únicamente el haz de luz y suaves sombras botánicas en movimiento. Calidad cinematográfica publicitaria 8k.`,
       promptEn: `Smooth 15-degree orbital camera pan around ${displayProductName} in ${activeEnvironment.label}. A sweep of warm sunlight travels across the container surface highlighting its glass finish and authentic label. Featuring ${activeEnvironment.lightingEn}. [FLOW ANTI-MORPHING DIRECTIVE]: Container silhouette and texts stay intact without jitter; animate only the light beam and gentle drifting botanical shadows. 8k commercial motion cinematography.`,
       voiceScriptEs: headline.trim()
-        ? `${headline.trim()}. Formulado con ${b1} para resultados de alta fidelidad.`
-        : `Fórmula botánica avanzada con ${b1}. Diseñada para acompañar tu estilo de vida.`,
+        ? `${headline.trim()}. Pureza botánica con ${b1}.`
+        : `Fórmula botánica con ${b1}. Bienestar en cada toma.`,
       voiceScriptEn: headline.trim()
-        ? `${headline.trim()}. Formulated with ${b1} for high-fidelity results.`
-        : `Advanced botanical formula with ${b1}. Designed for your daily lifestyle.`,
+        ? `${headline.trim()}. Pure botanical power with ${b1}.`
+        : `Botanical formula with ${b1}. Daily wellness in every dose.`,
       soundDesignEs: 'Melodía inspiradora de cuerdas acústicas y piano moderno con brillo especular sutil.',
       soundDesignEn: 'Uplifting acoustic strings and modern piano melody with subtle shimmer chime.',
     },
     {
       sceneNum: 3,
-      timeRange: '00:07 - 00:11',
+      timeRange: '00:10 - 00:15',
+      durationTag: '4–6 seg',
       title: outputLang === 'es' ? 'Escena 3 · Acción Sensorial & Beneficios' : 'Scene 3 · Sensory Action & Benefits',
-      badge: '7–11s · Textura & Prueba',
+      badge: '4–6s · Textura & Prueba',
       cameraMovement: outputLang === 'es' ? 'Slow Tilt-Down Macro' : 'Slow Tilt-Down Macro',
       promptEs: `Toma macro con cámara descendente lenta (Slow Tilt-Down). Un haz de luz resalta una microgota brillante deslizándose con tensión superficial perfecta cerca del envase ${displayProductName}, mientras flotan sutiles partículas luminosas de frescura botánica. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: Los logotipos del envase permanecen nítidos y fijos; animar únicamente el brillo de la gota y la profundidad de campo. Calidad de estudio publicitario 8k.`,
       promptEn: `Macro shot with slow downward camera glide (Slow Tilt-Down). A beam of light illuminates a sparkling dew droplet gliding with perfect surface tension near the ${displayProductName} container, accompanied by subtle floating luminous botanical particles. [FLOW ANTI-MORPHING DIRECTIVE]: Container logos remain tack-sharp and stationary; animate only droplet glint and depth-of-field transition. 8k commercial studio quality.`,
-      voiceScriptEs: `Doble acción comprobada: ${b1} y ${b2}. Siente la diferencia desde la primera toma.`,
-      voiceScriptEn: `Proven dual action: ${b1} and ${b2}. Feel the difference from day one.`,
+      voiceScriptEs: `Potencia activa con ${b1} y ${b2}. Resultados que sientes.`,
+      voiceScriptEn: `Active potency with ${b1} and ${b2}. Results you can feel.`,
       soundDesignEs: 'Gota cristalina con eco suave (droplet chime) y transición a ritmo envolvente y positivo.',
       soundDesignEn: 'Crystal droplet sound with soft reverb and smooth transition into warm confident beat.',
     },
     {
       sceneNum: 4,
-      timeRange: '00:11 - 00:15',
+      timeRange: '00:15 - 00:20',
+      durationTag: '4–6 seg',
       title: outputLang === 'es' ? 'Escena 4 · Cierre Comercial & CTA' : 'Scene 4 · Commercial Lockup & CTA',
-      badge: '11–15s · Llamada a la Acción',
+      badge: '4–6s · Llamada a la Acción',
       cameraMovement: outputLang === 'es' ? 'Slow Pull-Back Frontal' : 'Frontal Slow Pull-Back',
       promptEs: `Encuadre frontal heroico de ${displayProductName} con sutil retroceso lento de cámara (Slow Pull-Back), revelando una composición simétrica limpia con aire superior para titular publicitario. Iluminación comercial de alta gama con sutiles destellos de éxito en los bordes del envase. [DIRECTIVA ANTI-DEFORMACIÓN FLOW]: Logo y envase 100% fidedignos y estáticos; el video cierra en un fotograma publicitario impecable listo para llamada a la acción. Fotografía comercial de alta conversión 8k.`,
       promptEn: `Heroic frontal lockup of ${displayProductName} with subtle slow camera pull-back, revealing a clean symmetrical composition with top breathing room for advertising text. High-end commercial studio lighting with gentle edge rim glints. [FLOW ANTI-MORPHING DIRECTIVE]: Logo and container 100% faithful and static; video concludes on a flawless commercial hero frame ready for call-to-action. 8k high-conversion advertising cinematography.`,
-      voiceScriptEs: `Lleva tu bienestar al siguiente nivel con ${displayProductName}. Haz clic en el enlace y pide el tuyo hoy.`,
-      voiceScriptEn: `Elevate your wellness with ${displayProductName}. Click the link below and get yours today.`,
+      voiceScriptEs: `Eleva tu vitalidad con ${displayProductName}. Pide el tuyo hoy.`,
+      voiceScriptEn: `Elevate your vitality with ${displayProductName}. Order yours today.`,
       soundDesignEs: 'Resolución musical armoniosa de alta energía, campana sutil de confirmación de marca.',
       soundDesignEn: 'Harmonious high-energy musical resolution, subtle brand lockup confirmation chime.',
     },
   ];
 
+  const videoScenes = rawVideoScenes.map((s) => ({
+    ...s,
+    fullPromptEs: `[DURACIÓN / TIMING]: 4 a 6 segundos (Google Flow / Veo 2)\n[MOVIMIENTO DE CÁMARA]: ${s.cameraMovement}\n[PROMPT VISUAL IMAGE-TO-VIDEO]: ${s.promptEs}\n[LOCUCIÓN / VOICEOVER (ritmo natural 4-6s)]: "${s.voiceScriptEs}"\n[DISEÑO DE AUDIO Y SFX]: ${s.soundDesignEs}`,
+    fullPromptEn: `[DURATION / TIMING]: 4 to 6 seconds (Google Flow / Veo 2)\n[CAMERA MOTION]: ${s.cameraMovement}\n[VISUAL IMAGE-TO-VIDEO PROMPT]: ${s.promptEn}\n[VOICEOVER SCRIPT (natural 4-6s pace)]: "${s.voiceScriptEn}"\n[AUDIO & SFX DESIGN]: ${s.soundDesignEn}`,
+  }));
+
   const fullStoryboardText = videoScenes
     .map(
       (s) =>
         `========================================\n` +
-        `${s.title.toUpperCase()} (${s.timeRange})\n` +
-        `Cámara: ${s.cameraMovement}\n` +
+        `${s.title.toUpperCase()} (DURACIÓN: 4 A 6 SEGUNDOS · ${s.timeRange})\n` +
         `----------------------------------------\n` +
-        `PROMPT FLOW VIDEO (IMAGE-TO-VIDEO):\n` +
-        `${outputLang === 'es' ? s.promptEs : s.promptEn}\n\n` +
-        `GUION DE LOCUCIÓN (VOICEOVER):\n` +
-        `"${outputLang === 'es' ? s.voiceScriptEs : s.voiceScriptEn}"\n\n` +
-        `DISEÑO SONORO / SFX:\n` +
-        `${outputLang === 'es' ? s.soundDesignEs : s.soundDesignEn}\n`
+        (outputLang === 'es' ? s.fullPromptEs : s.fullPromptEn) +
+        `\n`
     )
     .join('\n');
 
@@ -1501,10 +1506,10 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                 <div className="p-4 rounded-xl bg-[#F7F5F0] border border-[#E7E5DF] space-y-2 text-xs text-stone-700">
                   <div className="flex items-center gap-2 font-bold text-stone-900 text-sm">
                     <Clapperboard className="w-4 h-4 text-[#C85A32]" />
-                    <span>Pipeline Image-to-Video en Google Flow (Anuncio de 15 Segundos)</span>
+                    <span>Pipeline Image-to-Video en Google Flow (Clips de 4 a 6s · Prompts Todo-en-Uno)</span>
                   </div>
                   <p className="leading-relaxed">
-                    Sube la <strong>Foto Maestra generada en la Fase 1</strong> a la sección de video de Flow como <strong>Fotograma Inicial (Start Frame)</strong>. Luego, genera cada una de estas 4 escenas pegando su prompt de cámara y locución.
+                    Sube la <strong>Foto Maestra generada en la Fase 1</strong> a la sección de video de Flow como <strong>Fotograma Inicial (Start Frame)</strong>. Cada escena tiene su prompt todo-en-uno calibrado a <strong>4–6 segundos</strong> con locución sintetizada a ritmo pausado (~8–10 palabras) para que nunca se corte en Flow.
                   </p>
                   <div className="pt-2 flex flex-wrap gap-2 items-center justify-between">
                     <button
@@ -1515,12 +1520,12 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                       {copiedKey === 'full-storyboard' ? (
                         <>
                           <Check className="w-3.5 h-3.5 stroke-[3]" />
-                          <span>¡Storyboard Completo Copiado!</span>
+                          <span>¡Guion Completo Todo-en-Uno Copiado!</span>
                         </>
                       ) : (
                         <>
                           <Copy className="w-3.5 h-3.5" />
-                          <span>Copiar Guion Completo (4 Escenas)</span>
+                          <span>Copiar Guion Completo Todo-en-Uno (4 Escenas)</span>
                         </>
                       )}
                     </button>
@@ -1562,52 +1567,60 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
 
                         <button
                           type="button"
-                          onClick={() => copyText(outputLang === 'es' ? scene.promptEs : scene.promptEn, `scene-${scene.sceneNum}`)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 border border-[#E7E5DF] transition-all cursor-pointer self-start sm:self-auto"
+                          onClick={() => copyText(outputLang === 'es' ? scene.fullPromptEs : scene.fullPromptEn, `scene-${scene.sceneNum}`)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-[#C85A32] hover:bg-[#B84A22] text-white transition-all cursor-pointer self-start sm:self-auto shadow-xs active:scale-[0.98]"
+                          title="Copia el prompt completo con duración, cámara, locución y audio integrados"
                         >
                           {copiedKey === `scene-${scene.sceneNum}` ? (
                             <>
-                              <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3]" />
-                              <span className="text-emerald-700">¡Copiado!</span>
+                              <Check className="w-3.5 h-3.5 text-white stroke-[3]" />
+                              <span>¡Prompt Completo Copiado!</span>
                             </>
                           ) : (
                             <>
-                              <Copy className="w-3.5 h-3.5 text-[#C85A32]" />
-                              <span>Copiar Prompt Escena</span>
+                              <Copy className="w-3.5 h-3.5 text-white" />
+                              <span>Copiar Prompt Completo (Todo-en-Uno)</span>
                             </>
                           )}
                         </button>
                       </div>
 
-                      {/* Prompt para el generador de video */}
+                      {/* Prompt Todo-en-Uno para el generador de video */}
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px] font-bold text-stone-700">
                           <span className="flex items-center gap-1">
                             <Play className="w-3 h-3 text-[#C85A32] fill-current" />
-                            Prompt de Movimiento para Flow Video:
+                            Prompt Completo Todo-en-Uno (Google Flow / Veo 2):
                           </span>
-                          <span className="text-stone-400 font-mono text-[10px]">Start Frame Image-to-Video</span>
+                          <span className="text-emerald-700 font-mono text-[10px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200/60 font-semibold">
+                            ⏱ Calibrado a 4–6s
+                          </span>
                         </div>
-                        <div className="p-3 rounded-xl bg-[#F7F5F0] border border-[#E7E5DF] font-mono text-xs text-stone-800 leading-relaxed select-all">
-                          {outputLang === 'es' ? scene.promptEs : scene.promptEn}
+                        <div className="p-3.5 rounded-xl bg-[#F7F5F0] border border-[#E7E5DF] font-mono text-xs text-stone-800 leading-relaxed whitespace-pre-wrap select-all">
+                          {outputLang === 'es' ? scene.fullPromptEs : scene.fullPromptEn}
                         </div>
                       </div>
 
-                      {/* Guion de Locución y SFX */}
+                      {/* Guion de Locución y SFX con controles secundarios */}
                       <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs pt-1">
-                        <div className="sm:col-span-8 p-3 rounded-xl bg-[#FDFBF9] border border-[#E7E5DF] space-y-1">
+                        <div className="sm:col-span-8 p-3 rounded-xl bg-[#FDFBF9] border border-[#E7E5DF] space-y-1.5">
                           <div className="flex items-center justify-between">
                             <span className="font-bold text-stone-800 flex items-center gap-1.5 text-[11px]">
                               <Volume2 className="w-3.5 h-3.5 text-[#C85A32]" />
-                              Guion de Voz en Off (Voiceover):
+                              Guion de Voz en Off (Ritmo Natural 4–6s):
                             </span>
-                            <button
-                              type="button"
-                              onClick={() => copyText(outputLang === 'es' ? scene.voiceScriptEs : scene.voiceScriptEn, `voice-${scene.sceneNum}`)}
-                              className="text-[10px] text-[#C85A32] hover:underline font-semibold cursor-pointer"
-                            >
-                              {copiedKey === `voice-${scene.sceneNum}` ? '✓ Copiado' : 'Copiar voz'}
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] text-stone-600 font-mono">
+                                ~{scene.voiceScriptEs.split(' ').length} palabras
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => copyText(outputLang === 'es' ? scene.voiceScriptEs : scene.voiceScriptEn, `voice-${scene.sceneNum}`)}
+                                className="text-[10px] text-[#C85A32] hover:underline font-semibold cursor-pointer"
+                              >
+                                {copiedKey === `voice-${scene.sceneNum}` ? '✓ Copiado' : 'Copiar solo voz'}
+                              </button>
+                            </div>
                           </div>
                           <p className="italic text-stone-800 font-medium">
                             "{outputLang === 'es' ? scene.voiceScriptEs : scene.voiceScriptEn}"
@@ -1615,9 +1628,19 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                         </div>
 
                         <div className="sm:col-span-4 p-3 rounded-xl bg-[#F7F5F0] border border-[#E7E5DF] space-y-1">
-                          <span className="font-bold text-stone-700 block text-[11px]">
-                            🎵 Audio & SFX:
-                          </span>
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-stone-700 block text-[11px]">
+                              🎵 Audio & SFX:
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => copyText(outputLang === 'es' ? scene.promptEs : scene.promptEn, `motion-${scene.sceneNum}`)}
+                              className="text-[10px] text-stone-600 hover:text-stone-900 hover:underline cursor-pointer"
+                              title="Copiar solo el movimiento de cámara"
+                            >
+                              {copiedKey === `motion-${scene.sceneNum}` ? '✓ Copiado' : 'Solo visual'}
+                            </button>
+                          </div>
                           <p className="text-stone-600 text-[11px] leading-relaxed">
                             {outputLang === 'es' ? scene.soundDesignEs : scene.soundDesignEn}
                           </p>
