@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Camera,
   Sparkles,
@@ -334,6 +334,36 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
     return true;
   };
 
+  // Smooth scroll to top of studio configurator on step change
+  const scrollToStudioTop = () => {
+    const el = document.getElementById('estudio-imagenes');
+    if (el) {
+      const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      const yOffset = -72; // Account for sticky header
+      const y = el.getBoundingClientRect().top + scrollY + yOffset;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleNavigateStep = (targetStep: StepNumber) => {
+    if (canNavigateToStep(targetStep)) {
+      setActiveStep(targetStep);
+      setTimeout(scrollToStudioTop, 30);
+    }
+  };
+
+  const isFirstMount = useRef(true);
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    const timer = setTimeout(scrollToStudioTop, 30);
+    return () => clearTimeout(timer);
+  }, [activeStep]);
+
   const effectiveSurfaceEs = hasCustomRawIngredients
     ? `posado sobre una losa pulida de piedra natural texturizada rodeado armoniosamente de ingredientes botánicos crudos en corte transversal fresco: ${rawIngredientsInput.trim()}, con microgotas de rocío fresco comunicando máxima frescura orgánica y alta potencia biológica`
     : activeEnvironment.surfaceEs;
@@ -567,7 +597,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   type="button"
                   disabled={!canNavigate}
                   onClick={() => {
-                    if (canNavigate) setActiveStep(s.num);
+                    if (canNavigate) handleNavigateStep(s.num);
                   }}
                   title={
                     !canNavigate
@@ -719,7 +749,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             <div className="pt-4 border-t border-[#E7E5DF] flex items-center justify-end">
               <button
                 type="button"
-                onClick={() => setActiveStep(2)}
+                onClick={() => handleNavigateStep(2)}
                 className="py-2.5 px-5 rounded-xl bg-[#C85A32] hover:bg-[#B84A22] text-white text-sm font-semibold flex items-center gap-2 cursor-pointer transition-all shadow-xs"
               >
                 <span>Continuar al Paso 2: Escenario</span>
@@ -961,7 +991,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             <div className="pt-4 border-t border-[#E7E5DF] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => setActiveStep(1)}
+                onClick={() => handleNavigateStep(1)}
                 className="py-2.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer transition-all border border-[#E7E5DF]"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -979,7 +1009,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   type="button"
                   disabled={isStep2Blocked}
                   onClick={() => {
-                    if (!isStep2Blocked) setActiveStep(3);
+                    if (!isStep2Blocked) handleNavigateStep(3);
                   }}
                   className={`py-2.5 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
                     isStep2Blocked
@@ -1232,7 +1262,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             <div className="pt-4 border-t border-[#E7E5DF] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <button
                 type="button"
-                onClick={() => setActiveStep(2)}
+                onClick={() => handleNavigateStep(2)}
                 className="py-2.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-sm font-medium flex items-center justify-center gap-2 cursor-pointer transition-all border border-[#E7E5DF]"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -1250,7 +1280,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
                   type="button"
                   disabled={isStep3Blocked}
                   onClick={() => {
-                    if (!isStep3Blocked) setActiveStep(4);
+                    if (!isStep3Blocked) handleNavigateStep(4);
                   }}
                   className={`py-2.5 px-5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-all ${
                     isStep3Blocked
@@ -1603,7 +1633,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             <div className="pt-2 text-center">
               <button
                 type="button"
-                onClick={() => setActiveStep(1)}
+                onClick={() => handleNavigateStep(1)}
                 className="text-xs text-[#C85A32] hover:underline cursor-pointer font-medium"
               >
                 ← Modificar Selección (Volver al Paso 1)
@@ -1614,7 +1644,7 @@ export const ImagePromptStudio: React.FC<Props> = ({ externalPresetPayload }) =>
             <div className="pt-4 border-t border-[#E7E5DF] flex items-center justify-between">
               <button
                 type="button"
-                onClick={() => setActiveStep(3)}
+                onClick={() => handleNavigateStep(3)}
                 className="py-2.5 px-4 rounded-xl bg-[#EFECE6] hover:bg-[#E7E5DF] text-stone-800 text-sm font-medium flex items-center gap-2 cursor-pointer transition-all border border-[#E7E5DF]"
               >
                 <ArrowLeft className="w-4 h-4" />
